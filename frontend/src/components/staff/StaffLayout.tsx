@@ -47,7 +47,7 @@ export function StaffLayout({ children }: StaffLayoutProps) {
       <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-30">
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl flex items-center justify-center">
               <UtensilsCrossed className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -77,7 +77,7 @@ export function StaffLayout({ children }: StaffLayoutProps) {
               href={href}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
                 pathname === href
-                  ? "text-orange-500 border-b-2 border-orange-500"
+                  ? "text-emerald-600 border-b-2 border-emerald-600"
                   : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >

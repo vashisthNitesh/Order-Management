@@ -59,7 +59,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       {/* Logo */}
       <div className="p-6 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl flex items-center justify-center">
             <UtensilsCrossed className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -79,7 +79,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group",
               pathname === href
-                ? "bg-orange-500 text-white shadow-lg shadow-orange-200 dark:shadow-orange-900/30"
+                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-orange-900/30"
                 : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
             )}
           >

@@ -61,7 +61,7 @@ export default function StaffLoginPage() {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-orange-500/30">
+          <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-emerald-500/30">
             <UtensilsCrossed className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white mb-1">Staff Portal</h1>
@@ -76,7 +76,7 @@ export default function StaffLoginPage() {
               <Input
                 {...register("username")}
                 placeholder="Enter username"
-                className="bg-white/10 border-white/10 text-white placeholder:text-gray-500 rounded-xl focus-visible:ring-orange-500"
+                className="bg-white/10 border-white/10 text-white placeholder:text-gray-500 rounded-xl focus-visible:ring-emerald-500"
                 autoCapitalize="none"
                 autoComplete="username"
               />
@@ -92,7 +92,7 @@ export default function StaffLoginPage() {
                   {...register("password")}
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter password"
-                  className="bg-white/10 border-white/10 text-white placeholder:text-gray-500 rounded-xl pr-10 focus-visible:ring-orange-500"
+                  className="bg-white/10 border-white/10 text-white placeholder:text-gray-500 rounded-xl pr-10 focus-visible:ring-emerald-500"
                   autoComplete="current-password"
                 />
                 <button

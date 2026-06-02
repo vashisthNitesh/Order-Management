@@ -99,7 +99,7 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-32">
       {/* Hero header */}
-      <div className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500">
+      <div className="relative bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-600">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full" />
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full" />
@@ -174,8 +174,8 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
                   onClick={() => setActiveCategory(key)}
                   className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                     activeCategory === key
-                      ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
-                      : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-orange-300"
+                      ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                      : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-emerald-300"
                   }`}
                 >
                   {label}
@@ -200,8 +200,8 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
                     onClick={() => setActiveCategory(cat.id)}
                     className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                       activeCategory === cat.id
-                        ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
-                        : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-orange-300"
+                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                        : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-emerald-300"
                     }`}
                   >
                     {cat.icon && <span>{cat.icon}</span>}
@@ -221,7 +221,7 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
 
             {/* Section heading */}
             <div className="flex items-center gap-2">
-              <ChefHat className="w-4 h-4 text-orange-500" />
+              <ChefHat className="w-4 h-4 text-emerald-600" />
               <h2 className="font-bold text-gray-900 dark:text-white">
                 {activeCategory === "popular"
                   ? "Popular Items"

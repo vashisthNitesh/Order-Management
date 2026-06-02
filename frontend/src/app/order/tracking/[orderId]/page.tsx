@@ -36,7 +36,7 @@ export default function OrderTrackingPage({ params }: { params: { orderId: strin
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function OrderTrackingPage({ params }: { params: { orderId: strin
               {/* Connector line */}
               <div className="absolute left-5 top-5 bottom-5 w-0.5 bg-gray-100 dark:bg-gray-800 z-0" />
               <div
-                className="absolute left-5 top-5 w-0.5 bg-orange-400 z-0 transition-all duration-1000"
+                className="absolute left-5 top-5 w-0.5 bg-emerald-500 z-0 transition-all duration-1000"
                 style={{
                   height: `${currentStepIndex >= 0 ? (currentStepIndex / (STATUS_STEPS.length - 1)) * 100 : 0}%`,
                 }}
@@ -124,9 +124,9 @@ export default function OrderTrackingPage({ params }: { params: { orderId: strin
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
                           isComplete
-                            ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
+                            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
                             : isActive
-                            ? "bg-orange-500 text-white shadow-lg shadow-orange-200 ring-4 ring-orange-100"
+                            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200 ring-4 ring-emerald-100"
                             : "bg-gray-100 dark:bg-gray-800 text-gray-400"
                         }`}
                       >
@@ -147,14 +147,14 @@ export default function OrderTrackingPage({ params }: { params: { orderId: strin
                           {step.label}
                         </p>
                         {isActive && (
-                          <p className="text-xs text-orange-500 mt-0.5">{step.desc}</p>
+                          <p className="text-xs text-emerald-600 mt-0.5">{step.desc}</p>
                         )}
                       </div>
                       {isActive && (
                         <div className="flex gap-1">
-                          <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" />
-                          <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:0.1s]" />
-                          <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce [animation-delay:0.2s]" />
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.1s]" />
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.2s]" />
                         </div>
                       )}
                     </motion.div>

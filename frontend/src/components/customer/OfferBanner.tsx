@@ -20,7 +20,7 @@ export function OfferBanner({ offers }: OfferBannerProps) {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="flex-shrink-0 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-4 min-w-[260px] text-white relative overflow-hidden"
+            className="flex-shrink-0 bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl p-4 min-w-[260px] text-white relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6" />
             <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-4 -translate-x-4" />

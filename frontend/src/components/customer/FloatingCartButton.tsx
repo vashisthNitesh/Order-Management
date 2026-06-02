@@ -20,11 +20,11 @@ export function FloatingCartButton() {
           onClick={openCart}
           className="fixed bottom-6 left-4 right-4 z-30 mx-auto max-w-sm"
         >
-          <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl shadow-2xl shadow-orange-300/50 p-4 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl shadow-2xl shadow-emerald-400/40 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <ShoppingBag className="w-6 h-6 text-white" />
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-white text-orange-600 rounded-full text-[10px] font-bold flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-white text-emerald-700 rounded-full text-[10px] font-bold flex items-center justify-center">
                   {count}
                 </span>
               </div>

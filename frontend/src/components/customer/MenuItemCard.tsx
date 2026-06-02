@@ -40,7 +40,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
         {/* Badges */}
         <div className="absolute top-2 left-2 flex gap-1.5">
           {item.is_popular && (
-            <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
               <Star className="w-2.5 h-2.5 fill-white" /> Popular
             </span>
           )}
@@ -102,19 +102,19 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
                   <Plus className="w-3.5 h-3.5" /> Add
                 </Button>
               ) : (
-                <div className="flex items-center gap-1.5 bg-orange-50 dark:bg-orange-900/20 rounded-xl p-1">
+                <div className="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-1">
                   <button
                     onClick={() => updateQuantity(item.id, quantity - 1)}
                     className="w-7 h-7 bg-white dark:bg-gray-700 rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
                   >
-                    <Minus className="w-3 h-3 text-orange-500" />
+                    <Minus className="w-3 h-3 text-emerald-600" />
                   </button>
-                  <span className="w-6 text-center font-bold text-orange-600 text-sm">
+                  <span className="w-6 text-center font-bold text-emerald-600 text-sm">
                     {quantity}
                   </span>
                   <button
                     onClick={() => addItem(item)}
-                    className="w-7 h-7 bg-orange-500 rounded-lg shadow-sm flex items-center justify-center hover:bg-orange-600 transition-colors"
+                    className="w-7 h-7 bg-emerald-600 rounded-lg shadow-sm flex items-center justify-center hover:bg-emerald-700 transition-colors"
                   >
                     <Plus className="w-3 h-3 text-white" />
                   </button>

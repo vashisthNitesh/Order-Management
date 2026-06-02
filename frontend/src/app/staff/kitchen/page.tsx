@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 const KITCHEN_COLUMNS: { status: OrderStatus; label: string; color: string; bg: string }[] = [
   { status: "pending", label: "New Orders", color: "text-yellow-600", bg: "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800" },
-  { status: "preparing", label: "Cooking", color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800" },
+  { status: "preparing", label: "Cooking", color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800" },
   { status: "ready", label: "Ready", color: "text-green-600", bg: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800" },
 ];
 
@@ -48,7 +48,7 @@ function KitchenCard({ order, onAdvance, isPending, nextStatus, actionLabel }: K
       </div>
 
       <div className="flex items-center gap-1.5">
-        <span className="text-xs font-bold text-white bg-orange-500 px-2 py-0.5 rounded-full">
+        <span className="text-xs font-bold text-white bg-emerald-600 px-2 py-0.5 rounded-full">
           T{order.table_number}
         </span>
         {order.customer_name && (
@@ -59,7 +59,7 @@ function KitchenCard({ order, onAdvance, isPending, nextStatus, actionLabel }: K
       <div className="space-y-1.5">
         {order.items.map((item) => (
           <div key={item.id} className="flex items-center gap-2 text-sm">
-            <span className="w-6 h-6 bg-orange-100 dark:bg-orange-900/30 text-orange-600 font-bold rounded text-xs flex items-center justify-center flex-shrink-0">
+            <span className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 font-bold rounded text-xs flex items-center justify-center flex-shrink-0">
               {item.quantity}
             </span>
             <span className="text-gray-700 dark:text-gray-300 font-medium">{item.menu_item_name}</span>
@@ -133,7 +133,7 @@ export default function KitchenViewPage() {
           <h2 className="font-bold text-gray-900 dark:text-white">Kitchen View</h2>
           <button
             onClick={() => refetch()}
-            className={`w-9 h-9 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors ${isRefetching ? "animate-spin" : ""}`}
+            className={`w-9 h-9 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-emerald-600 transition-colors ${isRefetching ? "animate-spin" : ""}`}
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -154,7 +154,7 @@ export default function KitchenViewPage() {
                   <div className="space-y-3 min-h-[100px]">
                     {isLoading ? (
                       <div className="flex items-center justify-center py-8">
-                        <div className="w-6 h-6 border-2 border-orange-400 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
                       </div>
                     ) : colOrders.length === 0 ? (
                       <motion.p

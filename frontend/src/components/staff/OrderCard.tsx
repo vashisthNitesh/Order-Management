@@ -122,7 +122,7 @@ export function OrderCard({ order }: OrderCardProps) {
                 className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400"
               >
                 <span className="flex items-center gap-1.5">
-                  <span className="w-4 h-4 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded flex items-center justify-center font-bold text-[10px]">
+                  <span className="w-4 h-4 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded flex items-center justify-center font-bold text-[10px]">
                     {item.quantity}
                   </span>
                   {item.menu_item_name}
@@ -131,7 +131,7 @@ export function OrderCard({ order }: OrderCardProps) {
               </div>
             ))}
             {order.special_instructions && (
-              <p className="text-xs text-orange-600 bg-orange-50 dark:bg-orange-900/20 rounded-lg px-2 py-1 mt-1">
+              <p className="text-xs text-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg px-2 py-1 mt-1">
                 📝 {order.special_instructions}
               </p>
             )}

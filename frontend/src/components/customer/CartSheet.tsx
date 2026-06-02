@@ -51,8 +51,8 @@ export function CartSheet() {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
-                  <ShoppingBag className="w-5 h-5 text-orange-500" />
+                <div className="w-9 h-9 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
+                  <ShoppingBag className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
                   <h2 className="font-bold text-gray-900 dark:text-white">Your Cart</h2>
@@ -69,9 +69,9 @@ export function CartSheet() {
 
             {/* Table info */}
             {tableId && (
-              <div className="mx-4 mt-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl p-3 flex items-center gap-2">
-                <span className="text-orange-500 text-xl">🍽️</span>
-                <span className="text-sm text-orange-700 dark:text-orange-300 font-medium">
+              <div className="mx-4 mt-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3 flex items-center gap-2">
+                <span className="text-emerald-600 text-xl">🍽️</span>
+                <span className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
                   Table {tableId}
                 </span>
               </div>
@@ -115,7 +115,7 @@ export function CartSheet() {
                         <p className="font-medium text-gray-900 dark:text-white text-sm truncate">
                           {cartItem.menuItem.name}
                         </p>
-                        <p className="text-orange-500 font-semibold text-sm mt-0.5">
+                        <p className="text-emerald-600 font-semibold text-sm mt-0.5">
                           {formatPrice(
                             parseFloat(cartItem.menuItem.price) * cartItem.quantity
                           )}
@@ -137,7 +137,7 @@ export function CartSheet() {
                               onClick={() =>
                                 updateQuantity(cartItem.menuItem.id, cartItem.quantity + 1)
                               }
-                              className="w-6 h-6 rounded-lg bg-orange-500 shadow-sm flex items-center justify-center hover:bg-orange-600 transition-colors"
+                              className="w-6 h-6 rounded-lg bg-emerald-600 shadow-sm flex items-center justify-center hover:bg-emerald-700 transition-colors"
                             >
                               <Plus className="w-3 h-3 text-white" />
                             </button>
