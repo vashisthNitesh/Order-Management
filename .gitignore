@@ -21,5 +21,24 @@ Thumbs.db
 *.env
 
 # ── Docker ──────────────────────────────────────────────────────────────
-# (keep docker-compose.yml committed, but not override files)
 docker-compose.override.yml
+
+# ── Node / Frontend ──────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+npm-debug.log*
+yarn-error.log*
+
+# ── Python / Backend ─────────────────────────────────────────────────────
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+staticfiles/
+media/
+*.log
+.coverage
+.pytest_cache/
