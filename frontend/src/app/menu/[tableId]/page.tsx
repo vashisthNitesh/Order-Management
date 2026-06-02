@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, UtensilsCrossed, ChefHat } from "lucide-react";
-import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { tableApi, categoryApi, menuItemApi, offerApi } from "@/lib/api";
 import { Category, MenuItem, Offer } from "@/types";
@@ -14,28 +13,39 @@ import { CartSheet } from "@/components/customer/CartSheet";
 import { OfferBanner } from "@/components/customer/OfferBanner";
 import { MenuSkeleton } from "@/components/customer/MenuSkeleton";
 import { Input } from "@/components/ui/input";
-import { getImageUrl } from "@/lib/utils";
 
-const RESTAURANT_ID = parseInt(process.env.NEXT_PUBLIC_DEFAULT_RESTAURANT_ID || "1");
+const RESTAURANT_ID = parseInt(
+  process.env.NEXT_PUBLIC_DEFAULT_RESTAURANT_ID || "1"
+);
 
 export default function MenuPage({ params }: { params: { tableId: string } }) {
   const tableId = parseInt(params.tableId);
-  const [activeCategory, setActiveCategory] = useState<number | "popular" | "specials">("popular");
+  const [activeCategory, setActiveCategory] = useState<
+    number | "popular" | "specials"
+  >("popular");
   const [search, setSearch] = useState("");
   const { setTable } = useCartStore();
-  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // ── Table ───────────────────────────────────────────────────────────
   const { data: table } = useQuery({
     queryKey: ["table", tableId],
     queryFn: () => tableApi.get(tableId).then((r) => r.data),
   });
 
-  const { data: categories = [], isLoading } = useQuery<Category[]>({
+  useEffect(() => {
+    if (table) setTable(table.id, table.restaurant);
+  }, [table, setTable]);
+
+  // ── Categories (tabs only — no items) ───────────────────────────────
+  const { data: categories = [], isLoading: catsLoading } = useQuery<
+    Category[]
+  >({
     queryKey: ["categories", RESTAURANT_ID],
     queryFn: () =>
       categoryApi.list(RESTAURANT_ID).then((r) => r.data.results || r.data),
   });
 
+  // ── Popular & Specials ───────────────────────────────────────────────
   const { data: popularItems = [] } = useQuery<MenuItem[]>({
     queryKey: ["popular-items", RESTAURANT_ID],
     queryFn: () => menuItemApi.popular(RESTAURANT_ID).then((r) => r.data),
@@ -46,6 +56,19 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
     queryFn: () => menuItemApi.specials(RESTAURANT_ID).then((r) => r.data),
   });
 
+  // ── Items for the selected category ─────────────────────────────────
+  const { data: categoryItems = [], isFetching: itemsFetching } = useQuery<
+    MenuItem[]
+  >({
+    queryKey: ["category-items", activeCategory],
+    queryFn: () =>
+      menuItemApi
+        .list({ category: activeCategory, is_available: true })
+        .then((r) => r.data.results || r.data),
+    enabled: typeof activeCategory === "number",
+  });
+
+  // ── Offers ───────────────────────────────────────────────────────────
   const { data: offers = [] } = useQuery<Offer[]>({
     queryKey: ["offers", RESTAURANT_ID],
     queryFn: () =>
@@ -54,43 +77,30 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
         .then((r) => r.data.results || r.data),
   });
 
-  useEffect(() => {
-    if (table) {
-      setTable(table.id, table.restaurant);
-    }
-  }, [table, setTable]);
+  // ── Displayed items (with search filter) ────────────────────────────
+  const baseItems: MenuItem[] =
+    activeCategory === "popular"
+      ? popularItems
+      : activeCategory === "specials"
+      ? specialItems
+      : categoryItems;
 
-  const getDisplayedItems = (): MenuItem[] => {
-    let items: MenuItem[] = [];
-
-    if (activeCategory === "popular") {
-      items = popularItems;
-    } else if (activeCategory === "specials") {
-      items = specialItems;
-    } else {
-      const cat = categories.find((c) => c.id === activeCategory);
-      items = cat?.items || [];
-    }
-
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      items = items.filter(
+  const displayedItems = search.trim()
+    ? baseItems.filter(
         (item) =>
-          item.name.toLowerCase().includes(q) ||
-          item.description.toLowerCase().includes(q)
-      );
-    }
+          item.name.toLowerCase().includes(search.toLowerCase()) ||
+          item.description.toLowerCase().includes(search.toLowerCase())
+      )
+    : baseItems;
 
-    return items;
-  };
-
-  const displayedItems = getDisplayedItems();
+  const isLoading = catsLoading;
+  const isItemsLoading = itemsFetching && typeof activeCategory === "number";
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-32">
       {/* Hero header */}
-      <div className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 pt-safe">
-        <div className="absolute inset-0 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full" />
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full" />
         </div>
@@ -98,16 +108,20 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <UtensilsCrossed className="w-5 h-5 text-white/80" />
-              <span className="text-white/80 text-sm font-medium">The Grand Bistro</span>
+              <span className="text-white/80 text-sm font-medium">
+                The Grand Bistro
+              </span>
             </div>
             <div className="glass rounded-xl px-3 py-1.5 text-white text-xs font-bold flex items-center gap-1.5">
-              <span>🍽️</span> Table {table?.table_number || tableId}
+              🍽️ Table {table?.table_number || tableId}
             </div>
           </div>
           <h1 className="text-2xl font-bold text-white mb-1">
             What would you like?
           </h1>
-          <p className="text-white/70 text-sm">Browse our menu and order directly</p>
+          <p className="text-white/70 text-sm">
+            Browse our menu and order directly
+          </p>
         </div>
 
         {/* Search */}
@@ -136,16 +150,23 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
         {/* Offers */}
         {offers.length > 0 && <OfferBanner offers={offers} />}
 
-        {/* Category tabs */}
         {isLoading ? (
           <MenuSkeleton />
         ) : (
           <>
+            {/* Category tabs */}
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
-              {/* Special tabs */}
               {[
-                { key: "popular" as const, label: "⭐ Popular", count: popularItems.length },
-                { key: "specials" as const, label: "👨‍🍳 Specials", count: specialItems.length },
+                {
+                  key: "popular" as const,
+                  label: "⭐ Popular",
+                  count: popularItems.length,
+                },
+                {
+                  key: "specials" as const,
+                  label: "👨‍🍳 Specials",
+                  count: specialItems.length,
+                },
               ].map(({ key, label, count }) => (
                 <motion.button
                   key={key}
@@ -170,9 +191,8 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
                 </motion.button>
               ))}
 
-              {/* Category tabs */}
               {categories
-                .filter((c) => c.is_active)
+                .filter((c) => c.is_active && c.item_count > 0)
                 .map((cat) => (
                   <motion.button
                     key={cat.id}
@@ -199,7 +219,7 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
                 ))}
             </div>
 
-            {/* Section title */}
+            {/* Section heading */}
             <div className="flex items-center gap-2">
               <ChefHat className="w-4 h-4 text-orange-500" />
               <h2 className="font-bold text-gray-900 dark:text-white">
@@ -207,15 +227,34 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
                   ? "Popular Items"
                   : activeCategory === "specials"
                   ? "Chef's Specials"
-                  : categories.find((c) => c.id === activeCategory)?.name || ""}
+                  : categories.find((c) => c.id === activeCategory)?.name ||
+                    ""}
               </h2>
-              <span className="text-xs text-gray-400 font-medium">
-                {displayedItems.length} items
-              </span>
+              {!isItemsLoading && (
+                <span className="text-xs text-gray-400 font-medium">
+                  {displayedItems.length} items
+                </span>
+              )}
             </div>
 
             {/* Items grid */}
-            {displayedItems.length === 0 ? (
+            {isItemsLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800"
+                  >
+                    <div className="h-44 bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                    <div className="p-4 space-y-2">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4" />
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse w-1/2 mt-2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : displayedItems.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -230,11 +269,20 @@ export default function MenuPage({ params }: { params: { tableId: string } }) {
                 </p>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {displayedItems.map((item) => (
-                  <MenuItemCard key={item.id} item={item} />
-                ))}
-              </div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={String(activeCategory)}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                >
+                  {displayedItems.map((item) => (
+                    <MenuItemCard key={item.id} item={item} />
+                  ))}
+                </motion.div>
+              </AnimatePresence>
             )}
           </>
         )}
