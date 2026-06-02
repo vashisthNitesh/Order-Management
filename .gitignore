@@ -1,0 +1,25 @@
+# ── OS ──────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ── Editors ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Secrets & Environment ───────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.env
+
+# ── Docker ──────────────────────────────────────────────────────────────
+# (keep docker-compose.yml committed, but not override files)
+docker-compose.override.yml

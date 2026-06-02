@@ -1,0 +1,42 @@
+version: "3.9"
+
+# No local postgres needed — using Neon cloud PostgreSQL
+# Set DATABASE_URL in backend/.env before running
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+    volumes:
+      - ./backend:/app
+      - media_files:/app/media
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_data &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --reload"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      NEXT_PUBLIC_MEDIA_URL: http://localhost:8000
+      NEXT_PUBLIC_DEFAULT_RESTAURANT_ID: "1"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  media_files:
