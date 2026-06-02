@@ -28,7 +28,7 @@ services:
     runtime: node
     rootDir: frontend
     buildCommand: "npm install --legacy-peer-deps && npm run build"
-    startCommand: "npm start"
+    startCommand: "npx next start -p $PORT"
     envVars:
       - key: NODE_VERSION
         value: "20.11.0"
