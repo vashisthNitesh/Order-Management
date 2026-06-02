@@ -69,7 +69,7 @@ function OfferModal({ offer, onClose, restaurantId }: { offer?: Offer; onClose: 
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Discount Type</label>
               <select {...register("discount_type")} className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm">
                 <option value="percentage">Percentage (%)</option>
-                <option value="fixed">Fixed Amount ($)</option>
+                <option value="fixed">Fixed Amount (₹)</option>
               </select>
             </div>
             <div className="space-y-1.5">
@@ -77,7 +77,7 @@ function OfferModal({ offer, onClose, restaurantId }: { offer?: Offer; onClose: 
               <Input {...register("discount_value")} type="number" step="0.01" placeholder="20" required />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Min Order ($)</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Min Order Amount (₹)</label>
               <Input {...register("min_order_amount")} type="number" step="0.01" placeholder="0" />
             </div>
             <div className="space-y-1.5">
@@ -94,7 +94,7 @@ function OfferModal({ offer, onClose, restaurantId }: { offer?: Offer; onClose: 
             </div>
           </div>
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" {...register("is_active")} className="w-4 h-4 accent-orange-500" />
+            <input type="checkbox" {...register("is_active")} className="w-4 h-4 accent-emerald-600" />
             <span className="text-sm text-gray-700 dark:text-gray-300">Active</span>
           </label>
           <div className="flex gap-2 pt-2">
@@ -152,7 +152,7 @@ export default function AdminOffersPage() {
                 animate={{ opacity: 1 }}
                 className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 flex items-center gap-4"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Tag className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
