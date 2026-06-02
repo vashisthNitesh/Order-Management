@@ -24,7 +24,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    items = MenuItemSerializer(many=True, read_only=True)
+    items = serializers.SerializerMethodField()
     item_count = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
 
@@ -35,6 +35,10 @@ class CategorySerializer(serializers.ModelSerializer):
             'image_url', 'sort_order', 'is_active', 'items', 'item_count', 'created_at'
         ]
         read_only_fields = ['created_at']
+
+    def get_items(self, obj):
+        available = obj.items.filter(is_available=True).order_by('sort_order', 'name')
+        return MenuItemSerializer(available, many=True, context=self.context).data
 
     def get_item_count(self, obj):
         return obj.items.filter(is_available=True).count()

@@ -95,7 +95,6 @@ export default function AdminLoginPage() {
               {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Sign In"}
             </Button>
           </form>
-          <p className="text-center text-xs text-gray-500 mt-4 font-mono">admin / admin123</p>
         </div>
       </motion.div>
     </div>

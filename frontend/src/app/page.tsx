@@ -24,14 +24,14 @@ export default function HomePage() {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
+        <div className="grid md:grid-cols-3 gap-6">
           {[
             {
               icon: <QrCode className="w-8 h-8 text-orange-500" />,
               title: "QR Code Ordering",
               desc: "Scan the QR on your table and browse the menu instantly. No login needed.",
               href: "/menu/1",
-              cta: "Try Demo Menu",
+              cta: "View Menu",
             },
             {
               icon: <UtensilsCrossed className="w-8 h-8 text-blue-500" />,
@@ -65,26 +65,6 @@ export default function HomePage() {
               </span>
             </Link>
           ))}
-        </div>
-
-        {/* Demo credentials */}
-        <div className="bg-gray-900 dark:bg-gray-800 rounded-2xl p-8 text-white">
-          <h2 className="text-xl font-semibold mb-4 text-orange-400">Demo Credentials</h2>
-          <div className="grid sm:grid-cols-2 gap-4 text-sm font-mono">
-            {[
-              { role: "Admin", user: "admin", pass: "admin123" },
-              { role: "Manager", user: "manager1", pass: "staff123" },
-              { role: "Waiter", user: "waiter1", pass: "staff123" },
-              { role: "Kitchen", user: "kitchen1", pass: "staff123" },
-            ].map((cred) => (
-              <div key={cred.role} className="bg-gray-800 dark:bg-gray-700 rounded-xl p-4">
-                <div className="text-orange-400 text-xs uppercase tracking-widest mb-1">{cred.role}</div>
-                <div className="text-gray-300">
-                  {cred.user} / {cred.pass}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>

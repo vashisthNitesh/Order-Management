@@ -125,27 +125,6 @@ export default function StaffLoginPage() {
             </Button>
           </form>
 
-          <div className="mt-5 pt-4 border-t border-white/10">
-            <p className="text-xs text-gray-500 text-center mb-2">Demo credentials</p>
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-              {[
-                ["admin", "admin123"],
-                ["waiter1", "staff123"],
-              ].map(([user, pass]) => (
-                <button
-                  key={user}
-                  type="button"
-                  onClick={() => {
-                    document.querySelector<HTMLInputElement>('input[name="username"]')!.value = user;
-                    document.querySelector<HTMLInputElement>('input[name="password"]')!.value = pass;
-                  }}
-                  className="bg-white/5 rounded-lg p-2 text-gray-400 hover:text-white hover:bg-white/10 transition-colors text-left"
-                >
-                  {user}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </motion.div>
     </div>
