@@ -1,0 +1,100 @@
+{% extends "admin_panel/base.html" %}
+{% load web_extras %}
+{% block page_title %}Menu Items{% endblock %}
+{% block content %}
+<div class="p-6 space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-lg font-bold text-gray-900">Menu Items</h2>
+      <p class="text-sm text-gray-400">{{ items.count }} item{{ items.count|pluralize }}</p>
+    </div>
+    <a href="{% url 'web:admin_menu_add' %}"
+       class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all shadow-lg shadow-emerald-200">
+      + Add Item
+    </a>
+  </div>
+
+  {# Filters #}
+  <form method="get" class="flex flex-wrap gap-3">
+    <select name="category" onchange="this.form.submit()"
+      class="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+      <option value="{{ cat.id }}" {% if cat_filter == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+      {% endfor %}
+    </select>
+    <div class="flex gap-2 flex-1 min-w-48">
+      <input name="search" type="text" value="{{ search }}" placeholder="Search items..."
+        class="flex-1 h-9 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+      <button type="submit" class="h-9 px-4 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium text-gray-600 transition-colors">Search</button>
+      {% if search or cat_filter %}
+      <a href="{% url 'web:admin_menu' %}" class="h-9 px-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm text-gray-500 flex items-center transition-colors">✕</a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if not items %}
+  <div class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-gray-100">
+    <span class="text-5xl mb-4">🍽️</span>
+    <p class="font-semibold text-gray-700">No items found</p>
+    <p class="text-sm text-gray-400 mt-1">{% if search %}Try a different search{% else %}Add your first menu item{% endif %}</p>
+    {% if not search %}<a href="{% url 'web:admin_menu_add' %}" class="mt-4 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">Add Item</a>{% endif %}
+  </div>
+  {% else %}
+  <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-100 bg-gray-50">
+          <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Item</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Category</th>
+          <th class="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
+          <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Status</th>
+          <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for item in items %}
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-3">
+            <div class="flex items-center gap-3">
+              {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
+              {% else %}
+              <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-lg flex-shrink-0">🍽️</div>
+              {% endif %}
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  {% food_dot item.food_type %}
+                  <span class="font-medium text-gray-900 truncate">{{ item.name }}</span>
+                </div>
+                <div class="flex gap-1.5 mt-0.5">
+                  {% if item.is_popular %}<span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-medium">Popular</span>{% endif %}
+                  {% if item.is_special %}<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">Special</span>{% endif %}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-gray-500 hidden sm:table-cell">{{ item.category.name }}</td>
+          <td class="px-4 py-3 text-right font-semibold text-gray-900">{{ item.price|inr }}</td>
+          <td class="px-4 py-3 text-center hidden md:table-cell">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full {% if item.is_available %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+              {% if item.is_available %}Available{% else %}Unavailable{% endif %}
+            </span>
+          </td>
+          <td class="px-6 py-3">
+            <div class="flex items-center justify-end gap-2">
+              <a href="{% url 'web:admin_menu_edit' item.id %}" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg transition-colors font-medium">Edit</a>
+              <form method="post" action="{% url 'web:admin_menu_delete' item.id %}" onsubmit="return confirm('Delete {{ item.name }}?')">
+                {% csrf_token %}
+                <button type="submit" class="text-xs bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg transition-colors font-medium">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

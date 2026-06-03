@@ -1,0 +1,59 @@
+{% extends "admin_panel/base.html" %}
+{% block page_title %}Tables{% endblock %}
+{% block content %}
+<div class="p-6 space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-lg font-bold text-gray-900">Tables</h2>
+      <p class="text-sm text-gray-400">{{ tables.count }} table{{ tables.count|pluralize }} configured</p>
+    </div>
+    <a href="{% url 'web:admin_table_add' %}"
+       class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all shadow-lg shadow-emerald-200">
+      + Add Table
+    </a>
+  </div>
+
+  {% if not tables %}
+  <div class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-gray-100">
+    <span class="text-5xl mb-4">🪑</span>
+    <p class="font-semibold text-gray-700">No tables yet</p>
+    <p class="text-sm text-gray-400 mt-1">Add your first table to generate a QR code</p>
+    <a href="{% url 'web:admin_table_add' %}" class="mt-4 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">Add Table</a>
+  </div>
+  {% else %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    {% for table in tables %}
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="p-5">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-12 h-12 {% if table.is_active %}bg-emerald-100{% else %}bg-gray-100{% endif %} rounded-2xl flex items-center justify-center text-2xl">🪑</div>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full {% if table.is_active %}bg-emerald-100 text-emerald-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+            {% if table.is_active %}Active{% else %}Inactive{% endif %}
+          </span>
+        </div>
+        <h3 class="font-bold text-gray-900 text-lg">Table {{ table.table_number }}</h3>
+        <p class="text-sm text-gray-400">Capacity: {{ table.capacity }} guests</p>
+      </div>
+      <div class="px-5 pb-5 flex items-center gap-2">
+        <a href="{% url 'web:admin_table_edit' table.id %}"
+           class="flex-1 text-center bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-semibold py-2 rounded-xl transition-colors">
+          ✏️ Edit
+        </a>
+        <a href="{% url 'web:admin_table_qr' table.id %}"
+           class="flex-1 text-center bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold py-2 rounded-xl transition-colors">
+          📲 QR Code
+        </a>
+        <form method="post" action="{% url 'web:admin_table_delete' table.id %}"
+              onsubmit="return confirm('Delete Table {{ table.table_number }}?')">
+          {% csrf_token %}
+          <button type="submit" class="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-xl flex items-center justify-center transition-colors text-sm">
+            🗑
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

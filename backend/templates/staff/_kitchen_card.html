@@ -1,0 +1,24 @@
+{% load web_extras %}
+<div class="bg-white rounded-2xl border border-gray-100 p-4 space-y-3 mb-3">
+  <div class="flex items-center justify-between">
+    <span class="font-bold font-mono text-sm text-gray-900">#{{ order.order_number }}</span>
+    <span class="text-xs text-gray-400">🪑 T{{ order.table.table_number }}</span>
+  </div>
+  <div class="space-y-1.5">
+    {% for item in order.items.all %}
+    <div class="flex items-center gap-2 text-sm">
+      <span class="w-6 h-6 bg-emerald-100 text-emerald-700 font-bold rounded text-xs flex items-center justify-center flex-shrink-0">{{ item.quantity }}</span>
+      <span class="text-gray-800 font-medium">{{ item.menu_item.name }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% if order.special_instructions %}
+  <p class="text-xs bg-yellow-50 border border-yellow-200 rounded-xl px-2 py-1.5 text-yellow-700">📝 {{ order.special_instructions }}</p>
+  {% endif %}
+  <form method="post" action="{% url 'web:update_order_status' order.id %}?status={{ next_status }}">
+    {% csrf_token %}
+    <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl py-2 text-sm font-semibold hover:from-emerald-700 transition-all">
+      {{ next_label }}
+    </button>
+  </form>
+</div>

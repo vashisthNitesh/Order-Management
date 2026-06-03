@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load web_extras %}
+{% block title %}Order #{{ order.order_number }} – Tracking{% endblock %}
+{% block body %}
+<div class="min-h-screen bg-gray-50 pb-12">
+  <div class="bg-white px-4 py-4 border-b flex items-center gap-3 sticky top-0 z-10">
+    <a href="{% url 'web:menu' order.table.id %}" class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </a>
+    <div>
+      <h1 class="font-bold text-gray-900">Track Order</h1>
+      <p class="text-xs text-gray-500 font-mono">#{{ order.order_number }}</p>
+    </div>
+    <span class="ml-auto text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">Table {{ order.table.table_number }}</span>
+  </div>
+
+  <div class="px-4 py-5 space-y-4">
+    {% if order.status == 'cancelled' %}
+    <div class="bg-red-50 rounded-2xl p-6 text-center border border-red-100">
+      <p class="text-4xl mb-2">❌</p>
+      <h2 class="font-bold text-red-700 text-lg">Order Cancelled</h2>
+    </div>
+    {% else %}
+    <div class="bg-white rounded-2xl p-5 border border-gray-100">
+      <div class="relative">
+        <div class="absolute left-5 top-5 bottom-5 w-0.5 bg-gray-100 z-0"></div>
+        <div class="absolute left-5 top-5 w-0.5 bg-emerald-500 z-0 transition-all duration-1000"
+             style="height:{{ current_index }}00%"></div>
+        <div class="relative z-10 space-y-6">
+          {% for status, label, icon in steps %}
+          {% with forloop.counter0 as idx %}
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500
+              {% if idx < current_index %}bg-emerald-600 text-white shadow-lg shadow-emerald-200
+              {% elif idx == current_index %}bg-emerald-600 text-white shadow-lg shadow-emerald-200 ring-4 ring-emerald-100
+              {% else %}bg-gray-100 text-gray-400{% endif %}">
+              {% if idx < current_index %}✓
+              {% else %}{{ icon }}{% endif %}
+            </div>
+            <div class="flex-1">
+              <p class="font-semibold text-sm {% if idx <= current_index %}text-gray-900{% else %}text-gray-400{% endif %}">{{ label }}</p>
+            </div>
+            {% if idx == current_index %}
+            <div class="flex gap-1">
+              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce"></div>
+              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:.1s"></div>
+              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:.2s"></div>
+            </div>
+            {% endif %}
+          </div>
+          {% endwith %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="bg-white rounded-2xl border border-gray-100">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-50">
+        <h2 class="font-semibold text-gray-900 text-sm">Order Items</h2>
+        <span class="font-mono text-xs text-gray-400">#{{ order.order_number }}</span>
+      </div>
+      {% for item in order.items.all %}
+      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-50 text-sm last:border-0">
+        <div class="flex items-center gap-2">
+          <span class="w-5 h-5 bg-emerald-100 text-emerald-700 rounded-md flex items-center justify-center text-xs font-bold">{{ item.quantity }}</span>
+          <span class="text-gray-700">{{ item.menu_item.name }}</span>
+        </div>
+        <span class="font-semibold text-gray-900">{{ item.subtotal|inr }}</span>
+      </div>
+      {% endfor %}
+      <div class="flex justify-between px-4 py-3 font-bold text-gray-900">
+        <span>Total</span>
+        <span class="text-emerald-600">{{ order.total_amount|inr }}</span>
+      </div>
+    </div>
+
+    <a href="{% url 'web:menu' order.table.id %}"
+       class="block text-center border border-gray-200 text-gray-700 rounded-xl py-3 font-semibold hover:bg-gray-50 transition-all text-sm">
+      Order More
+    </a>
+  </div>
+</div>
+{% block extra_scripts %}
+<script>
+  // Auto-refresh tracking every 10 seconds
+  setTimeout(() => location.reload(), 10000);
+</script>
+{% endblock %}
+{% endblock %}

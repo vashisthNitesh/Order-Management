@@ -37,6 +37,7 @@ LOCAL_APPS = [
     'apps.staff',
     'apps.offers',
     'apps.authentication',
+    'apps.web',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -66,10 +67,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.web.context_processors.admin_nav',
             ],
+            'libraries': {
+                'web_extras': 'apps.web.templatetags.web_extras',
+            },
         },
     },
 ]
+
+LOGIN_URL = '/staff/login/'
 
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
