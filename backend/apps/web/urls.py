@@ -44,6 +44,7 @@ urlpatterns = [
     # Tables
     path('manage/tables/', admin_views.admin_tables, name='admin_tables'),
     path('manage/tables/add/', admin_views.admin_table_save, name='admin_table_add'),
+    path('manage/tables/regenerate-all/', admin_views.admin_tables_regenerate_all, name='admin_tables_regenerate_all'),
     path('manage/tables/<int:table_id>/edit/', admin_views.admin_table_save, name='admin_table_edit'),
     path('manage/tables/<int:table_id>/delete/', admin_views.admin_table_delete, name='admin_table_delete'),
     path('manage/tables/<int:table_id>/qr/', admin_views.admin_table_qr, name='admin_table_qr'),

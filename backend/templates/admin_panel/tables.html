@@ -39,10 +39,16 @@
       <h2 class="text-lg font-bold text-gray-900">Restaurant Tables</h2>
       <p class="text-xs text-gray-400 font-medium">{{ tables.count }} table{{ tables.count|pluralize }} configured</p>
     </div>
-    <a href="{% url 'web:admin_table_add' %}"
-       class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.97] transition-all">
-      ➕ Add Table
-    </a>
+    <div class="flex items-center gap-3">
+      <a href="{% url 'web:admin_tables_regenerate_all' %}"
+         class="flex items-center gap-2 border border-emerald-500 hover:bg-emerald-50 text-emerald-600 px-4 py-2.5 rounded-xl text-sm font-bold active:scale-[0.97] transition-all shadow-sm">
+        🔄 Regenerate QRs
+      </a>
+      <a href="{% url 'web:admin_table_add' %}"
+         class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.97] transition-all">
+        ➕ Add Table
+      </a>
+    </div>
   </div>
 
   {% if not tables %}

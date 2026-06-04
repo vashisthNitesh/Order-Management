@@ -158,11 +158,32 @@ def admin_table_qr(request, table_id):
     table.generate_qr_code(base_url)
     table.save(update_fields=['qr_code'])
     if table.qr_code:
-        with open(table.qr_code.path, 'rb') as f:
-            response = HttpResponse(f.read(), content_type='image/png')
-            response['Content-Disposition'] = f'attachment; filename="table-{table.table_number}-qr.png"'
-            return response
+        try:
+            content = table.qr_code.read()
+        except Exception:
+            try:
+                with table.qr_code.open('rb') as f:
+                    content = f.read()
+            except Exception:
+                import requests
+                content = requests.get(table.qr_code.url).content
+        
+        response = HttpResponse(content, content_type='image/png')
+        response['Content-Disposition'] = f'attachment; filename="table-{table.table_number}-qr.png"'
+        return response
     messages.error(request, 'QR code could not be generated.')
+    return redirect('web:admin_tables')
+
+
+@admin_required
+def admin_tables_regenerate_all(request):
+    restaurant = _get_restaurant(request)
+    tables = Table.objects.filter(restaurant=restaurant)
+    base_url = f"{request.scheme}://{request.get_host()}"
+    for table in tables:
+        table.generate_qr_code(base_url)
+        table.save(update_fields=['qr_code'])
+    messages.success(request, f"Successfully regenerated QR codes for all {tables.count()} tables.")
     return redirect('web:admin_tables')
 
 
