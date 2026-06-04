@@ -1,32 +1,47 @@
 {% extends "base.html" %}
 {% block title %}Admin Login{% endblock %}
 {% block body %}
-<div class="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 flex items-center justify-center p-4">
-  <div class="w-full max-w-sm">
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 bg-dots-dark flex items-center justify-center p-4 relative overflow-hidden">
+  
+  {# Atmospheric Orbs #}
+  <div class="absolute top-1/4 left-1/4 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none animate-pulse duration-4000"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none animate-pulse duration-6000"></div>
+  
+  <div class="w-full max-w-sm relative z-10">
     <div class="text-center mb-8">
-      <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+      <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-purple-500/25">
         <span class="text-2xl">🛡️</span>
       </div>
       <h1 class="text-2xl font-bold text-white mb-1">Admin Panel</h1>
       <p class="text-gray-400 text-sm">Secure access for administrators</p>
     </div>
-    <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+    
+    <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl">
       {% for msg in messages %}
-      <div class="mb-4 bg-red-500/20 border border-red-500/30 text-red-300 text-sm px-4 py-3 rounded-xl">{{ msg }}</div>
+      <div class="mb-4 bg-red-500/20 border border-red-500/30 text-red-300 text-sm px-4 py-3 rounded-2xl">{{ msg }}</div>
       {% endfor %}
-      <form method="post" class="space-y-4">
+      
+      <form method="post" class="space-y-5">
         {% csrf_token %}
-        <div class="space-y-1.5">
+        <div class="space-y-2">
           <label class="text-sm font-medium text-gray-300">Username</label>
-          <input name="username" type="text" required autocapitalize="none"
-            class="w-full h-10 rounded-xl bg-white/10 border border-white/10 text-white placeholder-gray-500 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 text-xs">👤</span>
+            <input name="username" type="text" required autocapitalize="none" placeholder="Enter username"
+              class="w-full h-11 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-gray-500 pl-9 pr-4 text-sm focus:outline-none focus:bg-white/10 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300">
+          </div>
         </div>
-        <div class="space-y-1.5">
+        
+        <div class="space-y-2">
           <label class="text-sm font-medium text-gray-300">Password</label>
-          <input name="password" type="password" required
-            class="w-full h-10 rounded-xl bg-white/10 border border-white/10 text-white placeholder-gray-500 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 text-xs">🔒</span>
+            <input name="password" type="password" required placeholder="Enter password"
+              class="w-full h-11 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-gray-500 pl-9 pr-4 text-sm focus:outline-none focus:bg-white/10 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300">
+          </div>
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl h-11 font-semibold hover:from-purple-700 hover:to-blue-700 transition-all mt-2">
+        
+        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-2xl h-12 font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 active:scale-[0.98] shadow-lg shadow-purple-500/20 mt-2">
           Sign In
         </button>
       </form>

@@ -1,78 +1,122 @@
 {% extends "admin_panel/base.html" %}
 {% block page_title %}{% if staff %}Edit Staff{% else %}Add Staff{% endif %}{% endblock %}
 {% block content %}
-<div class="p-6 max-w-lg">
+<div class="p-6 max-w-xl">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{% url 'web:admin_staff' %}" class="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600">←</a>
-    <h2 class="font-bold text-gray-900">{% if staff %}Edit Staff Member{% else %}Add Staff Member{% endif %}</h2>
+    <a href="{% url 'web:admin_staff' %}" class="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </a>
+    <h2 class="text-lg font-bold text-gray-900">{% if staff %}Edit Staff Member{% else %}Add Staff Member{% endif %}</h2>
   </div>
 
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-    <form method="post" class="space-y-5">
+  <div class="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100/50 p-6 md:p-8">
+    <form method="post" class="space-y-6">
       {% csrf_token %}
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">First Name</label>
-          <input name="first_name" type="text" value="{{ staff.user.first_name|default:'' }}" placeholder="Jane"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+      {# First & Last Name #}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">First Name</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">👤</span>
+            <input name="first_name" type="text" value="{{ staff.user.first_name|default:'' }}" placeholder="Jane"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none">
+          </div>
         </div>
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Last Name</label>
-          <input name="last_name" type="text" value="{{ staff.user.last_name|default:'' }}" placeholder="Doe"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Last Name</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">👤</span>
+            <input name="last_name" type="text" value="{{ staff.user.last_name|default:'' }}" placeholder="Doe"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none">
+          </div>
         </div>
       </div>
 
+      {# Username (Only when creating) #}
       {% if not staff %}
-      <div class="space-y-1.5">
-        <label class="text-sm font-medium text-gray-700">Username <span class="text-red-500">*</span></label>
-        <input name="username" type="text" required autocapitalize="none" placeholder="janedoe"
-          class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 font-mono">
+      <div class="space-y-2">
+        <label class="text-sm font-semibold text-gray-700">Username <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🔑</span>
+          <input name="username" type="text" required autocapitalize="none" placeholder="janedoe"
+            class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none font-mono">
+        </div>
       </div>
       {% endif %}
 
-      <div class="space-y-1.5">
-        <label class="text-sm font-medium text-gray-700">Email</label>
-        <input name="email" type="email" value="{{ staff.user.email|default:'' }}" placeholder="jane@restaurant.com"
-          class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+      {# Email #}
+      <div class="space-y-2">
+        <label class="text-sm font-semibold text-gray-700">Email Address</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📧</span>
+          <input name="email" type="email" value="{{ staff.user.email|default:'' }}" placeholder="jane@restaurant.com"
+            class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none">
+        </div>
       </div>
 
+      {# Password (Only when creating) #}
       {% if not staff %}
-      <div class="space-y-1.5">
-        <label class="text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
-        <input name="password" type="password" required
-          class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+      <div class="space-y-2">
+        <label class="text-sm font-semibold text-gray-700">Password <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🔒</span>
+          <input name="password" type="password" required placeholder="Choose a secure password"
+            class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 focus:outline-none">
+        </div>
       </div>
       {% endif %}
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Role</label>
-          <select name="role"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white">
-            <option value="waiter" {% if not staff or staff.role == 'waiter' %}selected{% endif %}>Waiter</option>
-            <option value="kitchen" {% if staff and staff.role == 'kitchen' %}selected{% endif %}>Kitchen Staff</option>
-            <option value="manager" {% if staff and staff.role == 'manager' %}selected{% endif %}>Manager</option>
-            <option value="admin" {% if staff and staff.role == 'admin' %}selected{% endif %}>Admin</option>
-          </select>
+      {# Role & Phone #}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        
+        {# Role #}
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Role</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">💼</span>
+            <select name="role"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-10 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 focus:outline-none appearance-none">
+              <option value="waiter" {% if not staff or staff.role == 'waiter' %}selected{% endif %}>Waiter</option>
+              <option value="kitchen" {% if staff and staff.role == 'kitchen' %}selected{% endif %}>Kitchen Staff</option>
+              <option value="manager" {% if staff and staff.role == 'manager' %}selected{% endif %}>Manager</option>
+              <option value="admin" {% if staff and staff.role == 'admin' %}selected{% endif %}>Admin</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </div>
         </div>
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Phone</label>
-          <input name="phone" type="tel" value="{{ staff.phone|default:'' }}" placeholder="+91 98765 43210"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+
+        {# Phone #}
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Phone</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📞</span>
+            <input name="phone" type="tel" value="{{ staff.phone|default:'' }}" placeholder="+91 98765 43210"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none">
+          </div>
         </div>
+
       </div>
 
-      <div class="flex items-center gap-3">
-        <input name="is_active" type="checkbox" id="is_active" {% if not staff or staff.is_active %}checked{% endif %}
-          class="w-4 h-4 rounded accent-emerald-600">
-        <label for="is_active" class="text-sm font-medium text-gray-700">Active account</label>
+      {# Active Toggle #}
+      <div class="bg-gray-50/50 border border-gray-100 rounded-3xl p-5">
+        <label class="relative inline-flex items-center cursor-pointer select-none">
+          <input type="checkbox" name="is_active" id="is_active" {% if not staff or staff.is_active %}checked{% endif %} class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+          <span class="ms-3 text-sm font-semibold text-gray-700">Active account (allows sign in)</span>
+        </label>
       </div>
 
-      <div class="flex gap-3 pt-2">
-        <a href="{% url 'web:admin_staff' %}" class="flex-1 text-center py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">Cancel</a>
-        <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl py-2.5 text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all">
+      {# Buttons #}
+      <div class="flex gap-4 pt-4 border-t border-gray-100">
+        <a href="{% url 'web:admin_staff' %}" class="flex-1 text-center py-3 border border-gray-200 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-50 transition-colors">Cancel</a>
+        <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-3 text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all">
           {% if staff %}Save Changes{% else %}Add Staff{% endif %}
         </button>
       </div>

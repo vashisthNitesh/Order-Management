@@ -3,100 +3,174 @@
 {% block content %}
 <div class="p-6 max-w-2xl">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{% url 'web:admin_menu' %}" class="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600">←</a>
-    <h2 class="font-bold text-gray-900">{% if item %}Edit {{ item.name }}{% else %}Add Menu Item{% endif %}</h2>
+    <a href="{% url 'web:admin_menu' %}" class="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </a>
+    <h2 class="text-lg font-bold text-gray-900">{% if item %}Edit {{ item.name }}{% else %}Add Menu Item{% endif %}</h2>
   </div>
 
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-    <form method="post" enctype="multipart/form-data" class="space-y-5">
+  <div class="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100/50 p-6 md:p-8">
+    <form method="post" enctype="multipart/form-data" class="space-y-6" x-data="{ imagePreview: '{% if item and item.image %}{{ item.image.url }}{% endif %}' }">
       {% csrf_token %}
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div class="sm:col-span-2 space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Item Name <span class="text-red-500">*</span></label>
-          <input name="name" type="text" required value="{{ item.name|default:'' }}" placeholder="e.g. Paneer Butter Masala"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Category <span class="text-red-500">*</span></label>
-          <select name="category" required
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white">
-            <option value="">Select category</option>
-            {% for cat in categories %}
-            <option value="{{ cat.id }}" {% if item and item.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Price (₹) <span class="text-red-500">*</span></label>
-          <input name="price" type="number" step="0.01" min="0" required value="{{ item.price|default:'' }}" placeholder="0.00"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Food Type</label>
-          <select name="food_type"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white">
-            <option value="veg" {% if not item or item.food_type == 'veg' %}selected{% endif %}>🟢 Vegetarian</option>
-            <option value="non_veg" {% if item and item.food_type == 'non_veg' %}selected{% endif %}>🔴 Non-Vegetarian</option>
-            <option value="vegan" {% if item and item.food_type == 'vegan' %}selected{% endif %}>🌿 Vegan</option>
-          </select>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Preparation Time (min)</label>
-          <input name="preparation_time" type="number" min="1" max="120" value="{{ item.preparation_time|default:'15' }}"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Calories</label>
-          <input name="calories" type="number" min="0" value="{{ item.calories|default:'' }}" placeholder="Optional"
-            class="w-full h-10 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
-        </div>
-
-        <div class="sm:col-span-2 space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Description</label>
-          <textarea name="description" rows="3" placeholder="Brief description of the dish..."
-            class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none">{{ item.description|default:'' }}</textarea>
-        </div>
-
-        <div class="sm:col-span-2 space-y-1.5">
-          <label class="text-sm font-medium text-gray-700">Image</label>
-          {% if item and item.image %}
-          <div class="flex items-center gap-3 mb-2">
-            <img src="{{ item.image.url }}" class="w-16 h-16 rounded-xl object-cover border border-gray-200">
-            <span class="text-xs text-gray-500">Current image. Upload a new one to replace.</span>
-          </div>
-          {% endif %}
-          <input name="image" type="file" accept="image/*"
-            class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-gray-100 file:text-gray-700 file:font-medium file:text-sm hover:file:bg-gray-200">
-        </div>
-
-        <div class="sm:col-span-2 flex flex-wrap gap-5">
-          <div class="flex items-center gap-2">
-            <input name="is_available" type="checkbox" id="is_available" {% if not item or item.is_available %}checked{% endif %}
-              class="w-4 h-4 rounded accent-emerald-600">
-            <label for="is_available" class="text-sm font-medium text-gray-700">Available</label>
-          </div>
-          <div class="flex items-center gap-2">
-            <input name="is_popular" type="checkbox" id="is_popular" {% if item and item.is_popular %}checked{% endif %}
-              class="w-4 h-4 rounded accent-emerald-600">
-            <label for="is_popular" class="text-sm font-medium text-gray-700">Popular</label>
-          </div>
-          <div class="flex items-center gap-2">
-            <input name="is_special" type="checkbox" id="is_special" {% if item and item.is_special %}checked{% endif %}
-              class="w-4 h-4 rounded accent-emerald-600">
-            <label for="is_special" class="text-sm font-medium text-gray-700">Chef's Special</label>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        
+        {# Item Name #}
+        <div class="sm:col-span-2 space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Item Name <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📝</span>
+            <input name="name" type="text" required value="{{ item.name|default:'' }}" placeholder="e.g. Paneer Butter Masala"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none">
           </div>
         </div>
+
+        {# Category #}
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Category <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📂</span>
+            <select name="category" required
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-10 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 focus:outline-none appearance-none">
+              <option value="">Select category</option>
+              {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if item and item.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {# Price #}
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Price (₹) <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm font-medium">₹</span>
+            <input name="price" type="number" step="0.01" min="0" required value="{{ item.price|default:'' }}" placeholder="0.00"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-9 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none">
+          </div>
+        </div>
+
+        {# Food Type #}
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Food Type</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🥗</span>
+            <select name="food_type"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-10 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 focus:outline-none appearance-none">
+              <option value="veg" {% if not item or item.food_type == 'veg' %}selected{% endif %}>🟢 Vegetarian</option>
+              <option value="non_veg" {% if item and item.food_type == 'non_veg' %}selected{% endif %}>🔴 Non-Vegetarian</option>
+              <option value="vegan" {% if item and item.food_type == 'vegan' %}selected{% endif %}>🌿 Vegan</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {# Prep Time #}
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Preparation Time (min)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">⏱️</span>
+            <input name="preparation_time" type="number" min="1" max="120" value="{{ item.preparation_time|default:'15' }}"
+              class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 focus:outline-none">
+          </div>
+        </div>
+
+        {# Calories #}
+        <div class="space-y-2 sm:col-span-2 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-gray-700">Calories</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🔥</span>
+              <input name="calories" type="number" min="0" value="{{ item.calories|default:'' }}" placeholder="Optional (e.g. 350)"
+                class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-4 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 placeholder-gray-400/80 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        {# Description #}
+        <div class="sm:col-span-2 space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Description</label>
+          <textarea name="description" rows="3" placeholder="Describe the flavors, ingredients, allergens..."
+            class="w-full rounded-2xl border border-gray-200/80 px-4 py-3 text-sm bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 focus:outline-none placeholder-gray-400/80 resize-none">{{ item.description|default:'' }}</textarea>
+        </div>
+
+        {# Custom Image Upload Area with Live Preview #}
+        <div class="sm:col-span-2 space-y-2">
+          <label class="text-sm font-semibold text-gray-700">Item Image</label>
+          <div class="flex flex-col sm:flex-row items-center gap-5 p-5 border border-dashed border-gray-200 rounded-3xl bg-gray-50/30">
+            <!-- Preview Container -->
+            <div class="relative w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 group">
+              <template x-if="imagePreview">
+                <img :src="imagePreview" class="w-full h-full object-cover">
+              </template>
+              <template x-if="!imagePreview">
+                <span class="text-3xl text-gray-400">🍲</span>
+              </template>
+              <div x-show="imagePreview" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold cursor-pointer">
+                Change
+              </div>
+            </div>
+            
+            <!-- File Input Custom Wrapper -->
+            <div class="flex-1 text-center sm:text-left">
+              <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 text-sm font-semibold rounded-xl transition-all shadow-sm">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+                <span>Upload Image</span>
+                <input name="image" type="file" accept="image/*" class="hidden"
+                  @change="const file = $event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => { imagePreview = e.target.result; }; reader.readAsDataURL(file); }">
+              </label>
+              <p class="text-xs text-gray-400 mt-2">Supports JPG, JPEG, or PNG formats. Max file size: 2MB.</p>
+            </div>
+          </div>
+        </div>
+
+        {# iOS switches for boolean flags #}
+        <div class="sm:col-span-2 bg-gray-50/50 border border-gray-100 rounded-3xl p-5 space-y-4">
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status Settings</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            
+            <!-- Available -->
+            <label class="relative inline-flex items-center cursor-pointer select-none">
+              <input type="checkbox" name="is_available" id="is_available" {% if not item or item.is_available %}checked{% endif %} class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              <span class="ms-3 text-sm font-semibold text-gray-700">Available</span>
+            </label>
+
+            <!-- Popular -->
+            <label class="relative inline-flex items-center cursor-pointer select-none">
+              <input type="checkbox" name="is_popular" id="is_popular" {% if item and item.is_popular %}checked{% endif %} class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              <span class="ms-3 text-sm font-semibold text-gray-700">Popular</span>
+            </label>
+
+            <!-- Chef's Special -->
+            <label class="relative inline-flex items-center cursor-pointer select-none">
+              <input type="checkbox" name="is_special" id="is_special" {% if item and item.is_special %}checked{% endif %} class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              <span class="ms-3 text-sm font-semibold text-gray-700">Chef's Special</span>
+            </label>
+
+          </div>
+        </div>
+
       </div>
 
-      <div class="flex gap-3 pt-2">
-        <a href="{% url 'web:admin_menu' %}" class="flex-1 text-center py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">Cancel</a>
-        <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl py-2.5 text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all">
+      <div class="flex gap-4 pt-4 border-t border-gray-100">
+        <a href="{% url 'web:admin_menu' %}" class="flex-1 text-center py-3 border border-gray-200 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-50 transition-colors">Cancel</a>
+        <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-3 text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all">
           {% if item %}Save Changes{% else %}Add Item{% endif %}
         </button>
       </div>

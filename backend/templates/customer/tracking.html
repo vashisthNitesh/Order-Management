@@ -2,58 +2,89 @@
 {% load web_extras %}
 {% block title %}Order #{{ order.order_number }} – Tracking{% endblock %}
 {% block body %}
-<div class="min-h-screen bg-gray-50 pb-12">
-  <div class="bg-white px-4 py-4 border-b flex items-center gap-3 sticky top-0 z-10">
-    <a href="{% url 'web:menu' order.table.id %}" class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="min-h-screen bg-gray-50 bg-dots pb-12">
+  
+  {# Header #}
+  <div class="bg-white/80 backdrop-blur-md px-4 py-4 border-b border-gray-100 flex items-center gap-3 sticky top-0 z-30 shadow-sm">
+    <a href="{% url 'web:menu' order.table.id %}" class="w-9 h-9 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-gray-100 transition-all">
+      <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
     <div>
-      <h1 class="font-bold text-gray-900">Track Order</h1>
-      <p class="text-xs text-gray-500 font-mono">#{{ order.order_number }}</p>
+      <h1 class="font-bold text-gray-900 text-sm">Track Order</h1>
+      <p class="text-[10px] text-gray-400 font-mono">#{{ order.order_number }}</p>
     </div>
     <div class="ml-auto flex items-center gap-2">
-      <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">Table {{ order.table.table_number }}</span>
+      <span class="text-[11px] font-bold text-gray-500 bg-gray-100 border border-gray-200/50 px-2.5 py-1 rounded-xl">Table {{ order.table.table_number }}</span>
       {% if order.is_paid %}
-      <span class="text-xs font-semibold bg-green-100 text-green-700 border border-green-200 px-2 py-1 rounded-full">✓ PAID</span>
+      <span class="text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-2.5 py-1 rounded-full">✓ Paid</span>
       {% endif %}
     </div>
   </div>
 
-  <div class="px-4 py-5 space-y-4">
+  <div class="px-4 py-6 space-y-5 max-w-md mx-auto">
+    
+    {# Cancelled State #}
     {% if order.status == 'cancelled' %}
-    <div class="bg-red-50 rounded-2xl p-6 text-center border border-red-100">
-      <p class="text-4xl mb-2">❌</p>
-      <h2 class="font-bold text-red-700 text-lg">Order Cancelled</h2>
+    <div class="bg-red-50/50 border border-red-100 rounded-3xl p-6 text-center shadow-sm">
+      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">❌</div>
+      <h2 class="font-bold text-red-800 text-lg">Order Cancelled</h2>
+      <p class="text-xs text-red-500 mt-1">This order was cancelled by the staff.</p>
     </div>
+    
     {% else %}
-    <div class="bg-white rounded-2xl p-5 border border-gray-100">
+    
+    {# Live Status Tracker #}
+    <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-100/50">
       <div class="relative">
+        <!-- Gray timeline rail -->
         <div class="absolute left-5 top-5 bottom-5 w-0.5 bg-gray-100 z-0"></div>
-        <div class="absolute left-5 top-5 w-0.5 bg-emerald-500 z-0 transition-all duration-1000"
-             style="height:{{ current_index }}00%"></div>
+        <!-- Emerald filled progress timeline -->
+        <div class="absolute left-5 top-5 w-0.5 bg-gradient-to-b from-emerald-500 to-teal-400 z-0 transition-all duration-1000"
+             style="height: {% if current_index == 0 %}0%{% elif current_index == 1 %}25%{% elif current_index == 2 %}50%{% elif current_index == 3 %}75%{% elif current_index == 4 %}100%{% else %}0%{% endif %}"></div>
+        
         <div class="relative z-10 space-y-6">
           {% for status, label, icon in steps %}
           {% with forloop.counter0 as idx %}
           <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500
-              {% if idx < current_index %}bg-emerald-600 text-white shadow-lg shadow-emerald-200
-              {% elif idx == current_index %}bg-emerald-600 text-white shadow-lg shadow-emerald-200 ring-4 ring-emerald-100
-              {% else %}bg-gray-100 text-gray-400{% endif %}">
-              {% if idx < current_index %}✓
-              {% else %}{{ icon }}{% endif %}
+            
+            <!-- Step Badge -->
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500 relative
+              {% if idx < current_index %}bg-emerald-600 text-white shadow-lg shadow-emerald-100
+              {% elif idx == current_index %}bg-gradient-to-br from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-200 ring-4 ring-emerald-50
+              {% else %}bg-gray-50 border border-gray-200/80 text-gray-400{% endif %}">
+              
+              {% if idx == current_index %}
+                <span class="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-25"></span>
+              {% endif %}
+              
+              {% if idx < current_index %}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              {% else %}
+                <span class="text-sm">{{ icon }}</span>
+              {% endif %}
             </div>
+            
+            <!-- Step Label -->
             <div class="flex-1">
-              <p class="font-semibold text-sm {% if idx <= current_index %}text-gray-900{% else %}text-gray-400{% endif %}">{{ label }}</p>
+              <p class="text-sm font-semibold transition-colors duration-500
+                {% if idx <= current_index %}text-gray-900{% else %}text-gray-400{% endif %}">
+                {{ label }}
+              </p>
             </div>
-            {% if idx == current_index %}
+            
+            <!-- Pulse indicators for current state -->
+            {% if idx == current_index and order.status != 'served' %}
             <div class="flex gap-1">
               <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce"></div>
-              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:.1s"></div>
-              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:.2s"></div>
+              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:.15s"></div>
+              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:.3s"></div>
             </div>
             {% endif %}
+            
           </div>
           {% endwith %}
           {% endfor %}
@@ -62,59 +93,72 @@
     </div>
     {% endif %}
 
-    {# Payment status #}
+    {# Payment Status Cards #}
     {% if order.is_paid %}
-    <div class="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
-      <span class="text-2xl">✅</span>
+    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/80 rounded-3xl p-5 flex items-center gap-4 shadow-sm">
+      <div class="w-11 h-11 bg-white border border-emerald-100 rounded-2xl flex items-center justify-center text-xl shadow-sm">✅</div>
       <div>
-        <p class="font-semibold text-green-800 text-sm">Invoice Paid</p>
-        {% if order.paid_at %}<p class="text-xs text-green-600">{{ order.paid_at|date:"d M Y, H:i" }}</p>{% endif %}
+        <p class="font-bold text-emerald-900 text-sm">Invoice Paid</p>
+        {% if order.paid_at %}
+          <p class="text-[10px] text-emerald-600/80 mt-0.5 font-medium">Completed at {{ order.paid_at|date:"d M Y, H:i" }}</p>
+        {% endif %}
       </div>
     </div>
     {% elif order.status not in 'served,cancelled' %}
-    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
-      <span class="text-2xl">💰</span>
-      <p class="text-sm text-amber-700 font-medium">Payment pending — staff will process your invoice</p>
+    <div class="bg-gradient-to-r from-amber-50/50 to-orange-50/30 border border-amber-100 rounded-3xl p-5 flex items-center gap-4 shadow-sm">
+      <div class="w-11 h-11 bg-white border border-amber-100 rounded-2xl flex items-center justify-center text-xl shadow-sm">💵</div>
+      <div>
+        <p class="font-bold text-amber-900 text-sm">Payment Pending</p>
+        <p class="text-[10px] text-amber-600 mt-0.5 font-medium">Wait staff will process payment at your table</p>
+      </div>
     </div>
     {% endif %}
 
-    {# Order items #}
-    <div class="bg-white rounded-2xl border border-gray-100">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-50">
-        <h2 class="font-semibold text-gray-900 text-sm">Order Items</h2>
-        <span class="font-mono text-xs text-gray-400">#{{ order.order_number }}</span>
+    {# Order Invoice Summary #}
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100/50 overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-50 bg-gray-50/50">
+        <h2 class="font-bold text-gray-900 text-sm">Order Summary</h2>
+        <span class="font-mono text-[10px] text-gray-400">#{{ order.order_number }}</span>
       </div>
-      {% for item in order.items.all %}
-      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-50 text-sm last:border-0">
-        <div class="flex items-center gap-2">
-          <span class="w-5 h-5 bg-emerald-100 text-emerald-700 rounded-md flex items-center justify-center text-xs font-bold">{{ item.quantity }}</span>
-          <span class="text-gray-700">{{ item.menu_item.name }}</span>
+      
+      <div class="divide-y divide-gray-50 px-5">
+        {% for item in order.items.all %}
+        <div class="flex items-center justify-between py-3.5 text-sm">
+          <div class="flex items-center gap-2.5">
+            <span class="w-6 h-6 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl flex items-center justify-center text-xs font-bold">{{ item.quantity }}</span>
+            <span class="text-gray-700 font-medium">{{ item.menu_item.name|default:"Item" }}</span>
+          </div>
+          <span class="font-bold text-gray-900">{{ item.subtotal|inr }}</span>
         </div>
-        <span class="font-semibold text-gray-900">{{ item.subtotal|inr }}</span>
+        {% endfor %}
       </div>
-      {% endfor %}
-      <div class="flex justify-between px-4 py-3 font-bold text-gray-900">
-        <span>Total</span>
-        <span class="text-emerald-600">{{ order.total_amount|inr }}</span>
+
+      <div class="flex justify-between px-5 py-4 font-bold text-gray-950 border-t border-gray-100 bg-gray-50/30">
+        <span class="text-sm">Total Amount</span>
+        <span class="text-emerald-600 text-base">{{ order.total_amount|inr }}</span>
       </div>
     </div>
 
     {# Actions #}
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-3 pt-2">
       {% if can_edit %}
       <a href="{% url 'web:customer_order_edit' order.order_number %}"
-         class="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-3 font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all text-sm">
-        ✏️ Edit Order
+         class="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-3.5 font-bold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all text-sm">
+        ✏️ Edit Order Items
       </a>
       {% endif %}
       <a href="{% url 'web:menu' order.table.id %}"
-         class="block text-center border border-gray-200 text-gray-700 rounded-xl py-3 font-semibold hover:bg-gray-50 transition-all text-sm">
-        Order More
+         class="block text-center border border-gray-200 text-gray-700 bg-white rounded-2xl py-3 font-bold hover:bg-gray-50 active:scale-[0.98] transition-all text-sm shadow-sm">
+        Browse & Order More
       </a>
     </div>
+    
   </div>
 </div>
 {% block extra_scripts %}
-<script>setTimeout(() => location.reload(), 10000);</script>
+<script>
+  // Refresh page every 10 seconds to fetch live status updates
+  setTimeout(() => location.reload(), 10000);
+</script>
 {% endblock %}
 {% endblock %}

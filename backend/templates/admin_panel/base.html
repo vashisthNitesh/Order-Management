@@ -8,32 +8,34 @@
 
   {# Sidebar #}
   <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-         class="fixed lg:static lg:translate-x-0 inset-y-0 left-0 w-60 bg-white border-r flex flex-col z-50 transition-transform duration-200 lg:transition-none shadow-2xl lg:shadow-none">
-    <div class="p-6 border-b flex-shrink-0">
+         class="fixed lg:static lg:translate-x-0 inset-y-0 left-0 w-60 bg-slate-900 border-r border-slate-800 flex flex-col z-50 transition-transform duration-200 lg:transition-none shadow-2xl lg:shadow-none text-slate-300">
+    <div class="p-6 border-b border-slate-800 flex-shrink-0">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl flex items-center justify-center text-white text-lg">🍽️</div>
+        <div class="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-400 rounded-xl flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/10">🍽️</div>
         <div>
-          <p class="font-bold text-gray-900 text-sm">Admin Panel</p>
-          <p class="text-xs text-gray-400 truncate">{{ request.user.email|default:request.user.username }}</p>
+          <p class="font-bold text-white text-sm">Admin Panel</p>
+          <p class="text-xs text-slate-500 truncate max-w-[140px]">{{ request.user.email|default:request.user.username }}</p>
         </div>
       </div>
     </div>
 
-    <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+    <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto bg-slate-900">
       {% with request.resolver_match.url_name as url_name %}
       {% for href, icon, label in nav_items %}
       <a href="{{ href }}" @click="sidebarOpen=false"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-          {% if url_name and label|lower in request.path %}bg-emerald-600 text-white shadow-lg shadow-emerald-200{% else %}text-gray-600 hover:bg-gray-100 hover:text-gray-900{% endif %}">
-        {{ icon }} {{ label }}
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300
+          {% if url_name and label|lower in request.path %}bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/10{% else %}text-slate-400 hover:bg-slate-800/60 hover:text-white{% endif %}">
+        <span class="text-base">{{ icon }}</span>
+        <span>{{ label }}</span>
       </a>
       {% endfor %}
       {% endwith %}
     </nav>
 
-    <div class="p-4 border-t flex-shrink-0">
-      <a href="{% url 'web:admin_logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all">
-        🚪 Logout
+    <div class="p-4 border-t border-slate-800 flex-shrink-0 bg-slate-900">
+      <a href="{% url 'web:admin_logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300">
+        <span class="text-base">🚪</span>
+        <span>Logout</span>
       </a>
     </div>
   </aside>
