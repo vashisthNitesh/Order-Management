@@ -41,59 +41,100 @@
     {% if not search %}<a href="{% url 'web:admin_menu_add' %}" class="mt-4 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">Add Item</a>{% endif %}
   </div>
   {% else %}
-  <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-    <table class="w-full text-sm">
-      <thead>
-        <tr class="border-b border-gray-100 bg-gray-50">
-          <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Item</th>
-          <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Category</th>
-          <th class="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
-          <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Status</th>
-          <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-50">
-        {% for item in items %}
-        <tr class="hover:bg-gray-50 transition-colors">
-          <td class="px-6 py-3">
-            <div class="flex items-center gap-3">
-              {% if item.image %}
-              <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
-              {% else %}
-              <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-lg flex-shrink-0">🍽️</div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for item in items %}
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group">
+      
+      {# Card Image/Icon Header #}
+      <div class="h-40 bg-gray-50 relative overflow-hidden border-b border-gray-100 flex-shrink-0 flex items-center justify-center">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+        {% else %}
+        <div class="text-center">
+          <span class="text-6xl group-hover:scale-110 duration-200 transition-transform block">🍲</span>
+        </div>
+        {% endif %}
+        
+        {# Veg/Non-Veg Badge #}
+        <span class="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-[10px] font-bold px-2.5 py-0.5 rounded-full select-none shadow-sm flex items-center gap-1">
+          {% if item.food_type == 'veg' %}
+          <span class="text-emerald-600">🟢</span> Veg
+          {% elif item.food_type == 'non_veg' %}
+          <span class="text-red-600">🔴</span> Non-Veg
+          {% else %}
+          <span class="text-teal-600">🌿</span> Vegan
+          {% endif %}
+        </span>
+        
+        {# Availability Badge #}
+        <span class="absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full select-none shadow-sm bg-white/95 backdrop-blur-sm
+          {% if item.is_available %}text-emerald-700{% else %}text-gray-500{% endif %}">
+          <span class="w-1.5 h-1.5 rounded-full {% if item.is_available %}bg-emerald-500 animate-pulse{% else %}bg-gray-400{% endif %}"></span>
+          {% if item.is_available %}Available{% else %}Out of Stock{% endif %}
+        </span>
+
+        {# Popular/Special overlays #}
+        <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
+          {% if item.is_popular %}
+          <span class="bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm select-none">
+            ⭐ Popular
+          </span>
+          {% endif %}
+          {% if item.is_special %}
+          <span class="bg-purple-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm select-none">
+            ✨ Special
+          </span>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Card Body #}
+      <div class="p-5 flex-1 flex flex-col justify-between">
+        <div class="mb-4 space-y-1">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ item.category.name }}</span>
+          <h3 class="font-bold text-gray-900 text-sm group-hover:text-emerald-600 transition-colors line-clamp-1">{{ item.name }}</h3>
+          
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-base font-extrabold text-gray-900">{{ item.price|inr }}</span>
+            {% if item.preparation_time or item.calories %}
+            <div class="flex items-center gap-2 text-xs text-gray-400 font-medium">
+              {% if item.preparation_time %}
+              <span>⏱️ {{ item.preparation_time }}m</span>
               {% endif %}
-              <div class="min-w-0">
-                <div class="flex items-center gap-1.5">
-                  {% food_dot item.food_type %}
-                  <span class="font-medium text-gray-900 truncate">{{ item.name }}</span>
-                </div>
-                <div class="flex gap-1.5 mt-0.5">
-                  {% if item.is_popular %}<span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-medium">Popular</span>{% endif %}
-                  {% if item.is_special %}<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">Special</span>{% endif %}
-                </div>
-              </div>
+              {% if item.calories %}
+              <span>🔥 {{ item.calories }}cal</span>
+              {% endif %}
             </div>
-          </td>
-          <td class="px-4 py-3 text-gray-500 hidden sm:table-cell">{{ item.category.name }}</td>
-          <td class="px-4 py-3 text-right font-semibold text-gray-900">{{ item.price|inr }}</td>
-          <td class="px-4 py-3 text-center hidden md:table-cell">
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full {% if item.is_available %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
-              {% if item.is_available %}Available{% else %}Unavailable{% endif %}
-            </span>
-          </td>
-          <td class="px-6 py-3">
-            <div class="flex items-center justify-end gap-2">
-              <a href="{% url 'web:admin_menu_edit' item.id %}" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg transition-colors font-medium">Edit</a>
-              <form method="post" action="{% url 'web:admin_menu_delete' item.id %}" onsubmit="return confirm('Delete {{ item.name }}?')">
-                {% csrf_token %}
-                <button type="submit" class="text-xs bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg transition-colors font-medium">Delete</button>
-              </form>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+            {% endif %}
+          </div>
+          
+          {% if item.description %}
+          <p class="text-xs text-gray-400 line-clamp-2 mt-2 leading-relaxed">
+            {{ item.description }}
+          </p>
+          {% endif %}
+        </div>
+
+        {# Card Actions #}
+        <div class="flex items-center gap-2 pt-3 border-t border-gray-50">
+          <a href="{% url 'web:admin_menu_edit' item.id %}"
+             class="flex-1 text-center bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+            ✏️ Edit
+          </a>
+          
+          <form method="post" action="{% url 'web:admin_menu_delete' item.id %}"
+                onsubmit="return confirm('Delete {{ item.name }}?')"
+                class="flex-1">
+            {% csrf_token %}
+            <button type="submit" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-500 text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+              🗑 Delete
+            </button>
+          </form>
+        </div>
+      </div>
+      
+    </div>
+    {% endfor %}
   </div>
   {% endif %}
 </div>

@@ -39,7 +39,22 @@ class Table(models.Model):
     def __str__(self):
         return f"Table {self.table_number} - {self.restaurant.name}"
 
-    def generate_qr_code(self, base_url='http://localhost:3000'):
+    def generate_qr_code(self, base_url=None):
+        if not base_url:
+            from django.conf import settings
+            import os
+            base_url = getattr(settings, 'QR_BASE_URL', None)
+            if not base_url:
+                base_url = os.environ.get('RENDER_EXTERNAL_URL')
+            if not base_url:
+                base_url = os.environ.get('SITE_URL') or os.environ.get('BACKEND_URL')
+            if not base_url:
+                base_url = 'http://localhost:8000'
+
+        # Ensure scheme is prepended if not present
+        if base_url and not base_url.startswith('http'):
+            base_url = f"https://{base_url}"
+
         url = f"{base_url}/menu/{self.id}"
         qr = qrcode.QRCode(
             version=1,
@@ -62,3 +77,4 @@ class Table(models.Model):
         if is_new or not self.qr_code:
             self.generate_qr_code()
             super().save(update_fields=['qr_code'])
+

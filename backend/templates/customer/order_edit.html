@@ -158,7 +158,7 @@
           <div class="space-y-2">
             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Select Dish</label>
             <div x-data="{ open: false, selectedValue: '', selectedLabel: '— Choose item —' }" class="relative">
-              <input type="hidden" name="menu_item_id" :value="selectedValue" required>
+              <input type="text" name="menu_item_id" :value="selectedValue" required class="absolute opacity-0 w-px h-px pointer-events-none" tabindex="-1">
               <button type="button" @click="open = !open" @click.away="open = false"
                 class="w-full h-11 rounded-2xl border border-gray-200/80 pl-10 pr-10 text-sm bg-gray-50/50 hover:bg-gray-100/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all duration-300 text-left flex items-center justify-between focus:outline-none active:scale-[0.99] duration-150">
                 <div class="flex items-center gap-2">

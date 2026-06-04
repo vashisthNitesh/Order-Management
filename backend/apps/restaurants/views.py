@@ -35,7 +35,7 @@ class TableViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def regenerate_qr(self, request, pk=None):
         table = self.get_object()
-        base_url = request.data.get('base_url', 'http://localhost:3000')
+        base_url = request.data.get('base_url')
         table.generate_qr_code(base_url)
         table.save()
         serializer = TableSerializer(table, context={'request': request})
