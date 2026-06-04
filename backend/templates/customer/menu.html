@@ -44,6 +44,31 @@
 
   <div class="px-4 py-5 space-y-5">
 
+    {# ── Active Order Tracker Banner ─────────────────────────────────── #}
+    <template x-if="activeOrder">
+      <div class="bg-emerald-50 border border-emerald-150 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 animate-pulse">
+              📋
+            </div>
+            <div>
+              <p class="text-xs font-bold text-gray-800">
+                Active Order <span class="font-mono text-emerald-600 font-extrabold" x-text="'#' + activeOrder.number"></span>
+              </p>
+              <p class="text-[10px] text-gray-500 font-medium">
+                Status: <span class="font-bold text-emerald-700 uppercase" x-text="activeOrder.status"></span>
+              </p>
+            </div>
+          </div>
+          <a :href="'/order/track/' + activeOrder.id + '/'"
+             class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition-all shadow-sm active:scale-95">
+            Track Live Status →
+          </a>
+        </div>
+      </div>
+    </template>
+
     {# ── Offers ──────────────────────────────────────────────────── #}
     {% if offers %}
     <div class="overflow-x-auto scrollbar-hide">
@@ -373,6 +398,7 @@ function menuApp(tableId) {
     allItems: POPULAR_ITEMS,
     loading: false,
     cart: JSON.parse(localStorage.getItem('cart_' + tableId) || '[]'),
+    activeOrder: JSON.parse(localStorage.getItem('active_order_' + tableId) || 'null'),
     cartOpen: false,
     reviewOpen: false,
     placing: false,
@@ -398,7 +424,31 @@ function menuApp(tableId) {
     get cartCount() { return this.cart.reduce((s,i) => s+i.quantity, 0); },
     get cartTotal() { return this.cart.reduce((s,i) => s+parseInt(i.price)*i.quantity, 0); },
 
-    init() { this.allItems = POPULAR_ITEMS; },
+    init() { 
+      this.allItems = POPULAR_ITEMS;
+      if (this.activeOrder) {
+        this.refreshActiveOrderStatus();
+      }
+    },
+
+    async refreshActiveOrderStatus() {
+      try {
+        const res = await fetch(`/api/orders/${this.activeOrder.id}/`);
+        if (res.status === 200) {
+          const data = await res.json();
+          this.activeOrder.status = data.status;
+          this.activeOrder.is_paid = data.is_paid;
+          localStorage.setItem('active_order_' + TABLE_ID, JSON.stringify(this.activeOrder));
+          if ((data.status === 'served' || data.status === 'cancelled') && data.is_paid) {
+            localStorage.removeItem('active_order_' + TABLE_ID);
+            this.activeOrder = null;
+          }
+        } else if (res.status === 404) {
+          localStorage.removeItem('active_order_' + TABLE_ID);
+          this.activeOrder = null;
+        }
+      } catch(e) {}
+    },
 
     async setTab(tab) {
       this.activeTab = tab;
@@ -461,6 +511,11 @@ function menuApp(tableId) {
         if (data.success) {
           this.clearCart();
           this.reviewOpen = false;
+          localStorage.setItem('active_order_' + tableId, JSON.stringify({
+            id: data.order_id,
+            number: data.order_number,
+            status: 'pending'
+          }));
           window.location.href = `/order/success/${data.order_number}/`;
         } else {
           this.orderError = data.error || 'Failed to place order. Please try again.';

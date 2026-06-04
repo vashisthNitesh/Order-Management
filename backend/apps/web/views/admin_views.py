@@ -526,9 +526,25 @@ def admin_order_detail(request, order_id):
     menu_items = MenuItem.objects.filter(
         category__restaurant=restaurant, is_available=True
     ).select_related('category').order_by('category__name', 'name')
+
+    # Status timestamps mapping
+    history_map = {h.status: h.created_at for h in order.status_history.all()}
+    if 'pending' not in history_map:
+        history_map['pending'] = order.created_at
+
+    status_sequence = ['pending', 'confirmed', 'preparing', 'ready', 'served']
+    next_status = None
+    if order.status in status_sequence:
+        current_idx = status_sequence.index(order.status)
+        if current_idx < len(status_sequence) - 1:
+            next_status = status_sequence[current_idx + 1]
+
     return render(request, 'admin_panel/order_detail.html', {
         'order': order,
         'menu_items': menu_items,
+        'history_map': history_map,
+        'next_status': next_status,
+        'status_sequence': status_sequence,
     })
 
 
