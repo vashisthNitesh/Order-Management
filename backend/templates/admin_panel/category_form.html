@@ -3,15 +3,15 @@
 {% block content %}
 <div class="p-6 max-w-xl">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{% url 'web:admin_categories' %}" class="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600">
+    <a href="{% url 'web:admin_categories' %}" class="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-all text-gray-600 active:scale-[0.97]">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
     <h2 class="text-lg font-bold text-gray-900">{% if cat %}Edit {{ cat.name }}{% else %}Add Category{% endif %}</h2>
   </div>
 
-  <div class="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-100/50 p-6 md:p-8">
+  <div class="bg-white rounded-3xl border border-gray-100 border-t-4 border-t-emerald-500 shadow-xl shadow-gray-100/50 p-6 md:p-8">
     <form method="post" enctype="multipart/form-data" class="space-y-6" x-data="{ imagePreview: '{% if cat and cat.image %}{{ cat.image.url }}{% endif %}' }">
       {% csrf_token %}
 
@@ -57,11 +57,10 @@
 
       </div>
 
-      {# Custom Image Upload Area with Live Preview #}
+      {# Cover image #}
       <div class="space-y-2">
         <label class="text-sm font-semibold text-gray-700">Category Cover Image</label>
         <div class="flex flex-col sm:flex-row items-center gap-5 p-5 border border-dashed border-gray-200 rounded-3xl bg-gray-50/30">
-          <!-- Preview Container -->
           <div class="relative w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 group">
             <template x-if="imagePreview">
               <img :src="imagePreview" class="w-full h-full object-cover">
@@ -74,9 +73,8 @@
             </div>
           </div>
           
-          <!-- File Input Wrapper -->
           <div class="flex-1 text-center sm:text-left">
-            <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 text-sm font-semibold rounded-xl transition-all shadow-sm">
+            <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 text-sm font-semibold rounded-xl transition-all shadow-sm active:scale-[0.97] duration-150">
               <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
               </svg>
@@ -100,8 +98,8 @@
 
       {# Buttons #}
       <div class="flex gap-4 pt-4 border-t border-gray-100">
-        <a href="{% url 'web:admin_categories' %}" class="flex-1 text-center py-3 border border-gray-200 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-50 transition-colors">Cancel</a>
-        <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-3 text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all">
+        <a href="{% url 'web:admin_categories' %}" class="flex-1 text-center py-3 border border-gray-200 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-50 active:scale-[0.97] transition-all">Cancel</a>
+        <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-3 text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.97] transition-all">
           {% if cat %}Save Changes{% else %}Add Category{% endif %}
         </button>
       </div>
