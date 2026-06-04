@@ -33,6 +33,12 @@ class Order(models.Model):
     special_instructions = models.TextField(blank=True)
     customer_name = models.CharField(max_length=100, blank=True)
     customer_phone = models.CharField(max_length=20, blank=True)
+    is_paid = models.BooleanField(default=False)
+    paid_at = models.DateTimeField(null=True, blank=True)
+    paid_by = models.ForeignKey(
+        'auth.User', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='paid_orders'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -41,6 +47,10 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.order_number} - Table {self.table.table_number if self.table else 'N/A'}"
+
+    @property
+    def is_editable(self):
+        return not self.is_paid
 
     def calculate_total(self):
         total = sum(item.subtotal for item in self.items.all())
@@ -77,3 +87,32 @@ class OrderStatusHistory(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class OrderLog(models.Model):
+    ACTION_CHOICES = [
+        ('created',        'Order Created'),
+        ('item_added',     'Item Added'),
+        ('item_removed',   'Item Removed'),
+        ('qty_changed',    'Quantity Changed'),
+        ('status_changed', 'Status Changed'),
+        ('paid',           'Marked as Paid'),
+        ('note_updated',   'Note Updated'),
+    ]
+    ACTOR_CHOICES = [
+        ('staff',    'Staff'),
+        ('customer', 'Customer'),
+        ('system',   'System'),
+    ]
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='logs')
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    actor_type = models.CharField(max_length=10, choices=ACTOR_CHOICES, default='system')
+    actor_name = models.CharField(max_length=100, blank=True)
+    details = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.action} — {self.order.order_number}"

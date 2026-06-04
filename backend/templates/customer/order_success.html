@@ -29,8 +29,14 @@
         class="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-4 font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all">
         Track Your Order →
       </a>
+      {% if can_edit %}
+      <a href="{% url 'web:customer_order_edit' order.order_number %}"
+        class="flex items-center justify-center gap-2 border border-emerald-200 text-emerald-700 bg-emerald-50 rounded-2xl py-4 font-semibold hover:bg-emerald-100 transition-all">
+        ✏️ Edit Order
+      </a>
+      {% endif %}
       <a href="{% url 'web:menu' order.table.id %}"
-        class="flex items-center justify-center gap-2 border border-gray-200 text-gray-700 rounded-2xl py-4 font-semibold hover:bg-gray-50 transition-all">
+        class="flex items-center justify-center gap-2 border border-gray-200 text-gray-700 rounded-2xl py-3 font-medium hover:bg-gray-50 transition-all text-sm">
         Back to Menu
       </a>
     </div>

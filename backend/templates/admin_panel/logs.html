@@ -1,0 +1,91 @@
+{% extends "admin_panel/base.html" %}
+{% block page_title %}Order Logs{% endblock %}
+{% block content %}
+<div class="p-6 space-y-5">
+  <div>
+    <h2 class="text-lg font-bold text-gray-900">Order Audit Logs</h2>
+    <p class="text-sm text-gray-400">{{ logs|length }} entr{{ logs|length|pluralize:"y,ies" }} shown</p>
+  </div>
+
+  {# Filters #}
+  <form method="get" class="flex flex-wrap gap-3 bg-white rounded-2xl border border-gray-100 p-4">
+    <input name="order" type="text" value="{{ order_q }}" placeholder="Order # …"
+      class="h-9 rounded-xl border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 w-36">
+    <select name="action" onchange="this.form.submit()"
+      class="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+      <option value="">All Actions</option>
+      {% for val, label in action_choices %}
+      <option value="{{ val }}" {% if action_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select name="actor" onchange="this.form.submit()"
+      class="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+      <option value="">All Actors</option>
+      <option value="staff" {% if actor_filter == 'staff' %}selected{% endif %}>Staff</option>
+      <option value="customer" {% if actor_filter == 'customer' %}selected{% endif %}>Customer</option>
+    </select>
+    <button type="submit" class="h-9 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-colors">Apply</button>
+    {% if order_q or action_filter or actor_filter %}
+    <a href="{% url 'web:admin_logs' %}" class="h-9 px-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm text-gray-500 flex items-center">Clear</a>
+    {% endif %}
+  </form>
+
+  {% if not logs %}
+  <div class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-gray-100">
+    <span class="text-5xl mb-4">📋</span>
+    <p class="font-semibold text-gray-700">No log entries</p>
+  </div>
+  {% else %}
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[600px]">
+        <thead>
+          <tr class="border-b border-gray-100 bg-gray-50">
+            <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Time</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actor</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Details</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for log in logs %}
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-5 py-3 text-xs text-gray-400 whitespace-nowrap">{{ log.created_at|date:"d M H:i:s" }}</td>
+            <td class="px-4 py-3">
+              <a href="{% url 'web:admin_order_detail' log.order.id %}" class="font-mono font-bold text-emerald-700 hover:text-emerald-800 transition-colors">
+                #{{ log.order.order_number }}
+              </a>
+              {% if log.order.table %}<span class="text-xs text-gray-400 ml-1">T{{ log.order.table.table_number }}</span>{% endif %}
+            </td>
+            <td class="px-4 py-3">
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full
+                {% if log.action == 'created' %}bg-emerald-100 text-emerald-700
+                {% elif log.action == 'paid' %}bg-green-100 text-green-700
+                {% elif log.action == 'item_removed' %}bg-red-100 text-red-600
+                {% elif log.action == 'item_added' %}bg-blue-100 text-blue-600
+                {% elif log.action == 'status_changed' %}bg-orange-100 text-orange-600
+                {% elif log.action == 'qty_changed' %}bg-yellow-100 text-yellow-700
+                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                {{ log.get_action_display }}
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="flex items-center gap-1.5 text-xs">
+                <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs
+                  {% if log.actor_type == 'staff' %}bg-blue-100{% elif log.actor_type == 'customer' %}bg-purple-100{% else %}bg-gray-100{% endif %}">
+                  {% if log.actor_type == 'staff' %}👤{% elif log.actor_type == 'customer' %}🧑{% else %}⚙️{% endif %}
+                </span>
+                <span class="text-gray-700">{{ log.actor_name|default:log.actor_type|capfirst }}</span>
+              </span>
+            </td>
+            <td class="px-4 py-3 text-xs text-gray-500 max-w-xs truncate">{{ log.details|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

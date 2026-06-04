@@ -11,7 +11,7 @@ from decimal import Decimal, InvalidOperation
 
 from apps.restaurants.models import Restaurant, Table
 from apps.menu.models import Category, MenuItem
-from apps.orders.models import Order
+from apps.orders.models import Order, OrderItem, OrderStatusHistory, OrderLog
 from apps.staff.models import StaffProfile
 from apps.offers.models import Offer
 from apps.web.decorators import admin_required
@@ -73,13 +73,14 @@ def admin_dashboard(request):
         'total': qs.count(),
     }
     recent_orders = qs.select_related('table').prefetch_related('items').order_by('-created_at')[:10]
+    from django.urls import reverse
     rev = stats['today_revenue']
     rev_fmt = f"₹{int(rev):,}" if rev == int(rev) else f"₹{rev:,.2f}"
     stats_cards = [
-        ('📦', "Today's Orders", stats['today_orders'], 'bg-blue-100'),
-        ('💰', "Today's Revenue", rev_fmt, 'bg-emerald-100'),
-        ('⏳', 'Pending', stats['pending'], 'bg-yellow-100'),
-        ('🍳', 'Preparing', stats['preparing'], 'bg-orange-100'),
+        ('📦', "Today's Orders", stats['today_orders'], 'bg-blue-100',    reverse('web:admin_orders')),
+        ('💰', "Today's Revenue", rev_fmt,               'bg-emerald-100', reverse('web:admin_orders') + '?paid=1'),
+        ('⏳', 'Pending',         stats['pending'],      'bg-yellow-100',  reverse('web:admin_orders') + '?status=pending'),
+        ('🍳', 'Preparing',       stats['preparing'],    'bg-orange-100',  reverse('web:admin_orders') + '?status=preparing'),
     ]
     return render(request, 'admin_panel/dashboard.html', {
         'stats': stats,
@@ -455,3 +456,243 @@ def admin_staff_delete(request, staff_id):
     staff.user.delete()
     messages.success(request, f'Staff "{name}" removed.')
     return redirect('web:admin_staff')
+
+
+# ── Orders / Invoices ─────────────────────────────────────────────────────
+
+def _actor_name(user):
+    return user.get_full_name() or user.username
+
+
+@admin_required
+def admin_orders(request):
+    restaurant = _get_restaurant(request)
+    qs = Order.objects.filter(restaurant=restaurant).select_related('table').prefetch_related('items').order_by('-created_at')
+
+    status_filter = request.GET.get('status', '')
+    paid_filter = request.GET.get('paid', '')
+    search = request.GET.get('q', '')
+
+    if status_filter:
+        qs = qs.filter(status=status_filter)
+    if paid_filter == '1':
+        qs = qs.filter(is_paid=True)
+    elif paid_filter == '0':
+        qs = qs.filter(is_paid=False)
+    if search:
+        qs = qs.filter(order_number__icontains=search)
+
+    return render(request, 'admin_panel/orders.html', {
+        'orders': qs[:150],
+        'status_filter': status_filter,
+        'paid_filter': paid_filter,
+        'search': search,
+        'status_choices': Order.STATUS_CHOICES,
+    })
+
+
+@admin_required
+def admin_order_detail(request, order_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(
+        Order.objects.prefetch_related(
+            'items__menu_item__category',
+            'logs',
+            'status_history__changed_by',
+        ).select_related('table', 'paid_by'),
+        id=order_id, restaurant=restaurant,
+    )
+    menu_items = MenuItem.objects.filter(
+        category__restaurant=restaurant, is_available=True
+    ).select_related('category').order_by('category__name', 'name')
+    return render(request, 'admin_panel/order_detail.html', {
+        'order': order,
+        'menu_items': menu_items,
+    })
+
+
+@admin_required
+@require_POST
+def admin_order_item_update(request, order_id, item_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.is_paid:
+        messages.error(request, 'Cannot edit a paid invoice.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+    item = get_object_or_404(OrderItem, id=item_id, order=order)
+    try:
+        qty = int(request.POST.get('quantity', 1))
+    except (ValueError, TypeError):
+        qty = 1
+    if qty <= 0:
+        name = item.menu_item.name if item.menu_item else 'Item'
+        item.delete()
+        order.calculate_total()
+        OrderLog.objects.create(order=order, action='item_removed', actor_type='staff',
+                                actor_name=_actor_name(request.user), details=f'Removed {name}')
+        messages.success(request, f'"{name}" removed.')
+    else:
+        old_qty = item.quantity
+        item.quantity = qty
+        item.save(update_fields=['quantity'])
+        order.calculate_total()
+        name = item.menu_item.name if item.menu_item else 'Item'
+        OrderLog.objects.create(order=order, action='qty_changed', actor_type='staff',
+                                actor_name=_actor_name(request.user),
+                                details=f'{name}: {old_qty} → {qty}')
+        messages.success(request, 'Quantity updated.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_item_delete(request, order_id, item_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.is_paid:
+        messages.error(request, 'Cannot edit a paid invoice.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+    item = get_object_or_404(OrderItem, id=item_id, order=order)
+    name = item.menu_item.name if item.menu_item else 'Item'
+    item.delete()
+    order.calculate_total()
+    OrderLog.objects.create(order=order, action='item_removed', actor_type='staff',
+                            actor_name=_actor_name(request.user), details=f'Removed {name}')
+    messages.success(request, f'"{name}" removed from order.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_item_add(request, order_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.is_paid:
+        messages.error(request, 'Cannot edit a paid invoice.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+    menu_item_id = request.POST.get('menu_item_id', '').strip()
+    try:
+        qty = max(1, int(request.POST.get('quantity', 1)))
+    except (ValueError, TypeError):
+        qty = 1
+    try:
+        menu_item = MenuItem.objects.get(id=menu_item_id, category__restaurant=restaurant)
+    except MenuItem.DoesNotExist:
+        messages.error(request, 'Item not found.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+
+    existing = order.items.filter(menu_item=menu_item).first()
+    if existing:
+        existing.quantity += qty
+        existing.save(update_fields=['quantity'])
+        detail = f'{menu_item.name}: qty now {existing.quantity}'
+    else:
+        OrderItem.objects.create(order=order, menu_item=menu_item, quantity=qty, unit_price=menu_item.price)
+        detail = f'Added {menu_item.name} ×{qty}'
+
+    order.calculate_total()
+    OrderLog.objects.create(order=order, action='item_added', actor_type='staff',
+                            actor_name=_actor_name(request.user), details=detail)
+    messages.success(request, f'"{menu_item.name}" added.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_mark_paid(request, order_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.is_paid:
+        messages.info(request, 'Order is already marked as paid.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+    order.is_paid = True
+    order.paid_at = timezone.now()
+    order.paid_by = request.user
+    if order.status not in (Order.SERVED, Order.CANCELLED):
+        order.status = Order.SERVED
+    order.save(update_fields=['is_paid', 'paid_at', 'paid_by', 'status'])
+    OrderStatusHistory.objects.create(order=order, status=Order.SERVED, changed_by=request.user, note='Marked as paid')
+    OrderLog.objects.create(order=order, action='paid', actor_type='staff',
+                            actor_name=_actor_name(request.user),
+                            details=f'Invoice marked as paid. Total: {order.total_amount}')
+    messages.success(request, f'Order #{order.order_number} marked as paid.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_update_note(request, order_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.is_paid:
+        messages.error(request, 'Cannot edit a paid invoice.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+    order.special_instructions = request.POST.get('special_instructions', '').strip()
+    order.save(update_fields=['special_instructions'])
+    OrderLog.objects.create(order=order, action='note_updated', actor_type='staff',
+                            actor_name=_actor_name(request.user), details='Special instructions updated')
+    messages.success(request, 'Note updated.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_status_update(request, order_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    new_status = request.POST.get('status')
+    if new_status not in dict(Order.STATUS_CHOICES):
+        messages.error(request, 'Invalid status.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+    old_status = order.status
+    order.status = new_status
+    order.save(update_fields=['status'])
+    OrderStatusHistory.objects.create(order=order, status=new_status, changed_by=request.user)
+    OrderLog.objects.create(order=order, action='status_changed', actor_type='staff',
+                            actor_name=_actor_name(request.user),
+                            details=f'{old_status} → {new_status}')
+    messages.success(request, f'Status updated to {new_status}.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_item_toggle_available(request, order_id, item_id):
+    """Mark the underlying menu item unavailable directly from an invoice."""
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    item = get_object_or_404(OrderItem, id=item_id, order=order)
+    if item.menu_item:
+        item.menu_item.is_available = False
+        item.menu_item.save(update_fields=['is_available'])
+        messages.success(request, f'"{item.menu_item.name}" marked unavailable on the menu.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+# ── Logs ──────────────────────────────────────────────────────────────────
+
+@admin_required
+def admin_logs(request):
+    restaurant = _get_restaurant(request)
+    logs = OrderLog.objects.filter(
+        order__restaurant=restaurant
+    ).select_related('order__table').order_by('-created_at')
+
+    order_q = request.GET.get('order', '')
+    action_filter = request.GET.get('action', '')
+    actor_filter = request.GET.get('actor', '')
+
+    if order_q:
+        logs = logs.filter(order__order_number__icontains=order_q)
+    if action_filter:
+        logs = logs.filter(action=action_filter)
+    if actor_filter:
+        logs = logs.filter(actor_type=actor_filter)
+
+    return render(request, 'admin_panel/logs.html', {
+        'logs': logs[:300],
+        'order_q': order_q,
+        'action_filter': action_filter,
+        'actor_filter': actor_filter,
+        'action_choices': OrderLog.ACTION_CHOICES,
+    })

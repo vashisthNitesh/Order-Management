@@ -10,6 +10,10 @@ urlpatterns = [
     path('order/place/<int:table_id>/', customer.place_order, name='place_order'),
     path('order/success/<str:order_number>/', customer.order_success, name='order_success'),
     path('order/track/<int:order_id>/', customer.track_order, name='track_order'),
+    path('order/edit/<str:order_number>/', customer.customer_order_edit, name='customer_order_edit'),
+    path('order/edit/<str:order_number>/item/update/', customer.customer_item_update, name='customer_item_update'),
+    path('order/edit/<str:order_number>/item/add/', customer.customer_item_add, name='customer_item_add'),
+    path('order/edit/<str:order_number>/note/', customer.customer_update_note, name='customer_update_note'),
 
     # ── Staff ─────────────────────────────────────────────────────────────
     path('staff/login/', staff.staff_login, name='staff_login'),
@@ -22,6 +26,20 @@ urlpatterns = [
     path('manage/login/', admin_views.admin_login, name='admin_login'),
     path('manage/logout/', admin_views.admin_logout, name='admin_logout'),
     path('manage/', admin_views.admin_dashboard, name='admin_dashboard'),
+
+    # Orders / Invoices
+    path('manage/orders/', admin_views.admin_orders, name='admin_orders'),
+    path('manage/orders/<int:order_id>/', admin_views.admin_order_detail, name='admin_order_detail'),
+    path('manage/orders/<int:order_id>/item/<int:item_id>/update/', admin_views.admin_order_item_update, name='admin_order_item_update'),
+    path('manage/orders/<int:order_id>/item/<int:item_id>/delete/', admin_views.admin_order_item_delete, name='admin_order_item_delete'),
+    path('manage/orders/<int:order_id>/item/<int:item_id>/toggle-available/', admin_views.admin_order_item_toggle_available, name='admin_order_item_toggle_available'),
+    path('manage/orders/<int:order_id>/item/add/', admin_views.admin_order_item_add, name='admin_order_item_add'),
+    path('manage/orders/<int:order_id>/mark-paid/', admin_views.admin_order_mark_paid, name='admin_order_mark_paid'),
+    path('manage/orders/<int:order_id>/note/', admin_views.admin_order_update_note, name='admin_order_update_note'),
+    path('manage/orders/<int:order_id>/status/', admin_views.admin_order_status_update, name='admin_order_status_update'),
+
+    # Logs
+    path('manage/logs/', admin_views.admin_logs, name='admin_logs'),
 
     # Tables
     path('manage/tables/', admin_views.admin_tables, name='admin_tables'),
