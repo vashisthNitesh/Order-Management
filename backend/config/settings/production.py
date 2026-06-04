@@ -11,6 +11,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') + [
 # Render terminates SSL at its load balancer — don't redirect internally
 SECURE_SSL_REDIRECT = False
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True

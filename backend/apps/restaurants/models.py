@@ -40,16 +40,17 @@ class Table(models.Model):
         return f"Table {self.table_number} - {self.restaurant.name}"
 
     def generate_qr_code(self, base_url=None):
+        from django.conf import settings
+        import os
+
+        env_url = getattr(settings, 'QR_BASE_URL', None) or os.environ.get('RENDER_EXTERNAL_URL') or os.environ.get('SITE_URL') or os.environ.get('BACKEND_URL')
+
         if not base_url:
-            from django.conf import settings
-            import os
-            base_url = getattr(settings, 'QR_BASE_URL', None)
-            if not base_url:
-                base_url = os.environ.get('RENDER_EXTERNAL_URL')
-            if not base_url:
-                base_url = os.environ.get('SITE_URL') or os.environ.get('BACKEND_URL')
-            if not base_url:
-                base_url = 'http://localhost:8000'
+            base_url = env_url or 'http://localhost:8000'
+        else:
+            # Override local/loopback hosts in production when external env is defined
+            if ('localhost' in base_url or '127.0.0.1' in base_url) and env_url and not getattr(settings, 'DEBUG', True):
+                base_url = env_url
 
         # Ensure scheme is prepended if not present
         if base_url and not base_url.startswith('http'):
