@@ -162,3 +162,15 @@ class NotificationSystemTests(TestCase):
         notifications = Notification.objects.filter(order=order, recipient_type=Notification.STAFF)
         self.assertEqual(notifications.count(), 1)
         self.assertEqual(notifications.first().title, "Order Updated by Customer")
+
+    def test_order_detail_view_success(self):
+        order = Order.objects.create(
+            restaurant=self.restaurant,
+            table=self.table,
+            customer_name="John Doe"
+        )
+        response = self.client.get(f'/api/orders/{order.id}/')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['id'], order.id)
+        self.assertEqual(data['status'], 'pending')

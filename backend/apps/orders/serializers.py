@@ -6,7 +6,7 @@ from apps.menu.serializers import MenuItemSerializer
 class OrderItemSerializer(serializers.ModelSerializer):
     menu_item_name = serializers.CharField(source='menu_item.name', read_only=True)
     menu_item_image = serializers.SerializerMethodField()
-    subtotal = serializers.DecimalField(source='subtotal', max_digits=10, decimal_places=2, read_only=True)
+    subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = OrderItem
