@@ -73,7 +73,87 @@
         </svg>
       </button>
       <h1 class="font-semibold text-gray-900 text-sm">{% block page_title %}Dashboard{% endblock %}</h1>
-      <div class="ml-auto flex items-center gap-2">
+      <div class="ml-auto flex items-center gap-4">
+        
+        {# Notification Bell Dropdown #}
+        <div x-data="{ 
+               open: false, 
+               notifications: [],
+               unreadCount: 0,
+               init() {
+                 window.addEventListener('show-toast', (e) => {
+                   this.notifications.unshift({
+                     title: e.detail.title,
+                     message: e.detail.message,
+                     created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                     unread: true
+                   });
+                   this.unreadCount++;
+                 });
+                 this.fetchNotifications();
+               },
+               async fetchNotifications() {
+                 try {
+                   const res = await fetch('/api/orders/notifications/poll/?restaurant_id=1&last_seen_id=0');
+                   if (res.status === 200) {
+                     const data = await res.json();
+                     this.notifications = (data.notifications || []).map(n => ({
+                       title: n.title,
+                       message: n.message,
+                       created_at: new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                       unread: false
+                     }));
+                     this.unreadCount = 0;
+                   }
+                 } catch(e) {}
+               },
+               markAllRead() {
+                 this.unreadCount = 0;
+                 this.notifications.forEach(n => n.unread = false);
+               }
+             }" 
+             class="relative">
+          <button @click="open = !open; if(open) markAllRead()" 
+                  class="relative p-2.5 text-gray-500 hover:text-gray-700 bg-gray-150/80 hover:bg-gray-200 rounded-xl transition-all active:scale-95 focus:outline-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span x-show="unreadCount > 0" x-text="unreadCount" 
+                  class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-4 h-4 shadow-sm animate-bounce">
+            </span>
+          </button>
+
+          <div x-show="open" @click.away="open = false" x-cloak
+               x-transition:enter="transition ease-out duration-100 transform opacity-0 scale-95"
+               x-transition:enter-end="opacity-100 scale-100"
+               x-transition:leave="transition ease-in duration-75 transform opacity-100 scale-100"
+               class="absolute right-0 mt-2 w-80 bg-white border border-gray-150 rounded-2xl shadow-xl z-50 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-150 flex items-center justify-between bg-gray-50">
+              <h3 class="font-bold text-gray-900 text-xs">Notifications</h3>
+              <button @click="notifications = []; unreadCount = 0" class="text-[10px] text-gray-400 hover:text-red-500 transition-colors">Clear all</button>
+            </div>
+            
+            <div class="max-h-64 overflow-y-auto divide-y divide-gray-100">
+              <template x-if="notifications.length === 0">
+                <div class="p-8 text-center text-gray-400 text-xs">
+                  <span>🔔 No new notifications</span>
+                </div>
+              </template>
+              <template x-for="item in notifications">
+                <div class="p-3.5 hover:bg-gray-50/50 transition-colors flex gap-2" :class="item.unread ? 'bg-emerald-50/20' : ''">
+                  <span class="text-base flex-shrink-0">🍽️</span>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-gray-900 text-xs" x-text="item.title"></p>
+                    <p class="text-[11px] text-gray-500 mt-0.5" x-text="item.message"></p>
+                    <p class="text-[9px] text-gray-400 mt-1" x-text="item.created_at"></p>
+                  </div>
+                  <span x-show="item.unread" class="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
         {% for msg in messages %}
         <span class="text-xs {% if 'error' in msg.tags %}text-red-600 bg-red-50{% else %}text-emerald-600 bg-emerald-50{% endif %} px-3 py-1 rounded-full font-medium">{{ msg }}</span>
         {% endfor %}
