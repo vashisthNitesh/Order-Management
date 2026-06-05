@@ -1,48 +1,44 @@
 {% extends "base.html" %}
 {% block title %}Staff Login{% endblock %}
 {% block body %}
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 bg-dots-dark flex items-center justify-center p-4 relative overflow-hidden">
-  
-  {# Atmospheric Orbs #}
-  <div class="absolute top-1/4 left-1/4 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none animate-pulse duration-4000"></div>
-  <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none animate-pulse duration-6000"></div>
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
   
   <div class="w-full max-w-sm relative z-10">
     <div class="text-center mb-8">
-      <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-emerald-500/25">
+      <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-emerald-500/25 border border-white/20 animate-pulse" style="animation-duration: 4s;">
         <span class="text-3xl">🍽️</span>
       </div>
-      <h1 class="text-2xl font-bold text-white mb-1">Staff Portal</h1>
-      <p class="text-gray-400 text-sm">Sign in to manage orders</p>
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-white mb-1 tracking-tight">Staff Portal</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Sign in to manage orders</p>
     </div>
     
-    <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl">
+    <div class="glass-panel rounded-3xl p-6 shadow-2xl border border-white/25 dark:border-white/10">
       {% for msg in messages %}
-      <div class="mb-4 bg-red-500/20 border border-red-500/30 text-red-300 text-sm px-4 py-3 rounded-2xl">{{ msg }}</div>
+      <div class="mb-4 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold px-4 py-3 rounded-2xl">{{ msg }}</div>
       {% endfor %}
       
       <form method="post" class="space-y-5">
         {% csrf_token %}
         <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-300">Username</label>
+          <label class="text-xs font-bold text-slate-650 dark:text-slate-300 uppercase tracking-wider">Username</label>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 text-xs">👤</span>
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">👤</span>
             <input name="username" type="text" required autocomplete="username" autocapitalize="none" placeholder="Enter username"
-              class="w-full h-11 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-gray-500 pl-9 pr-4 text-sm focus:outline-none focus:bg-white/10 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-300">
+              class="w-full h-11 rounded-2xl glass-input bg-white/30 dark:bg-slate-900/30 border border-slate-350/30 dark:border-white/5 text-slate-850 dark:text-white placeholder-slate-400 pl-9 pr-4 text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all duration-300">
           </div>
         </div>
         
         <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-300">Password</label>
+          <label class="text-xs font-bold text-slate-650 dark:text-slate-300 uppercase tracking-wider">Password</label>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 text-xs">🔒</span>
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">🔒</span>
             <input name="password" type="password" required autocomplete="current-password" placeholder="Enter password"
-              class="w-full h-11 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-gray-500 pl-9 pr-4 text-sm focus:outline-none focus:bg-white/10 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-300">
+              class="w-full h-11 rounded-2xl glass-input bg-white/30 dark:bg-slate-900/30 border border-slate-350/30 dark:border-white/5 text-slate-850 dark:text-white placeholder-slate-400 pl-9 pr-4 text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all duration-300">
           </div>
         </div>
         
         <button type="submit"
-          class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl h-12 font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all duration-300 active:scale-[0.98] shadow-lg shadow-emerald-500/20 mt-2">
+          class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white rounded-2xl h-12 font-bold transition-all duration-300 active:scale-[0.98] shadow-lg shadow-emerald-500/20 mt-2 border border-white/10">
           Sign In
         </button>
       </form>

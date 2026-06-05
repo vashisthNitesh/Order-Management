@@ -4,28 +4,28 @@
 <div class="p-6 space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-lg font-bold text-gray-900">Categories</h2>
-      <p class="text-sm text-gray-400">{{ categories.count }} categor{{ categories.count|pluralize:"y,ies" }}</p>
+      <h2 class="text-lg font-bold text-slate-905 dark:text-white">Categories</h2>
+      <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider mt-0.5">{{ categories.count }} categor{{ categories.count|pluralize:"y,ies" }}</p>
     </div>
     <a href="{% url 'web:admin_category_add' %}"
-       class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all shadow-lg shadow-emerald-200">
+       class="glass-btn-primary px-4 py-2 rounded-xl text-sm font-bold border border-white/10 shadow-lg flex items-center gap-2">
       + Add Category
     </a>
   </div>
 
   {% if not categories %}
-  <div class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-gray-100">
+  <div class="flex flex-col items-center justify-center py-20 text-center glass-panel rounded-2xl border border-slate-200/40 dark:border-white/5 p-6 shadow-sm">
     <span class="text-5xl mb-4">📂</span>
-    <p class="font-semibold text-gray-700">No categories yet</p>
-    <a href="{% url 'web:admin_category_add' %}" class="mt-4 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">Add Category</a>
+    <p class="font-bold text-slate-805 dark:text-slate-250">No categories yet</p>
+    <a href="{% url 'web:admin_category_add' %}" class="mt-4 glass-btn-primary px-4 py-2 rounded-xl text-sm font-bold border border-white/10">Add Category</a>
   </div>
   {% else %}
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for cat in categories %}
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group">
+    <div class="glass-card rounded-3xl border border-slate-200/45 dark:border-white/5 overflow-hidden flex flex-col group shadow-md">
       
       {# Card Image/Icon Header #}
-      <div class="h-36 bg-gray-50/80 relative flex items-center justify-center overflow-hidden border-b border-gray-150 flex-shrink-0">
+      <div class="h-36 bg-slate-500/5 dark:bg-slate-900/40 relative flex items-center justify-center overflow-hidden border-b border-slate-200/45 dark:border-white/5 flex-shrink-0">
         {% if cat.image %}
         <img src="{{ cat.image.url }}" alt="{{ cat.name }}" class="w-full h-full object-cover">
         {% else %}
@@ -35,14 +35,14 @@
         {% endif %}
         
         {# Order / Sorting badge #}
-        <span class="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full select-none">
+        <span class="absolute top-3 left-3 bg-black/60 dark:bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full select-none border border-white/10">
           Order: {{ cat.sort_order }}
         </span>
         
         {# Active Status Indicator #}
-        <span class="absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full select-none
-          {% if cat.is_active %}bg-emerald-50 text-emerald-700{% else %}bg-gray-100 text-gray-500{% endif %}">
-          <span class="w-1.5 h-1.5 rounded-full {% if cat.is_active %}bg-emerald-500 animate-pulse{% else %}bg-gray-400{% endif %}"></span>
+        <span class="absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full select-none border border-white/10
+          {% if cat.is_active %}bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20{% else %}bg-slate-500/10 text-slate-500{% endif %}">
+          <span class="w-1.5 h-1.5 rounded-full {% if cat.is_active %}bg-emerald-500 animate-pulse{% else %}bg-slate-400{% endif %}"></span>
           {% if cat.is_active %}Active{% else %}Inactive{% endif %}
         </span>
       </div>
@@ -50,16 +50,16 @@
       {# Card Body #}
       <div class="p-5 flex-1 flex flex-col justify-between">
         <div class="mb-4">
-          <h3 class="font-bold text-gray-900 text-sm group-hover:text-emerald-600 transition-colors">{{ cat.name }}</h3>
-          <p class="text-xs text-gray-400 mt-1 line-clamp-2">
+          <h3 class="font-bold text-slate-900 dark:text-slate-205 text-sm group-hover:text-emerald-600 transition-colors">{{ cat.name }}</h3>
+          <p class="text-xs text-slate-400 dark:text-slate-500 mt-1 line-clamp-2 font-medium">
             {{ cat.description|default:"No description provided." }}
           </p>
         </div>
 
         {# Card Actions #}
-        <div class="flex items-center gap-2 pt-3 border-t border-gray-50">
+        <div class="flex items-center gap-2 pt-3 border-t border-slate-200/30 dark:border-white/5">
           <a href="{% url 'web:admin_category_edit' cat.id %}"
-             class="flex-1 text-center bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+             class="flex-1 text-center glass-btn-secondary text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
             ✏️ Edit
           </a>
           
@@ -67,7 +67,7 @@
                 onsubmit="return confirm('Delete {{ cat.name }}? All items in this category will be affected.')"
                 class="flex-1">
             {% csrf_token %}
-            <button type="submit" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-500 text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+            <button type="submit" class="w-full text-center glass-btn-danger text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
               🗑 Delete
             </button>
           </form>
@@ -79,4 +79,9 @@
   </div>
   {% endif %}
 </div>
+{% block admin_scripts %}
+<script>
+  // Simple check reload
+</script>
+{% endblock %}
 {% endblock %}

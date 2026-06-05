@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="flex h-screen overflow-hidden bg-slate-50/50" x-data="{sidebarOpen:false, sidebarCollapsed: localStorage.getItem('admin_sidebar_collapsed') === 'true'}">
+<div class="flex h-screen overflow-hidden bg-slate-50/20 dark:bg-slate-950/20" x-data="{sidebarOpen:false, sidebarCollapsed: localStorage.getItem('admin_sidebar_collapsed') === 'true', darkMode: localStorage.getItem('dark_mode') === 'true'}">
 
   {# Mobile overlay #}
   <div x-show="sidebarOpen" @click="sidebarOpen=false"
@@ -8,21 +8,21 @@
 
   {# Sidebar #}
   <aside :class="[sidebarCollapsed ? 'lg:w-20' : 'lg:w-64', sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']"
-         class="fixed lg:static inset-y-0 left-0 bg-white border-r border-slate-200/60 flex flex-col z-50 transition-all duration-300 shadow-xl lg:shadow-none text-slate-700 w-64">
+         class="fixed lg:static inset-y-0 left-0 glass-panel flex flex-col z-50 transition-all duration-300 shadow-xl lg:shadow-none text-slate-700 dark:text-slate-200 w-64 border-r border-slate-200/50 dark:border-white/5">
     
     <!-- Sidebar Header -->
-    <div class="p-5 border-b border-slate-100 flex-shrink-0 flex items-center justify-between">
+    <div class="p-5 border-b border-slate-200/40 dark:border-white/5 flex-shrink-0 flex items-center justify-between">
       <div class="flex items-center gap-3 overflow-hidden">
-        <div class="w-9 h-9 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl flex items-center justify-center text-white text-lg shadow-md shadow-emerald-500/10 flex-shrink-0">🍽️</div>
+        <div class="w-9 h-9 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-xl flex items-center justify-center text-white text-lg shadow-md shadow-emerald-500/10 flex-shrink-0 border border-white/20">🍽️</div>
         <div class="transition-opacity duration-300" :class="sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100'">
-          <p class="font-extrabold text-slate-900 text-sm tracking-tight">Admin Console</p>
-          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Restaurant Hub</p>
+          <p class="font-extrabold text-slate-950 dark:text-white text-sm tracking-tight leading-none mb-1">Admin Console</p>
+          <p class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Restaurant Hub</p>
         </div>
       </div>
       
       <!-- Collapse Toggle Button (Desktop Only) -->
       <button @click="sidebarCollapsed = !sidebarCollapsed; localStorage.setItem('admin_sidebar_collapsed', sidebarCollapsed)"
-              class="hidden lg:flex w-7 h-7 rounded-lg border border-slate-100 items-center justify-center hover:bg-slate-50 transition-colors text-slate-400 hover:text-slate-600 ml-auto focus:outline-none">
+              class="hidden lg:flex w-7 h-7 rounded-lg border border-slate-200/50 dark:border-white/10 items-center justify-center hover:bg-slate-100/55 dark:hover:bg-slate-800/40 transition-colors text-slate-400 hover:text-slate-650 ml-auto focus:outline-none">
         <svg class="w-4 h-4 transform transition-transform duration-300" :class="sidebarCollapsed ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
         </svg>
@@ -30,12 +30,12 @@
     </div>
 
     <!-- Sidebar Navigation -->
-    <nav class="flex-1 p-3.5 space-y-1 overflow-y-auto bg-white scrollbar-hide">
+    <nav class="flex-1 p-3.5 space-y-1 overflow-y-auto bg-transparent scrollbar-hide">
       {% with request.resolver_match.url_name as url_name %}
       {% for href, icon, label in nav_items %}
       <a href="{{ href }}" @click="sidebarOpen=false" title="{{ label }}"
         class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 relative group
-          {% if url_name and label|lower in request.path %}bg-emerald-50/70 text-emerald-700 border-l-2 border-emerald-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+          {% if url_name and label|lower in request.path %}bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 border-l-2 border-emerald-550{% else %}text-slate-605 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/25 hover:text-slate-950 dark:hover:text-white{% endif %}">
         
         <!-- Icon -->
         <span class="text-base group-hover:scale-105 transition-transform duration-200 flex-shrink-0">{{ icon }}</span>
@@ -63,7 +63,7 @@
           setInterval(check, 15000);
         " x-show="count > 0" x-text="count" 
         :class="sidebarCollapsed ? '-top-1 -right-1 shadow-md' : 'right-3 top-1/2 -translate-y-1/2'"
-        class="absolute bg-red-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-5 h-5 shadow-sm border border-white animate-pulse">
+        class="absolute bg-red-550 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-5 h-5 shadow-sm border border-white dark:border-slate-900 animate-pulse">
         </span>
         {% endif %}
       </a>
@@ -72,19 +72,19 @@
     </nav>
 
     <!-- Sidebar Profile / Logout Footer -->
-    <div class="p-3.5 border-t border-slate-100 flex-shrink-0 bg-white flex flex-col gap-2">
+    <div class="p-3.5 border-t border-slate-200/40 dark:border-white/5 flex-shrink-0 bg-transparent flex flex-col gap-2">
       <div class="flex items-center gap-3 overflow-hidden p-1">
         <!-- Initials Avatar -->
-        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-sm">
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-650 dark:text-emerald-450 border border-emerald-500/25 flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-sm">
           {{ request.user.username|slice:":1"|upper }}
         </div>
         <div class="transition-opacity duration-300 truncate flex-1" :class="sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100'">
-          <p class="font-bold text-slate-800 text-xs truncate">{{ request.user.get_full_name|default:request.user.username }}</p>
-          <p class="text-[10px] text-slate-400 truncate">{{ request.user.email }}</p>
+          <p class="font-bold text-slate-805 dark:text-slate-200 text-xs truncate leading-none mb-0.5">{{ request.user.get_full_name|default:request.user.username }}</p>
+          <p class="text-[9px] text-slate-400 dark:text-slate-500 font-semibold truncate">{{ request.user.email }}</p>
         </div>
       </div>
       
-      <a href="{% url 'web:admin_logout' %}" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200">
+      <a href="{% url 'web:admin_logout' %}" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-405 dark:text-slate-500 hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-450 transition-all duration-200">
         <span class="text-sm">🚪</span>
         <span class="transition-all duration-300" :class="sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100'">Logout</span>
       </a>
@@ -93,14 +93,27 @@
 
   {# Main Content Area #}
   <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/50 h-16 flex items-center px-6 gap-3 flex-shrink-0 sticky top-0 z-40">
-      <button @click="sidebarOpen=true" class="lg:hidden w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-center hover:bg-slate-100 transition-colors">
-        <svg class="w-4.5 h-4.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <header class="glass-panel border-b border-slate-200/40 dark:border-white/5 h-16 flex items-center px-6 gap-3 flex-shrink-0 sticky top-0 z-40">
+      <button @click="sidebarOpen=true" class="lg:hidden w-9 h-9 rounded-xl bg-slate-55 dark:bg-slate-900/50 border border-slate-200/50 dark:border-white/5 flex items-center justify-center hover:bg-slate-100/55 dark:hover:bg-slate-800 transition-colors">
+        <svg class="w-4.5 h-4.5 text-slate-600 dark:text-slate-405" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </button>
-      <h1 class="font-bold text-slate-900 text-base tracking-tight">{% block page_title %}Dashboard{% endblock %}</h1>
-      <div class="ml-auto flex items-center gap-4">
+      <h1 class="font-bold text-slate-950 dark:text-white text-base tracking-tight">{% block page_title %}Dashboard{% endblock %}</h1>
+      <div class="ml-auto flex items-center gap-3">
+         
+         {# Theme Toggle Button #}
+         <button @click="darkMode = !darkMode; localStorage.setItem('dark_mode', darkMode); if(darkMode) { document.documentElement.classList.add('dark') } else { document.documentElement.classList.remove('dark') }"
+                 class="p-2.5 text-slate-505 hover:text-emerald-600 dark:hover:text-emerald-400 bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 hover:bg-emerald-50/50 dark:hover:bg-slate-800/55 rounded-xl transition-all duration-200 active:scale-95 focus:outline-none"
+                 title="Toggle Light/Dark Theme">
+           <svg x-show="darkMode" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+           </svg>
+           <svg x-show="!darkMode" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+           </svg>
+         </button>
+
          {# Notification Bell Dropdown #}
         <div x-data="{ 
                open: false, 
@@ -142,7 +155,7 @@
              }" 
              class="relative">
           <button @click="open = !open; if(open) markAllRead()" 
-                  class="relative p-2.5 text-slate-500 hover:text-emerald-600 bg-slate-50 border border-slate-200/60 hover:bg-emerald-50/50 rounded-xl transition-all duration-200 active:scale-95 focus:outline-none">
+                  class="relative p-2.5 text-slate-505 hover:text-emerald-600 dark:hover:text-emerald-450 bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 hover:bg-emerald-50/50 dark:hover:bg-slate-800/55 rounded-xl transition-all duration-200 active:scale-95 focus:outline-none">
             <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
@@ -156,32 +169,32 @@
                x-transition:enter="transition ease-out duration-200 transform opacity-0 scale-95"
                x-transition:enter-end="opacity-100 scale-100"
                x-transition:leave="transition ease-in duration-100 transform opacity-100 scale-100"
-               class="absolute right-0 mt-3 w-96 bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.06)] z-50 overflow-hidden">
+               class="absolute right-0 mt-3 w-96 glass-panel rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] z-50 overflow-hidden border border-slate-200/50 dark:border-white/10">
             
-            <div class="px-5 py-4 border-b border-slate-100/80 flex items-center justify-between bg-slate-50/40">
+            <div class="px-5 py-4 border-b border-slate-200/40 dark:border-white/5 flex items-center justify-between bg-slate-50/40 dark:bg-slate-900/50">
               <div class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-emerald-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-450 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
-                <h3 class="font-bold text-slate-800 text-xs tracking-tight">Activity Alerts</h3>
+                <h3 class="font-bold text-slate-800 dark:text-slate-100 text-xs tracking-tight uppercase">Activity Alerts</h3>
               </div>
               <button @click="notifications = []; unreadCount = 0" 
-                      class="text-[10px] font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest">
+                      class="text-[9px] font-extrabold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest">
                 Clear all
               </button>
             </div>
             
-            <div class="max-h-80 overflow-y-auto divide-y divide-slate-50">
+            <div class="max-h-80 overflow-y-auto divide-y divide-slate-100/30 dark:divide-slate-800/45">
               <template x-if="notifications.length === 0">
-                <div class="p-10 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
-                  <div class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-lg shadow-sm border border-slate-100">☕</div>
-                  <p class="text-[11px] font-semibold text-slate-500">All caught up! No alerts.</p>
+                <div class="p-10 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center justify-center gap-2">
+                  <div class="w-10 h-10 bg-slate-100/50 dark:bg-slate-900/50 rounded-full flex items-center justify-center text-lg shadow-sm border border-slate-200/50 dark:border-white/5">☕</div>
+                  <p class="text-[11px] font-semibold text-slate-550 dark:text-slate-400">All caught up! No alerts.</p>
                 </div>
               </template>
               <template x-for="item in notifications">
                 <a :href="item.order_id ? `/manage/orders/${item.order_id}/` : '#'"
-                   class="p-4 hover:bg-slate-50/40 transition-colors flex gap-3.5 relative border-b border-slate-50 last:border-b-0 block cursor-pointer"
-                   :class="item.unread ? 'bg-emerald-50/10' : ''">
+                   class="p-4 hover:bg-white/30 dark:hover:bg-slate-800/35 transition-colors flex gap-3.5 relative border-b border-slate-100/20 dark:border-slate-800/20 last:border-b-0 block cursor-pointer"
+                   :class="item.unread ? 'bg-emerald-500/5' : ''">
                   
                   <!-- Left side thin accent line -->
                   <div class="absolute left-0 top-0 bottom-0 w-0.75"
@@ -195,28 +208,28 @@
                   <!-- Dynamic SVG Icon Badge -->
                   <div class="flex-shrink-0">
                     <template x-if="item.title.includes('Placed')">
-                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-600 border border-emerald-100/80 shadow-sm">
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 border border-emerald-500/20 shadow-sm">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                       </div>
                     </template>
                     <template x-if="item.title.includes('Paid')">
-                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-50 text-blue-600 border border-blue-100/80 shadow-sm">
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-500/10 text-blue-600 dark:text-blue-450 border border-blue-500/20 shadow-sm">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
                     </template>
                     <template x-if="item.title.includes('Updated') || item.title.includes('Edited')">
-                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 border border-amber-100/80 shadow-sm">
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-amber-500/10 text-amber-600 dark:text-amber-450 border border-amber-500/20 shadow-sm">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </div>
                     </template>
                     <template x-if="!item.title.includes('Placed') && !item.title.includes('Paid') && !item.title.includes('Updated') && !item.title.includes('Edited')">
-                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-50 text-slate-500 border border-slate-150 shadow-sm">
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-500/10 text-slate-500 dark:text-slate-400 border border-slate-200/25 dark:border-white/5 shadow-sm">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
@@ -227,10 +240,10 @@
                   <!-- Details -->
                   <div class="flex-1 min-w-0">
                     <div class="flex justify-between items-start">
-                      <p class="font-bold text-slate-900 text-[12px] tracking-tight truncate pr-2" x-text="item.title"></p>
-                      <span class="text-[9px] text-slate-400 flex-shrink-0 font-bold tracking-wide" x-text="item.created_at"></span>
+                      <p class="font-bold text-slate-900 dark:text-white text-[12px] tracking-tight truncate pr-2" x-text="item.title"></p>
+                      <span class="text-[9px] text-slate-400 dark:text-slate-500 flex-shrink-0 font-bold tracking-wide" x-text="item.created_at"></span>
                     </div>
-                    <p class="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed" x-text="item.message"></p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1 leading-relaxed" x-text="item.message"></p>
                   </div>
  
                   <!-- Unread indicator dot -->
@@ -242,7 +255,7 @@
         </div>
 
         {% for msg in messages %}
-        <span class="text-xs {% if 'error' in msg.tags %}text-red-600 bg-red-50{% else %}text-emerald-600 bg-emerald-50{% endif %} px-3 py-1 rounded-full font-medium">{{ msg }}</span>
+        <span class="text-xs {% if 'error' in msg.tags %}text-red-650 bg-red-500/10 dark:text-red-400 border border-red-500/20{% else %}text-emerald-650 bg-emerald-500/10 dark:text-emerald-400 border border-emerald-500/20{% endif %} px-3 py-1 rounded-full font-bold shadow-sm">{{ msg }}</span>
         {% endfor %}
       </div>
     </header>

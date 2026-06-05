@@ -5,22 +5,22 @@
 <div class="p-6 space-y-6">
 
   {# Welcome Header Card #}
-  <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white p-6 md:p-8 rounded-2xl relative overflow-hidden shadow-lg border border-slate-850">
+  <div class="glass-panel bg-gradient-to-br from-slate-900/95 via-slate-850/90 to-slate-950/95 text-white p-6 md:p-8 rounded-3xl relative overflow-hidden shadow-xl border border-white/10 dark:border-white/5">
     <div class="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
     
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
       <div>
         <h2 class="text-xl md:text-2xl font-bold tracking-tight">Welcome back, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
-        <p class="text-slate-400 text-xs mt-1">Here is the live performance summary for <span class="text-emerald-400 font-semibold">{{ restaurant.name }}</span> today.</p>
+        <p class="text-slate-400 text-xs mt-1">Here is the live performance summary for <span class="text-emerald-400 dark:text-emerald-350 font-semibold">{{ restaurant.name }}</span> today.</p>
       </div>
       
-      <div class="flex items-center gap-2 self-start sm:self-center bg-slate-800/60 backdrop-blur border border-slate-700/80 px-3.5 py-2 rounded-xl shadow-sm">
+      <div class="flex items-center gap-2 self-start sm:self-center bg-white/10 dark:bg-slate-850/65 backdrop-blur border border-white/15 px-3.5 py-2 rounded-xl shadow-sm">
         <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-450 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
-        <span class="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Live Monitoring</span>
+        <span class="text-[9px] font-extrabold text-slate-200 uppercase tracking-widest">Live Monitoring</span>
       </div>
     </div>
   </div>
@@ -28,15 +28,15 @@
   {# Stats Grid #}
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
     {% for icon, label, value, color, link in stats_cards %}
-    <a href="{{ link }}" class="bg-white rounded-2xl p-5 border border-slate-200/50 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-300/80 hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between min-h-36">
+    <a href="{{ link }}" class="glass-card rounded-2xl p-5 border border-slate-200/40 dark:border-white/5 flex flex-col justify-between min-h-36">
       <div class="flex items-center justify-between">
-        <span class="text-xs text-slate-400 font-extrabold uppercase tracking-widest">{{ label }}</span>
-        <div class="w-8 h-8 rounded-lg {{ color }} flex items-center justify-center text-sm group-hover:scale-105 duration-200 transition-transform">
+        <span class="text-[9px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest">{{ label }}</span>
+        <div class="w-8 h-8 rounded-lg {{ color }} bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center text-sm group-hover:scale-105 duration-200 transition-transform">
           {{ icon }}
         </div>
       </div>
       <div class="mt-4">
-        <p class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ value }}</p>
+        <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ value }}</p>
       </div>
     </a>
     {% endfor %}
@@ -47,58 +47,58 @@
     
     {# Pending Card #}
     <a href="{% url 'web:admin_orders' %}?status=pending"
-       class="bg-amber-50/20 hover:bg-amber-50/50 border border-amber-200/50 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between relative overflow-hidden">
+       class="glass-card border-amber-350/35 dark:border-amber-500/10 bg-amber-500/[0.02] dark:bg-amber-500/[0.01] hover:bg-amber-500/[0.06] dark:hover:bg-amber-500/[0.04] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-amber-500/5 rounded-full pointer-events-none"></div>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-          <span class="text-xs font-extrabold text-amber-800 uppercase tracking-wider">Pending Confirmation</span>
+          <span class="text-[10px] font-extrabold text-amber-850 dark:text-amber-400 uppercase tracking-wider">Pending Confirmation</span>
         </div>
-        <span class="text-2xl font-black text-amber-600" x-text="'{{ stats.pending }}'"></span>
+        <span class="text-2xl font-black text-amber-600 dark:text-amber-400" x-text="'{{ stats.pending }}'"></span>
       </div>
       <div>
-        <div class="w-full bg-amber-100/50 rounded-full h-1.5 mb-2 overflow-hidden">
+        <div class="w-full bg-amber-200/20 dark:bg-amber-900/10 rounded-full h-1.5 mb-2 overflow-hidden">
           <div class="bg-amber-500 h-1.5 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.pending stats.total 100 %}{% else %}0{% endif %}%"></div>
         </div>
-        <p class="text-[9px] text-amber-700/80 font-bold uppercase tracking-widest">Requires Action & Confirm</p>
+        <p class="text-[9px] text-amber-700/80 dark:text-amber-400/80 font-bold uppercase tracking-widest">Requires Action & Confirm</p>
       </div>
     </a>
 
     {# Preparing Card #}
     <a href="{% url 'web:admin_orders' %}?status=preparing"
-       class="bg-orange-50/20 hover:bg-orange-50/50 border border-orange-200/50 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between relative overflow-hidden">
+       class="glass-card border-orange-350/35 dark:border-orange-500/10 bg-orange-500/[0.02] dark:bg-orange-500/[0.01] hover:bg-orange-500/[0.06] dark:hover:bg-orange-500/[0.04] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-orange-500/5 rounded-full pointer-events-none"></div>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-          <span class="text-xs font-extrabold text-orange-800 uppercase tracking-wider">Active In Kitchen</span>
+          <span class="text-[10px] font-extrabold text-orange-850 dark:text-orange-400 uppercase tracking-wider">Active In Kitchen</span>
         </div>
-        <span class="text-2xl font-black text-orange-600" x-text="'{{ stats.preparing }}'"></span>
+        <span class="text-2xl font-black text-orange-600 dark:text-orange-400" x-text="'{{ stats.preparing }}'"></span>
       </div>
       <div>
-        <div class="w-full bg-orange-100/50 rounded-full h-1.5 mb-2 overflow-hidden">
+        <div class="w-full bg-orange-200/20 dark:bg-orange-900/10 rounded-full h-1.5 mb-2 overflow-hidden">
           <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.preparing stats.total 100 %}{% else %}0{% endif %}%"></div>
         </div>
-        <p class="text-[9px] text-orange-700/80 font-bold uppercase tracking-widest">Currently Cooking</p>
+        <p class="text-[9px] text-orange-700/80 dark:text-orange-400/80 font-bold uppercase tracking-widest">Currently Cooking</p>
       </div>
     </a>
 
     {# Ready Card #}
     <a href="{% url 'web:admin_orders' %}?status=ready"
-       class="bg-emerald-50/20 hover:bg-emerald-50/50 border border-emerald-200/50 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between relative overflow-hidden">
+       class="glass-card border-emerald-350/35 dark:border-emerald-500/10 bg-emerald-500/[0.02] dark:bg-emerald-500/[0.01] hover:bg-emerald-500/[0.06] dark:hover:bg-emerald-500/[0.04] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/5 rounded-full pointer-events-none"></div>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-xs font-extrabold text-emerald-800 uppercase tracking-wider">Ready to Serve</span>
+          <span class="text-[10px] font-extrabold text-emerald-850 dark:text-emerald-400 uppercase tracking-wider">Ready to Serve</span>
         </div>
-        <span class="text-2xl font-black text-emerald-600" x-text="'{{ stats.ready }}'"></span>
+        <span class="text-2xl font-black text-emerald-600 dark:text-emerald-400" x-text="'{{ stats.ready }}'"></span>
       </div>
       <div>
-        <div class="w-full bg-emerald-100/50 rounded-full h-1.5 mb-2 overflow-hidden">
+        <div class="w-full bg-emerald-200/20 dark:bg-emerald-900/10 rounded-full h-1.5 mb-2 overflow-hidden">
           <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.ready stats.total 100 %}{% else %}0{% endif %}%"></div>
         </div>
-        <p class="text-[9px] text-emerald-700/80 font-bold uppercase tracking-widest">Needs delivery to table</p>
+        <p class="text-[9px] text-emerald-700/80 dark:text-emerald-400/80 font-bold uppercase tracking-widest">Needs delivery to table</p>
       </div>
     </a>
 
@@ -107,7 +107,7 @@
   {# Ready Alert Banner #}
   {% if stats.ready > 0 %}
   <a href="{% url 'web:admin_orders' %}?status=ready"
-     class="flex items-center gap-4 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl p-4.5 shadow-md shadow-emerald-500/5 hover:shadow-lg transition-all hover:scale-[1.002] active:scale-[0.998]">
+     class="flex items-center gap-4 bg-gradient-to-r from-emerald-650/90 to-teal-550/90 border border-emerald-500/20 text-white rounded-2xl p-4.5 shadow-md shadow-emerald-500/5 hover:shadow-lg transition-all hover:scale-[1.002] active:scale-[0.998]">
     <div class="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center text-lg flex-shrink-0 animate-bounce">🔔</div>
     <div>
       <p class="font-bold text-sm tracking-tight">{{ stats.ready }} order{{ stats.ready|pluralize }} ready to serve!</p>
@@ -119,51 +119,51 @@
 
   {# Quick Navigation Links #}
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <a href="{% url 'web:admin_orders' %}?paid=0" class="bg-white border border-slate-200/60 rounded-2xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group flex items-start gap-4">
-      <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+    <a href="{% url 'web:admin_orders' %}?paid=0" class="glass-card rounded-2xl p-5 border border-slate-200/40 dark:border-white/5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/15 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
       <div>
-        <p class="text-xs font-bold text-slate-800">Unpaid Invoices</p>
-        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Pending Cashout</p>
+        <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Unpaid Invoices</p>
+        <p class="text-[9px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider mt-1">Pending Cashout</p>
       </div>
     </a>
 
-    <a href="{% url 'web:staff_kitchen' %}" class="bg-white border border-slate-200/60 rounded-2xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group flex items-start gap-4">
-      <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+    <a href="{% url 'web:staff_kitchen' %}" class="glass-card rounded-2xl p-5 border border-slate-200/40 dark:border-white/5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-650 dark:text-orange-450 border border-orange-500/15 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
         </svg>
       </div>
       <div>
-        <p class="text-xs font-bold text-slate-800">Kitchen Display</p>
-        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Cooking Queue</p>
+        <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Kitchen Display</p>
+        <p class="text-[9px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider mt-1">Cooking Queue</p>
       </div>
     </a>
 
-    <a href="{% url 'web:admin_menu' %}" class="bg-white border border-slate-200/60 rounded-2xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group flex items-start gap-4">
-      <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+    <a href="{% url 'web:admin_menu' %}" class="glass-card rounded-2xl p-5 border border-slate-200/40 dark:border-white/5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/15 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       </div>
       <div>
-        <p class="text-xs font-bold text-slate-800">Manage Menu</p>
-        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Dishes & Pricing</p>
+        <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Manage Menu</p>
+        <p class="text-[9px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider mt-1">Dishes & Pricing</p>
       </div>
     </a>
 
-    <a href="{% url 'web:admin_logs' %}" class="bg-white border border-slate-200/60 rounded-2xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group flex items-start gap-4">
-      <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+    <a href="{% url 'web:admin_logs' %}" class="glass-card rounded-2xl p-5 border border-slate-200/40 dark:border-white/5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-550/15 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
         </svg>
       </div>
       <div>
-        <p class="text-xs font-bold text-slate-800">System Logs</p>
-        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">Audit Trails</p>
+        <p class="text-xs font-bold text-slate-800 dark:text-slate-200">System Logs</p>
+        <p class="text-[9px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider mt-1">Audit Trails</p>
       </div>
     </a>
   </div>

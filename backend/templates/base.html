@@ -7,9 +7,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    // Inline dark mode initialization to prevent flash
+    if (localStorage.getItem('dark_mode') === 'true' || (!('dark_mode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -33,11 +42,14 @@
     
     /* Modern soft background dot pattern */
     .bg-dots {
-      background-image: radial-gradient(rgba(16, 185, 129, 0.05) 1.5px, transparent 0);
+      background-image: radial-gradient(rgba(16, 185, 129, 0.04) 1.5px, transparent 0);
       background-size: 24px 24px;
     }
+    .dark .bg-dots {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1.5px, transparent 0);
+    }
     .bg-dots-dark {
-      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 0);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1.5px, transparent 0);
       background-size: 24px 24px;
     }
 
@@ -53,13 +65,167 @@
       background: #cbd5e1;
       border-radius: 9999px;
     }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
     ::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Glassmorphism System Classes */
+    .glass-panel {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .dark .glass-panel {
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glass-card {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.03);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.07);
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    }
+    .dark .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .glass-card-static {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.03);
+    }
+    .dark .glass-card-static {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .glass-input {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.2s ease-in-out;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.7);
+      border-color: #10b981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+    }
+    .dark .glass-input {
+      background: rgba(15, 23, 42, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+    .dark .glass-input:focus {
+      background: rgba(15, 23, 42, 0.5);
+      border-color: #10b981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+    }
+
+    .glass-btn-primary {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.8));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      transition: all 0.2s ease-in-out;
+    }
+    .glass-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9));
+    }
+    .glass-btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .glass-btn-secondary {
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(8px);
+      color: #334155;
+      transition: all 0.2s ease-in-out;
+    }
+    .glass-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+    .dark .glass-btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+    }
+    .dark .glass-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .glass-btn-success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      backdrop-filter: blur(8px);
+      color: #047857;
+      transition: all 0.2s ease-in-out;
+    }
+    .glass-btn-success:hover {
+      background: rgba(16, 185, 129, 0.3);
+    }
+    .dark .glass-btn-success {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #34d399;
+    }
+
+    .glass-btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      backdrop-filter: blur(8px);
+      color: #b91c1c;
+      transition: all 0.2s ease-in-out;
+    }
+    .glass-btn-danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+    .dark .glass-btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
     }
   </style>
   {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full bg-gray-50 bg-dots text-gray-900 antialiased font-sans">
+<body class="h-full bg-slate-50 dark:bg-slate-950 bg-dots text-slate-900 dark:text-slate-100 antialiased font-sans transition-colors duration-300">
+
+  <!-- Fixed ambient blobs for Sonoma look -->
+  <div class="fixed inset-0 -z-50 overflow-hidden pointer-events-none">
+    <div class="absolute -top-[10%] -left-[10%] w-[50%] h-[55%] rounded-full bg-blue-400/20 dark:bg-blue-600/10 blur-[130px] animate-pulse" style="animation-duration: 9s;"></div>
+    <div class="absolute -bottom-[10%] -right-[10%] w-[55%] h-[50%] rounded-full bg-purple-400/20 dark:bg-purple-600/10 blur-[130px] animate-pulse" style="animation-duration: 13s;"></div>
+    <div class="absolute top-[35%] left-[55%] w-[35%] h-[35%] rounded-full bg-teal-400/10 dark:bg-indigo-600/10 blur-[110px] animate-pulse" style="animation-duration: 11s;"></div>
+  </div>
 
   {# Global Toast Container #}
   <div x-data="{
@@ -82,8 +248,8 @@
            x-transition:leave-start="opacity-100 scale-100"
            x-transition:leave-end="translate-y-[-10px] opacity-0 scale-95"
            @click="if (toast.order_id && window.location.pathname.includes('/manage/')) window.location.href = `/manage/orders/${toast.order_id}/`"
-           :class="toast.order_id && window.location.pathname.includes('/manage/') ? 'cursor-pointer hover:border-slate-350 hover:shadow-[0_25px_50px_rgba(0,0,0,0.12)]' : ''"
-           class="bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-[0_20px_45px_rgba(0,0,0,0.1)] rounded-2xl p-4 flex gap-3.5 pointer-events-auto relative overflow-hidden transition-all duration-300 w-full">
+           :class="toast.order_id && window.location.pathname.includes('/manage/') ? 'cursor-pointer hover:border-slate-350 dark:hover:border-slate-700 hover:shadow-[0_25px_50px_rgba(0,0,0,0.12)]' : ''"
+           class="glass-panel shadow-[0_20px_45px_rgba(0,0,0,0.1)] rounded-2xl p-4 flex gap-3.5 pointer-events-auto relative overflow-hidden transition-all duration-300 w-full">
         <!-- Colored side gradient bar -->
         <div class="absolute left-0 top-0 bottom-0 w-1"
              :class="{
@@ -95,10 +261,10 @@
         <!-- Modern Status Icon with Glow -->
         <div class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center relative overflow-hidden"
              :class="{
-               'bg-emerald-50 text-emerald-600 border border-emerald-100': toast.type === 'success',
-               'bg-blue-50 text-blue-600 border border-blue-100': toast.type === 'info',
-               'bg-amber-50 text-amber-600 border border-amber-100': toast.type === 'warning',
-               'bg-red-50 text-red-600 border border-red-100': toast.type === 'error'
+               'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20': toast.type === 'success',
+               'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20': toast.type === 'info',
+               'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20': toast.type === 'warning',
+               'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20': toast.type === 'error'
              }">
           <template x-if="toast.type === 'success'">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,11 +289,11 @@
         </div>
         <!-- Content -->
         <div class="flex-1 min-w-0 pr-4">
-          <h4 class="font-bold text-gray-900 text-xs tracking-tight" x-text="toast.title"></h4>
-          <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed font-semibold" x-text="toast.message"></p>
+          <h4 class="font-bold text-slate-900 dark:text-slate-100 text-xs tracking-tight" x-text="toast.title"></h4>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed font-semibold" x-text="toast.message"></p>
         </div>
         <!-- Close button -->
-        <button @click.stop="toasts = toasts.filter(t => t.id !== toast.id)" class="absolute top-3 right-3 text-gray-400 hover:text-gray-650 transition-colors">
+        <button @click.stop="toasts = toasts.filter(t => t.id !== toast.id)" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-350 transition-colors">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
           </svg>

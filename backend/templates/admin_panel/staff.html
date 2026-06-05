@@ -4,69 +4,73 @@
 <div class="p-6 space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-lg font-bold text-gray-900">Staff</h2>
-      <p class="text-sm text-gray-400">{{ staff_list.count }} staff member{{ staff_list.count|pluralize }}</p>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">Staff Members</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{{ staff_list.count }} member{{ staff_list.count|pluralize }}</p>
     </div>
     <a href="{% url 'web:admin_staff_add' %}"
-       class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all shadow-lg shadow-emerald-200">
-      + Add Staff
+       class="glass-btn-primary flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Add Staff
     </a>
   </div>
 
   {% if not staff_list %}
-  <div class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-gray-100">
+  <div class="glass-card-static flex flex-col items-center justify-center py-20 text-center rounded-2xl p-6">
     <span class="text-5xl mb-4">👥</span>
-    <p class="font-semibold text-gray-700">No staff members yet</p>
-    <a href="{% url 'web:admin_staff_add' %}" class="mt-4 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">Add Staff</a>
+    <p class="font-bold text-slate-800 dark:text-slate-200">No staff members yet</p>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Start by adding your first staff member.</p>
+    <a href="{% url 'web:admin_staff_add' %}" class="glass-btn-primary mt-4 px-5 py-2 rounded-xl text-sm font-semibold inline-block">Add Staff</a>
   </div>
   {% else %}
-  <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+  <div class="glass-panel rounded-2xl overflow-hidden shadow-sm">
     <table class="w-full text-sm">
       <thead>
-        <tr class="border-b border-gray-100 bg-gray-50">
-          <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Staff Member</th>
-          <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Role</th>
-          <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Phone</th>
-          <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-          <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+        <tr class="border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/30">
+          <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Staff Member</th>
+          <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">Role</th>
+          <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden md:table-cell">Phone</th>
+          <th class="text-center px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+          <th class="text-right px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-50">
+      <tbody class="divide-y divide-slate-100/70 dark:divide-slate-800/50">
         {% for member in staff_list %}
-        <tr class="hover:bg-gray-50 transition-colors">
-          <td class="px-6 py-3">
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+          <td class="px-6 py-4">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl flex items-center justify-center text-sm font-bold text-emerald-700 flex-shrink-0">
+              <div class="w-9 h-9 bg-gradient-to-br from-emerald-400/30 to-teal-400/30 dark:from-emerald-500/20 dark:to-teal-500/20 rounded-xl flex items-center justify-center text-sm font-bold text-emerald-700 dark:text-emerald-400 flex-shrink-0 border border-emerald-200/50 dark:border-emerald-500/20">
                 {{ member.user.first_name|first|upper|default:member.user.username|first|upper }}
               </div>
               <div>
-                <p class="font-medium text-gray-900">{{ member.user.get_full_name|default:member.user.username }}</p>
-                <p class="text-xs text-gray-400">@{{ member.user.username }}</p>
+                <p class="font-semibold text-slate-900 dark:text-white">{{ member.user.get_full_name|default:member.user.username }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">@{{ member.user.username }}</p>
               </div>
             </div>
           </td>
-          <td class="px-4 py-3 hidden sm:table-cell">
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full
-              {% if member.role == 'admin' %}bg-purple-100 text-purple-700
-              {% elif member.role == 'manager' %}bg-blue-100 text-blue-700
-              {% elif member.role == 'chef' %}bg-orange-100 text-orange-700
-              {% else %}bg-gray-100 text-gray-600{% endif %}">
+          <td class="px-6 py-4 hidden sm:table-cell">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full
+              {% if member.role == 'admin' %}bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-400
+              {% elif member.role == 'manager' %}bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-400
+              {% elif member.role == 'chef' %}bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-400
+              {% else %}bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300{% endif %}">
               {{ member.get_role_display }}
             </span>
           </td>
-          <td class="px-4 py-3 text-gray-500 hidden md:table-cell">{{ member.phone|default:"—" }}</td>
-          <td class="px-4 py-3 text-center">
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full {% if member.is_active %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-400 hidden md:table-cell text-sm">{{ member.phone|default:"—" }}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full {% if member.is_active %}bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400{% else %}bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400{% endif %}">
               {% if member.is_active %}Active{% else %}Inactive{% endif %}
             </span>
           </td>
-          <td class="px-6 py-3">
+          <td class="px-6 py-4">
             <div class="flex items-center justify-end gap-2">
-              <a href="{% url 'web:admin_staff_edit' member.id %}" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg transition-colors font-medium">Edit</a>
+              <a href="{% url 'web:admin_staff_edit' member.id %}" class="glass-btn-secondary text-xs font-semibold px-3 py-1.5 rounded-lg transition-all">
+                Edit
+              </a>
               <form method="post" action="{% url 'web:admin_staff_delete' member.id %}"
                     onsubmit="return confirm('Remove {{ member.user.get_full_name|default:member.user.username }}? This will delete their account.')">
                 {% csrf_token %}
-                <button type="submit" class="text-xs bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg transition-colors font-medium">Remove</button>
+                <button type="submit" class="glass-btn-danger text-xs font-semibold px-3 py-1.5 rounded-lg transition-all">Remove</button>
               </form>
             </div>
           </td>

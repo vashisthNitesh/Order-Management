@@ -2,21 +2,24 @@
 {% load web_extras %}
 {% block title %}Orders – Staff{% endblock %}
 {% block body %}
-<div class="min-h-screen bg-slate-50/50 flex flex-col">
+<div class="min-h-screen flex flex-col">
   
   <!-- Navigation Header -->
-  <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-30 flex-shrink-0">
-    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-15">
+  <header class="glass-panel border-b border-slate-200/50 dark:border-slate-800/50 sticky top-0 z-30 flex-shrink-0">
+    <div class="max-w-3xl mx-auto px-4 flex items-center justify-between h-14">
       <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 bg-slate-900 rounded-xl flex items-center justify-center text-white text-base">📋</div>
-        <span class="font-extrabold text-slate-900 text-sm tracking-tight">Staff Portal</span>
+        <div class="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 rounded-xl flex items-center justify-center text-white text-sm shadow-md">📋</div>
+        <div>
+          <span class="font-extrabold text-slate-900 dark:text-white text-sm tracking-tight">Staff Portal</span>
+          <p class="text-[10px] text-slate-500 dark:text-slate-400 -mt-0.5">Order Management</p>
+        </div>
       </div>
-      <div class="flex items-center gap-3">
-        <span class="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200/40 px-2.5 py-1 rounded-xl capitalize">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-600 dark:text-slate-400 glass-card-static px-2.5 py-1 rounded-xl capitalize border border-slate-200/50 dark:border-slate-700/50">
           {{ request.user.staff_profile.role|default:"Staff" }}
         </span>
         <a href="{% url 'web:staff_logout' %}" 
-           class="w-9 h-9 border border-slate-200/80 bg-white hover:bg-slate-50 rounded-xl flex items-center justify-center text-slate-450 hover:text-rose-600 transition-all shadow-sm active:scale-95" 
+           class="w-9 h-9 glass-card rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-all active:scale-95" 
            title="Logout">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
@@ -26,37 +29,37 @@
     </div>
     
     <!-- Tabs Nav -->
-    <div class="border-t border-slate-100 bg-white/40">
-      <nav class="max-w-7xl mx-auto flex px-4">
+    <div class="border-t border-slate-200/40 dark:border-slate-800/40">
+      <nav class="max-w-3xl mx-auto flex px-4">
         <a href="{% url 'web:staff_dashboard' %}" 
-           class="flex-1 max-w-[200px] flex items-center justify-center gap-2 py-3 text-xs font-bold text-emerald-750 border-b-2 border-emerald-600">
-          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="flex-1 max-w-[200px] flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 dark:border-emerald-500 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <span>📋 Active Orders</span>
+          <span>Active Orders</span>
         </a>
         <a href="{% url 'web:staff_kitchen' %}" 
-           class="flex-1 max-w-[200px] flex items-center justify-center gap-2 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition-all border-b-2 border-transparent">
-          <svg class="w-4 h-4 text-slate-450" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="flex-1 max-w-[200px] flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all border-b-2 border-transparent">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <span>🍳 Kitchen Queue</span>
+          <span>Kitchen Queue</span>
         </a>
       </nav>
     </div>
   </header>
 
   <!-- Main Grid Area -->
-  <main class="flex-1 max-w-3xl mx-auto w-full p-4 space-y-5 overflow-y-auto">
+  <main class="flex-1 max-w-3xl mx-auto w-full p-4 space-y-4 overflow-y-auto">
     <!-- Status Filter pills -->
-    <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1.5">
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
       {% for tab_status, tab_label, tab_cls in status_tabs %}
       <a href="?status={{ tab_status }}"
         class="flex-shrink-0 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95
-          {% if status_filter == tab_status %}bg-slate-900 border-slate-900 text-white shadow-sm{% else %}bg-white border-slate-200 text-slate-650 hover:bg-slate-50{% endif %}">
+          {% if status_filter == tab_status %}bg-slate-900 dark:bg-slate-100 border-slate-900 dark:border-slate-100 text-white dark:text-slate-900 shadow-sm{% else %}glass-card border-slate-200/60 dark:border-slate-700/60 text-slate-600 dark:text-slate-400{% endif %}">
         <span>{{ tab_label }}</span>
         <span class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[9px] font-extrabold transition-all
-          {% if status_filter == tab_status %}bg-white/20 text-white{% else %}bg-slate-100 text-slate-500 border border-slate-200/50{% endif %}">
+          {% if status_filter == tab_status %}bg-white/20 dark:bg-slate-900/20 text-white dark:text-slate-900{% else %}bg-slate-100/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400{% endif %}">
           {% if tab_status %}
             {{ status_counts|get_dict_item:tab_status }}
           {% else %}
@@ -69,47 +72,47 @@
 
     <!-- Active Orders list -->
     {% if not orders %}
-    <div class="flex flex-col items-center justify-center py-20 text-center bg-white border border-slate-200/60 rounded-2xl p-6 shadow-sm">
-      <div class="w-16 h-16 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center text-2xl shadow-sm mb-4">📋</div>
-      <h4 class="font-bold text-slate-900 text-base">No active orders</h4>
-      <p class="text-sm text-slate-400 mt-1 max-w-xs mx-auto">No orders match the "{{ status_filter|default:'active' }}" status filter at this moment.</p>
+    <div class="glass-card flex flex-col items-center justify-center py-20 text-center rounded-2xl p-6">
+      <div class="w-16 h-16 glass-card-static border border-slate-200/50 dark:border-slate-700/50 rounded-full flex items-center justify-center text-2xl mb-4">📋</div>
+      <h4 class="font-bold text-slate-900 dark:text-white text-base">No active orders</h4>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto">No orders match the "{{ status_filter|default:'active' }}" status filter right now.</p>
     </div>
     {% else %}
     <div class="space-y-3.5">
       {% for order in orders %}
-      <div class="bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow" x-data="{expanded:false}">
+      <div class="glass-card rounded-2xl overflow-hidden" x-data="{expanded:false}">
         
         <!-- Main details -->
         <div class="p-4 md:p-5">
           <div class="flex items-start justify-between gap-3 mb-3.5">
             <div>
               <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-                <span class="font-mono font-bold text-slate-900 text-sm">#{{ order.order_number }}</span>
+                <span class="font-mono font-bold text-slate-900 dark:text-white text-sm">#{{ order.order_number }}</span>
                 {{ order.status|status_badge }}
               </div>
-              <div class="flex items-center gap-2.5 text-xs text-slate-400 font-semibold">
+              <div class="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 font-semibold">
                 {% if order.table %}
-                <span class="text-slate-600">Table {{ order.table.table_number }}</span>
-                <span class="text-slate-200">•</span>
+                <span class="text-slate-700 dark:text-slate-300">Table {{ order.table.table_number }}</span>
+                <span class="text-slate-300 dark:text-slate-600">•</span>
                 {% endif %}
                 <span>{{ order.customer_name|default:"Walk-in Customer" }}</span>
               </div>
             </div>
-            <div class="text-right">
-              <p class="font-extrabold text-slate-900 text-base">{{ order.total_amount|inr }}</p>
-              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">{{ order.items.count }} item{{ order.items.count|pluralize }}</p>
+            <div class="text-right flex-shrink-0">
+              <p class="font-extrabold text-slate-900 dark:text-white text-base">{{ order.total_amount|inr }}</p>
+              <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">{{ order.items.count }} item{{ order.items.count|pluralize }}</p>
             </div>
           </div>
 
           <!-- Items Expand Toggle -->
           <button @click="expanded=!expanded" 
-                  class="w-full flex items-center justify-between text-xs text-slate-500 hover:text-slate-800 py-2.5 border-t border-slate-100 transition-colors font-semibold select-none focus:outline-none">
+                  class="w-full flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-2.5 border-t border-slate-200/40 dark:border-slate-700/40 transition-colors font-semibold select-none focus:outline-none">
             <span class="truncate pr-4 text-left">
               {% for item in order.items.all|slice:":3" %}{{ item.quantity }}× {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
               {% if order.items.count > 3 %} +{{ order.items.count|add:"-3" }} more{% endif %}
             </span>
-            <span class="flex items-center gap-1 text-[10px] text-slate-400 group flex-shrink-0">
-              <span x-text="expanded ? 'Hide Details' : 'Show Details'"></span>
+            <span class="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500 flex-shrink-0">
+              <span x-text="expanded ? 'Hide' : 'Details'"></span>
               <svg class="w-3.5 h-3.5 transform transition-transform duration-200" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
               </svg>
@@ -117,19 +120,19 @@
           </button>
 
           <!-- Collapsible Items details -->
-          <div x-show="expanded" x-cloak x-collapse class="space-y-2.5 border-t border-slate-100 pt-3.5 mt-1">
+          <div x-show="expanded" x-cloak x-collapse class="space-y-2.5 border-t border-slate-200/30 dark:border-slate-700/30 pt-3.5 mt-1">
             {% for item in order.items.all %}
             <div class="flex justify-between items-center text-xs">
               <span class="flex items-center gap-2">
-                <span class="w-5 h-5 bg-slate-50 border border-slate-200/80 text-slate-700 rounded-md font-bold flex items-center justify-center text-[10px] shadow-sm">{{ item.quantity }}</span>
-                <span class="text-slate-800 font-semibold">{{ item.menu_item.name }}</span>
+                <span class="w-5 h-5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 rounded-md font-bold flex items-center justify-center text-[10px]">{{ item.quantity }}</span>
+                <span class="text-slate-800 dark:text-slate-200 font-semibold">{{ item.menu_item.name }}</span>
               </span>
-              <span class="font-bold text-slate-900">{{ item.subtotal|inr }}</span>
+              <span class="font-bold text-slate-900 dark:text-white">{{ item.subtotal|inr }}</span>
             </div>
             {% endfor %}
             {% if order.special_instructions %}
-            <div class="bg-amber-50/40 border border-amber-200/60 rounded-xl p-3 text-xs text-amber-800 font-semibold leading-relaxed flex gap-2 mt-2">
-              <svg class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-amber-50/60 dark:bg-amber-500/10 border border-amber-200/60 dark:border-amber-500/20 rounded-xl p-3 text-xs text-amber-800 dark:text-amber-400 font-semibold leading-relaxed flex gap-2 mt-2">
+              <svg class="w-4 h-4 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <span>{{ order.special_instructions }}</span>
@@ -143,28 +146,28 @@
           {% if order.status == 'pending' %}
           <form method="post" action="{% url 'web:update_order_status' order.id %}?status=confirmed" class="flex-1">
             {% csrf_token %}
-            <button type="submit" class="w-full bg-slate-950 hover:bg-slate-900 text-white rounded-xl py-2.5 text-xs font-extrabold shadow-sm transition-all active:scale-[0.98]">
+            <button type="submit" class="w-full glass-btn-primary rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Confirm Order
             </button>
           </form>
           {% elif order.status == 'confirmed' %}
           <form method="post" action="{% url 'web:update_order_status' order.id %}?status=preparing" class="flex-1">
             {% csrf_token %}
-            <button type="submit" class="w-full bg-slate-950 hover:bg-slate-900 text-white rounded-xl py-2.5 text-xs font-extrabold shadow-sm transition-all active:scale-[0.98]">
+            <button type="submit" class="w-full glass-btn-primary rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Start Cooking
             </button>
           </form>
           {% elif order.status == 'preparing' %}
           <form method="post" action="{% url 'web:update_order_status' order.id %}?status=ready" class="flex-1">
             {% csrf_token %}
-            <button type="submit" class="w-full bg-slate-950 hover:bg-slate-900 text-white rounded-xl py-2.5 text-xs font-extrabold shadow-sm transition-all active:scale-[0.98]">
+            <button type="submit" class="w-full glass-btn-primary rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Mark Ready
             </button>
           </form>
           {% elif order.status == 'ready' %}
           <form method="post" action="{% url 'web:update_order_status' order.id %}?status=served" class="flex-1">
             {% csrf_token %}
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-2.5 text-xs font-extrabold shadow-sm transition-all active:scale-[0.98]">
+            <button type="submit" class="w-full glass-btn-success rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Mark Served
             </button>
           </form>
@@ -173,7 +176,7 @@
           {% if order.status not in 'served,cancelled' %}
           <form method="post" action="{% url 'web:update_order_status' order.id %}?status=cancelled" onsubmit="return confirm('Cancel order #{{ order.order_number }}?')">
             {% csrf_token %}
-            <button type="submit" class="px-4 py-2.5 border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-bold transition-all active:scale-[0.98]">
+            <button type="submit" class="glass-btn-danger px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-[0.98]">
               Cancel
             </button>
           </form>
