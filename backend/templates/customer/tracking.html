@@ -166,18 +166,21 @@
       localStorage.removeItem('active_order_' + tableId);
     {% endif %}
 
-    let lastSeenId = parseInt(sessionStorage.getItem('tracking_last_seen_notification_id_' + orderId) || '0');
+    const stored = sessionStorage.getItem('customer_last_seen_notification_id_order_' + orderId);
+    let lastSeenId = stored !== null ? parseInt(stored) : null;
 
     const pollTrackingNotification = async () => {
+      const isFirst = lastSeenId === null;
+      const queryId = isFirst ? 0 : lastSeenId;
       try {
-        const res = await fetch(`/api/orders/notifications/poll/?order_id=${orderId}&last_seen_id=${lastSeenId}`);
+        const res = await fetch(`/api/orders/notifications/poll/?order_id=${orderId}&last_seen_id=${queryId}`);
         if (res.status === 200) {
           const data = await res.json();
           const notifications = data.notifications || [];
           if (notifications.length > 0) {
             const maxId = Math.max(...notifications.map(n => n.id));
             
-            if (lastSeenId > 0) {
+            if (!isFirst) {
               notifications.forEach(n => {
                 playNotificationSound();
                 
@@ -197,13 +200,16 @@
             }
             
             lastSeenId = maxId;
-            sessionStorage.setItem('tracking_last_seen_notification_id_' + orderId, lastSeenId);
+            sessionStorage.setItem('customer_last_seen_notification_id_order_' + orderId, lastSeenId);
+          } else if (isFirst) {
+            lastSeenId = 0;
+            sessionStorage.setItem('customer_last_seen_notification_id_order_' + orderId, 0);
           }
         }
       } catch(e) {}
     };
 
-    if (lastSeenId === 0) {
+    if (lastSeenId === null) {
       pollTrackingNotification().then(() => {
         setInterval(pollTrackingNotification, 5000);
       });

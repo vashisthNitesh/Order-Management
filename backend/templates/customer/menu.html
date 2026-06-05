@@ -435,7 +435,7 @@ function menuApp(tableId) {
     orderError: '',
     customerName: '',
     specialInstructions: '',
-    lastSeenNotificationId: parseInt(sessionStorage.getItem('customer_last_seen_notification_id_' + tableId) || '0'),
+    lastSeenNotificationId: null,
 
     get sectionTitle() {
       const tabs = { popular: 'Popular Items', specials: "Chef's Specials" };
@@ -464,10 +464,13 @@ function menuApp(tableId) {
         this.specialInstructions = ACTIVE_ORDER_SPECIAL_INSTRUCTIONS;
       }
       if (this.activeOrder) {
+        const stored = sessionStorage.getItem('customer_last_seen_notification_id_order_' + this.activeOrder.id);
+        this.lastSeenNotificationId = stored !== null ? parseInt(stored) : null;
+        
         this.refreshActiveOrderStatus();
         
         // Initial setup for notification polling watermark
-        if (this.lastSeenNotificationId === 0) {
+        if (this.lastSeenNotificationId === null) {
           this.pollActiveOrderNotifications().then(() => {
             setInterval(() => this.pollActiveOrderNotifications(), 5000);
           });
@@ -485,14 +488,16 @@ function menuApp(tableId) {
 
     async pollActiveOrderNotifications() {
       if (!this.activeOrder) return;
+      const isFirst = this.lastSeenNotificationId === null;
+      const queryId = isFirst ? 0 : this.lastSeenNotificationId;
       try {
-        const res = await fetch(`/api/orders/notifications/poll/?order_id=${this.activeOrder.id}&last_seen_id=${this.lastSeenNotificationId}`);
+        const res = await fetch(`/api/orders/notifications/poll/?order_id=${this.activeOrder.id}&last_seen_id=${queryId}`);
         if (res.status === 200) {
           const data = await res.json();
           const notifications = data.notifications || [];
           if (notifications.length > 0) {
             const maxId = Math.max(...notifications.map(n => n.id));
-            if (this.lastSeenNotificationId > 0) {
+            if (!isFirst) {
               notifications.forEach(n => {
                 playNotificationSound();
                 window.dispatchEvent(new CustomEvent('show-toast', {
@@ -502,7 +507,10 @@ function menuApp(tableId) {
               this.refreshActiveOrderStatus();
             }
             this.lastSeenNotificationId = maxId;
-            sessionStorage.setItem('customer_last_seen_notification_id_' + tableId, this.lastSeenNotificationId);
+            sessionStorage.setItem('customer_last_seen_notification_id_order_' + this.activeOrder.id, this.lastSeenNotificationId);
+          } else if (isFirst) {
+            this.lastSeenNotificationId = 0;
+            sessionStorage.setItem('customer_last_seen_notification_id_order_' + this.activeOrder.id, 0);
           }
         }
       } catch(e) {}
