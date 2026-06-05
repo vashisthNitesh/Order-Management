@@ -36,12 +36,10 @@
               if (res.status === 200) {
                 const data = await res.json();
                 const newCount = data.count || 0;
-                if (newCount > count && count > 0) {
-                  try {
-                    new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-600.wav').play();
-                  } catch(e) {}
-                }
-                count = newCount;
+                 if (newCount > count && count > 0) {
+                   playNotificationSound();
+                 }
+                 count = newCount;
               }
             } catch(e) {}
           };
@@ -114,40 +112,59 @@
              }" 
              class="relative">
           <button @click="open = !open; if(open) markAllRead()" 
-                  class="relative p-2.5 text-gray-500 hover:text-gray-700 bg-gray-150/80 hover:bg-gray-200 rounded-xl transition-all active:scale-95 focus:outline-none">
+                  class="relative p-2.5 text-slate-500 hover:text-emerald-600 bg-slate-100 hover:bg-emerald-50 rounded-xl transition-all duration-300 active:scale-95 focus:outline-none">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
-            <span x-show="unreadCount > 0" x-text="unreadCount" 
-                  class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-4 h-4 shadow-sm animate-bounce">
+            <span x-show="unreadCount > 0" class="absolute -top-0.5 -right-0.5 flex h-4 w-4">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-white text-[8px] font-extrabold items-center justify-center" x-text="unreadCount"></span>
             </span>
           </button>
 
           <div x-show="open" @click.away="open = false" x-cloak
-               x-transition:enter="transition ease-out duration-100 transform opacity-0 scale-95"
+               x-transition:enter="transition ease-out duration-200 transform opacity-0 scale-95"
                x-transition:enter-end="opacity-100 scale-100"
-               x-transition:leave="transition ease-in duration-75 transform opacity-100 scale-100"
-               class="absolute right-0 mt-2 w-80 bg-white border border-gray-150 rounded-2xl shadow-xl z-50 overflow-hidden">
-            <div class="px-4 py-3 border-b border-gray-150 flex items-center justify-between bg-gray-50">
-              <h3 class="font-bold text-gray-900 text-xs">Notifications</h3>
-              <button @click="notifications = []; unreadCount = 0" class="text-[10px] text-gray-400 hover:text-red-500 transition-colors">Clear all</button>
+               x-transition:leave="transition ease-in duration-100 transform opacity-100 scale-100"
+               class="absolute right-0 mt-2.5 w-80 bg-white border border-slate-150 rounded-2xl shadow-xl shadow-slate-900/10 z-50 overflow-hidden">
+            
+            <div class="px-4.5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🔔</span>
+                <h3 class="font-bold text-slate-800 text-xs">Activity Alerts</h3>
+              </div>
+              <button @click="notifications = []; unreadCount = 0" 
+                      class="text-[10px] font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-wider">
+                Clear all
+              </button>
             </div>
             
-            <div class="max-h-64 overflow-y-auto divide-y divide-gray-100">
+            <div class="max-h-72 overflow-y-auto divide-y divide-slate-100">
               <template x-if="notifications.length === 0">
-                <div class="p-8 text-center text-gray-400 text-xs">
-                  <span>🔔 No new notifications</span>
+                <div class="p-10 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
+                  <span class="text-3xl">☕</span>
+                  <p class="text-[11px] font-medium">No activity notifications yet</p>
                 </div>
               </template>
               <template x-for="item in notifications">
-                <div class="p-3.5 hover:bg-gray-50/50 transition-colors flex gap-2" :class="item.unread ? 'bg-emerald-50/20' : ''">
-                  <span class="text-base flex-shrink-0">🍽️</span>
-                  <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-gray-900 text-xs" x-text="item.title"></p>
-                    <p class="text-[11px] text-gray-500 mt-0.5" x-text="item.message"></p>
-                    <p class="text-[9px] text-gray-400 mt-1" x-text="item.created_at"></p>
+                <div class="p-4 hover:bg-slate-50/50 transition-colors flex gap-3 relative pl-5"
+                     :class="item.unread ? 'bg-emerald-50/20' : ''">
+                  <!-- Side accent color block -->
+                  <div class="absolute left-0 top-0 bottom-0 w-1"
+                       :class="item.title.includes('Placed') || item.title.includes('Paid') ? 'bg-emerald-400' : 'bg-blue-400'"></div>
+                  <!-- Icon placeholder -->
+                  <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-sm flex-shrink-0">
+                    <span x-text="item.title.includes('Placed') ? '📦' : item.title.includes('Paid') ? '💰' : '🔔'"></span>
                   </div>
-                  <span x-show="item.unread" class="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-start">
+                      <p class="font-bold text-slate-900 text-xs truncate pr-1" x-text="item.title"></p>
+                      <span class="text-[9px] text-slate-400 flex-shrink-0 font-medium" x-text="item.created_at"></span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1 leading-relaxed" x-text="item.message"></p>
+                  </div>
+                  <!-- Unread indicator dot -->
+                  <span x-show="item.unread" class="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 flex-shrink-0 animate-pulse"></span>
                 </div>
               </template>
             </div>

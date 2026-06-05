@@ -59,31 +59,59 @@
        @show-toast.window="addToast($event.detail.title, $event.detail.message, $event.detail.type)"
        class="fixed top-6 right-6 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
     <template x-for="toast in toasts" :key="toast.id">
-      <div x-transition:enter="transition ease-out duration-300"
-           x-transition:enter-start="-translate-y-4 opacity-0 scale-95"
-           x-transition:enter-end="translate-y-0 opacity-100 scale-100"
-           x-transition:leave="transition ease-in duration-200"
-           x-transition:leave-start="translate-y-0 opacity-100 scale-100"
-           x-transition:leave-end="translate-x-12 opacity-0"
-           class="bg-white/95 backdrop-blur-md border border-gray-150 shadow-2xl rounded-2xl p-4 flex gap-3 pointer-events-auto relative overflow-hidden transition-all duration-300">
-        <!-- Colored side bar -->
-        <div class="absolute left-0 top-0 bottom-0 w-1.5"
+      <div x-transition:enter="transition ease-out duration-400 transform"
+           x-transition:enter-start="translate-y-[-24px] translate-x-[24px] opacity-0 scale-90"
+           x-transition:enter-end="translate-y-0 translate-x-0 opacity-100 scale-100"
+           x-transition:leave="transition ease-in duration-200 transform"
+           x-transition:leave-start="opacity-100 scale-100"
+           x-transition:leave-end="translate-x-[48px] opacity-0 scale-95"
+           class="bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-slate-950/35 rounded-2xl p-4 flex gap-3.5 pointer-events-auto relative overflow-hidden transition-all duration-300 w-80">
+        <!-- Colored side gradient bar -->
+        <div class="absolute left-0 top-0 bottom-0 w-1"
              :class="{
-               'bg-emerald-500': toast.type === 'success',
-               'bg-blue-500': toast.type === 'info',
-               'bg-amber-500': toast.type === 'warning',
-               'bg-red-500': toast.type === 'error'
+               'bg-gradient-to-b from-emerald-400 to-teal-500': toast.type === 'success',
+               'bg-gradient-to-b from-blue-400 to-indigo-500': toast.type === 'info',
+               'bg-gradient-to-b from-amber-400 to-orange-500': toast.type === 'warning',
+               'bg-gradient-to-b from-red-400 to-pink-500': toast.type === 'error'
              }"></div>
-        <!-- Icon -->
-        <div class="text-xl flex-shrink-0" x-text="toast.type === 'success' ? '🔔' : toast.type === 'info' ? 'ℹ️' : toast.type === 'warning' ? '⚠️' : '🚨'"></div>
-        <div class="pl-1.5 pr-4">
-          <h4 class="font-bold text-gray-900 text-xs" x-text="toast.title"></h4>
-          <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed" x-text="toast.message"></p>
+        <!-- Modern Status Icon with Glow -->
+        <div class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center relative overflow-hidden"
+             :class="{
+               'bg-emerald-500/10 text-emerald-400': toast.type === 'success',
+               'bg-blue-500/10 text-blue-400': toast.type === 'info',
+               'bg-amber-500/10 text-amber-400': toast.type === 'warning',
+               'bg-red-500/10 text-red-400': toast.type === 'error'
+             }">
+          <template x-if="toast.type === 'success'">
+            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </template>
+          <template x-if="toast.type === 'info'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </template>
+          <template x-if="toast.type === 'warning'">
+            <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </template>
+          <template x-if="toast.type === 'error'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </template>
+        </div>
+        <!-- Content -->
+        <div class="flex-1 min-w-0 pr-4">
+          <h4 class="font-bold text-white text-xs tracking-wide" x-text="toast.title"></h4>
+          <p class="text-[11px] text-slate-400 mt-1 leading-relaxed font-medium" x-text="toast.message"></p>
         </div>
         <!-- Close button -->
-        <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors">
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="absolute top-2 right-2 text-slate-500 hover:text-slate-300 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
@@ -92,6 +120,65 @@
 
   {% block body %}{% endblock %}
   {% block extra_scripts %}{% endblock %}
+
+  <script>
+    // Premium Synthesized Chime using Web Audio API
+    // This solves browser autoplay block and eliminates external link issues.
+    let audioUnlocked = false;
+    let audioContext = null;
+    
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+        audioUnlocked = true;
+        document.removeEventListener('click', unlockAudio);
+        document.removeEventListener('touchstart', unlockAudio);
+      } catch(e) {}
+    }
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+    
+    function playNotificationSound() {
+      try {
+        const ctx = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+        
+        // Pitch 1: 659.25Hz (E5)
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(659.25, ctx.currentTime);
+        gain1.gain.setValueAtTime(0, ctx.currentTime);
+        gain1.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.03);
+        gain1.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(ctx.currentTime);
+        osc1.stop(ctx.currentTime + 0.3);
+
+        // Pitch 2: 987.77Hz (B5) delayed for a premium double chime
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(987.77, ctx.currentTime + 0.08);
+        gain2.gain.setValueAtTime(0, ctx.currentTime + 0.08);
+        gain2.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.11);
+        gain2.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(ctx.currentTime + 0.08);
+        osc2.stop(ctx.currentTime + 0.45);
+      } catch(e) {
+        console.log('Audio synthesis error:', e);
+      }
+    }
+  </script>
 
   {% if request.user.is_authenticated %}
   <script>
@@ -111,9 +198,7 @@
               
               if (lastSeenId > 0) {
                 notifications.forEach(n => {
-                  try {
-                    new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-600.wav').play();
-                  } catch(e) {}
+                  playNotificationSound();
                   
                   window.dispatchEvent(new CustomEvent('show-toast', {
                     detail: {

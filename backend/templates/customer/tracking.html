@@ -159,6 +159,13 @@
 <script>
   (function() {
     const orderId = {{ order.id }};
+    const tableId = {{ order.table.id }};
+    
+    // Immediately clear active order from localStorage if paid, cancelled, or served
+    {% if order.is_paid or order.status == 'cancelled' or order.status == 'served' %}
+      localStorage.removeItem('active_order_' + tableId);
+    {% endif %}
+
     let lastSeenId = parseInt(sessionStorage.getItem('tracking_last_seen_notification_id_' + orderId) || '0');
 
     const pollTrackingNotification = async () => {
@@ -172,9 +179,7 @@
             
             if (lastSeenId > 0) {
               notifications.forEach(n => {
-                try {
-                  new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-600.wav').play();
-                } catch(e) {}
+                playNotificationSound();
                 
                 window.dispatchEvent(new CustomEvent('show-toast', {
                   detail: {
