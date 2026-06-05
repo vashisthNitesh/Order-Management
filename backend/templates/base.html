@@ -149,31 +149,46 @@
           ctx.resume();
         }
         
-        // Pitch 1: 659.25Hz (E5)
+        const now = ctx.currentTime;
+        
+        // Tone 1: A5 (880Hz) - Sine wave (pure chime)
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
         osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(659.25, ctx.currentTime);
-        gain1.gain.setValueAtTime(0, ctx.currentTime);
-        gain1.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.03);
-        gain1.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
+        osc1.frequency.setValueAtTime(880.00, now);
+        gain1.gain.setValueAtTime(0, now);
+        gain1.gain.linearRampToValueAtTime(0.35, now + 0.02);
+        gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
         osc1.connect(gain1);
         gain1.connect(ctx.destination);
-        osc1.start(ctx.currentTime);
-        osc1.stop(ctx.currentTime + 0.3);
+        osc1.start(now);
+        osc1.stop(now + 0.6);
 
-        // Pitch 2: 987.77Hz (B5) delayed for a premium double chime
+        // Tone 2: C#6 (1108.73Hz) - Sine wave, slightly delayed for cascade effect
         const osc2 = ctx.createOscillator();
         const gain2 = ctx.createGain();
         osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(987.77, ctx.currentTime + 0.08);
-        gain2.gain.setValueAtTime(0, ctx.currentTime + 0.08);
-        gain2.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.11);
-        gain2.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+        osc2.frequency.setValueAtTime(1108.73, now + 0.08);
+        gain2.gain.setValueAtTime(0, now + 0.08);
+        gain2.gain.linearRampToValueAtTime(0.35, now + 0.10);
+        gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
         osc2.connect(gain2);
         gain2.connect(ctx.destination);
-        osc2.start(ctx.currentTime + 0.08);
-        osc2.stop(ctx.currentTime + 0.45);
+        osc2.start(now + 0.08);
+        osc2.stop(now + 0.7);
+
+        // Tone 3: E6 (1318.51Hz) - High bell tone, slightly more delayed
+        const osc3 = ctx.createOscillator();
+        const gain3 = ctx.createGain();
+        osc3.type = 'sine';
+        osc3.frequency.setValueAtTime(1318.51, now + 0.16);
+        gain3.gain.setValueAtTime(0, now + 0.16);
+        gain3.gain.linearRampToValueAtTime(0.25, now + 0.18);
+        gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+        osc3.connect(gain3);
+        gain3.connect(ctx.destination);
+        osc3.start(now + 0.16);
+        osc3.stop(now + 0.8);
       } catch(e) {
         console.log('Audio synthesis error:', e);
       }

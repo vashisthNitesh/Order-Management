@@ -69,6 +69,48 @@ def menu(request, table_id):
         end_date__gte=now,
     )
 
+    edit_mode = request.GET.get('edit') == '1'
+    active_order = None
+    active_order_items_json = '[]'
+    active_order_id = None
+    active_order_customer_name = ''
+    active_order_special_instructions = ''
+
+    customer_orders = request.session.get('customer_orders', [])
+    if customer_orders:
+        active_order = Order.objects.filter(
+            id__in=customer_orders,
+            table=table,
+            is_paid=False
+        ).first()
+
+    if active_order and edit_mode:
+        active_order_id = active_order.id
+        active_order_customer_name = active_order.customer_name
+        active_order_special_instructions = active_order.special_instructions
+        items_list = []
+        for order_item in active_order.items.select_related('menu_item'):
+            mi = order_item.menu_item
+            if mi:
+                image_url = None
+                if mi.image:
+                    image_url = request.build_absolute_uri(mi.image.url)
+                items_list.append({
+                    'id': mi.id,
+                    'name': mi.name,
+                    'description': mi.description,
+                    'price': str(mi.price),
+                    'food_type': mi.food_type,
+                    'is_popular': mi.is_popular,
+                    'is_special': mi.is_special,
+                    'preparation_time': mi.preparation_time,
+                    'calories': mi.calories,
+                    'image_url': image_url,
+                    'quantity': order_item.quantity,
+                    'special_instructions': order_item.special_instructions,
+                })
+        active_order_items_json = json.dumps(items_list)
+
     return render(request, 'customer/menu.html', {
         'table': table,
         'restaurant': restaurant,
@@ -78,6 +120,11 @@ def menu(request, table_id):
         'offers': offers,
         'popular_json': json.dumps([_item_to_dict(i, request) for i in popular_items]),
         'special_json': json.dumps([_item_to_dict(i, request) for i in special_items]),
+        'is_edit_mode': edit_mode,
+        'active_order_id': active_order_id,
+        'active_order_items_json': active_order_items_json,
+        'active_order_customer_name': active_order_customer_name,
+        'active_order_special_instructions': active_order_special_instructions,
     })
 
 
@@ -102,13 +149,31 @@ def place_order(request, table_id):
     if not items_data:
         return JsonResponse({'error': 'Cart is empty'}, status=400)
 
-    order = Order.objects.create(
-        restaurant=table.restaurant,
-        table=table,
-        special_instructions=body.get('special_instructions', ''),
-        customer_name=body.get('customer_name', ''),
-        status=Order.PENDING,
-    )
+    active_order_id = body.get('active_order_id')
+    is_edit = False
+    order = None
+
+    if active_order_id:
+        order = get_object_or_404(Order, id=active_order_id)
+        if not _customer_can_edit(request, order):
+            return JsonResponse({'error': 'You cannot edit this order.'}, status=403)
+        is_edit = True
+
+    if is_edit:
+        # Update existing order details and clear old items
+        order.special_instructions = body.get('special_instructions', '')
+        order.customer_name = body.get('customer_name', '')
+        order.save(update_fields=['special_instructions', 'customer_name'])
+        order.items.all().delete()
+    else:
+        # Create a new order
+        order = Order.objects.create(
+            restaurant=table.restaurant,
+            table=table,
+            special_instructions=body.get('special_instructions', ''),
+            customer_name=body.get('customer_name', ''),
+            status=Order.PENDING,
+        )
 
     total = 0
     item_names = []
@@ -131,24 +196,47 @@ def place_order(request, table_id):
 
     order.total_amount = total
     order.save(update_fields=['total_amount'])
-    OrderStatusHistory.objects.create(order=order, status=Order.PENDING)
-    OrderLog.objects.create(
-        order=order, action='created', actor_type='customer',
-        actor_name=body.get('customer_name', '') or 'Customer',
-        details=', '.join(item_names),
-    )
 
-    # Store order in session so customer can edit it later
-    customer_orders = request.session.get('customer_orders', [])
-    if order.id not in customer_orders:
-        customer_orders.append(order.id)
-        request.session['customer_orders'] = customer_orders
-        request.session.modified = True
+    if is_edit:
+        # Log update and notify staff
+        OrderLog.objects.create(
+            order=order, action='edited', actor_type='customer',
+            actor_name=body.get('customer_name', '') or 'Customer',
+            details='Updated items: ' + ', '.join(item_names),
+        )
+        try:
+            from apps.orders.utils import send_notification
+            from apps.orders.models import Notification
+            table_num = order.table.table_number if order.table else 'N/A'
+            send_notification(
+                restaurant=order.restaurant,
+                order=order,
+                recipient_type=Notification.STAFF,
+                title="Order Updated by Customer",
+                message=f"Order #{order.order_number} for Table {table_num} was updated."
+            )
+        except Exception:
+            pass
+    else:
+        OrderStatusHistory.objects.create(order=order, status=Order.PENDING)
+        OrderLog.objects.create(
+            order=order, action='created', actor_type='customer',
+            actor_name=body.get('customer_name', '') or 'Customer',
+            details=', '.join(item_names),
+        )
+
+        # Store order in session so customer can edit it later
+        customer_orders = request.session.get('customer_orders', [])
+        if order.id not in customer_orders:
+            customer_orders.append(order.id)
+            request.session['customer_orders'] = customer_orders
+            request.session.modified = True
 
     return JsonResponse({
         'success': True,
         'order_id': order.id,
         'order_number': order.order_number,
+        'status': order.status,
     })
 
 

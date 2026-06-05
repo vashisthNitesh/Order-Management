@@ -142,7 +142,7 @@
     {# Actions #}
     <div class="flex flex-col gap-3 pt-2">
       {% if can_edit %}
-      <a href="{% url 'web:customer_order_edit' order.order_number %}"
+      <a href="{% url 'web:menu' order.table.id %}?edit=1"
          class="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl py-3.5 font-bold hover:from-emerald-700 hover:to-teal-600 shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all text-sm">
         ✏️ Edit Order Items
       </a>
@@ -161,8 +161,8 @@
     const orderId = {{ order.id }};
     const tableId = {{ order.table.id }};
     
-    // Immediately clear active order from localStorage if paid, cancelled, or served
-    {% if order.is_paid or order.status == 'cancelled' or order.status == 'served' %}
+    // Immediately clear active order from localStorage if paid or cancelled
+    {% if order.is_paid or order.status == 'cancelled' %}
       localStorage.removeItem('active_order_' + tableId);
     {% endif %}
 

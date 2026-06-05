@@ -3,7 +3,7 @@
 {% block title %}Menu – {{ restaurant.name }}{% endblock %}
 
 {% block body %}
-<div x-data="menuApp({{ table.id }})" x-init="init()" class="min-h-screen bg-gray-50 pb-32">
+<div x-data="menuApp({{ table.id }})" class="min-h-screen bg-gray-50 pb-32">
 
   {# ── Header ─────────────────────────────────────────────────────── #}
   <div class="bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-600 relative overflow-hidden">
@@ -45,7 +45,7 @@
   <div class="px-4 py-5 space-y-5">
 
     {# ── Active Order Tracker Banner ─────────────────────────────────── #}
-    <template x-if="activeOrder">
+    <template x-if="activeOrder && !isEditingOrder">
       <div class="bg-emerald-50 border border-emerald-150 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -66,6 +66,29 @@
             Track Live Status →
           </a>
         </div>
+      </div>
+    </template>
+
+    {# ── Editing Mode Banner ─────────────────────────────────────────── #}
+    <template x-if="isEditingOrder">
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+            ✏️
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-850">
+              Editing Order <span class="font-mono text-amber-700 font-extrabold" x-text="'#' + (activeOrder ? activeOrder.number : '')"></span>
+            </p>
+            <p class="text-[10px] text-amber-600 font-semibold">
+              Modifying items in your active order
+            </p>
+          </div>
+        </div>
+        <button @click="cancelEditing()"
+           class="bg-white hover:bg-gray-100 border border-amber-250 text-amber-700 text-[11px] font-bold px-3 py-1.5 rounded-xl transition-all shadow-sm active:scale-95">
+          Cancel Edit
+        </button>
       </div>
     </template>
 
@@ -302,7 +325,7 @@
           <button @click="clearCart()" class="px-3 py-2 text-xs text-red-500 border border-red-200 rounded-xl hover:bg-red-50 transition-colors">Clear</button>
           <button @click="checkout()"
             class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl py-3 font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all active:scale-95">
-            <span>Place Order</span>
+            <span x-text="isEditingOrder ? 'Update Order' : 'Place Order'"></span>
             <span x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
             <span>→</span>
           </button>
@@ -317,7 +340,7 @@
     <div class="relative bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
       <div class="flex items-center justify-between px-6 py-5 border-b">
         <div>
-          <h2 class="font-bold text-gray-900 text-lg">Review Order</h2>
+          <h2 class="font-bold text-gray-900 text-lg" x-text="isEditingOrder ? 'Review Order Update' : 'Review Order'"></h2>
           <p class="text-xs text-gray-400 mt-0.5">Table {{ table.table_number }}</p>
         </div>
         <button @click="reviewOpen=false" class="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
@@ -375,7 +398,7 @@
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
           </template>
-          <template x-if="!placing"><span>Confirm Order →</span></template>
+          <template x-if="!placing"><span x-text="isEditingOrder ? 'Confirm Update →' : 'Confirm Order →'"></span></template>
         </button>
         <p x-show="orderError" class="text-xs text-red-500 text-center mt-2" x-text="orderError"></p>
       </div>
@@ -390,6 +413,11 @@
 const POPULAR_ITEMS = {{ popular_json|safe }};
 const SPECIAL_ITEMS = {{ special_json|safe }};
 const TABLE_ID = {{ table.id }};
+const ACTIVE_ORDER_ITEMS = {{ active_order_items_json|safe }};
+const IS_EDIT_MODE = {{ is_edit_mode|yesno:"true,false" }};
+const ACTIVE_ORDER_ID = {% if active_order_id %}{{ active_order_id }}{% else %}null{% endif %};
+const ACTIVE_ORDER_CUSTOMER_NAME = "{{ active_order_customer_name|escapejs }}";
+const ACTIVE_ORDER_SPECIAL_INSTRUCTIONS = "{{ active_order_special_instructions|escapejs }}";
 
 function menuApp(tableId) {
   return {
@@ -399,6 +427,8 @@ function menuApp(tableId) {
     loading: false,
     cart: JSON.parse(localStorage.getItem('cart_' + tableId) || '[]'),
     activeOrder: JSON.parse(localStorage.getItem('active_order_' + tableId) || 'null'),
+    isEditingOrder: IS_EDIT_MODE,
+    editingOrderId: ACTIVE_ORDER_ID,
     cartOpen: false,
     reviewOpen: false,
     placing: false,
@@ -427,6 +457,12 @@ function menuApp(tableId) {
 
     init() { 
       this.allItems = POPULAR_ITEMS;
+      if (this.isEditingOrder && ACTIVE_ORDER_ITEMS.length > 0) {
+        this.cart = ACTIVE_ORDER_ITEMS;
+        this.saveCart();
+        this.customerName = ACTIVE_ORDER_CUSTOMER_NAME;
+        this.specialInstructions = ACTIVE_ORDER_SPECIAL_INSTRUCTIONS;
+      }
       if (this.activeOrder) {
         this.refreshActiveOrderStatus();
         
@@ -440,6 +476,11 @@ function menuApp(tableId) {
           this.pollActiveOrderNotifications();
         }
       }
+    },
+
+    cancelEditing() {
+      localStorage.removeItem('cart_' + tableId);
+      window.location.href = `/menu/${tableId}/`;
     },
 
     async pollActiveOrderNotifications() {
@@ -481,8 +522,8 @@ function menuApp(tableId) {
           };
           localStorage.setItem('active_order_' + TABLE_ID, JSON.stringify(this.activeOrder));
 
-          // Immediately clear active order from local storage if paid, cancelled, or served
-          if (data.is_paid || data.status === 'cancelled' || data.status === 'served') {
+          // Immediately clear active order from local storage if paid or cancelled
+          if (data.is_paid || data.status === 'cancelled') {
             localStorage.removeItem('active_order_' + TABLE_ID);
             this.activeOrder = null;
           }
@@ -541,14 +582,19 @@ function menuApp(tableId) {
       this.placing = true;
       this.orderError = '';
       try {
+        const payload = {
+          items: this.cart.map(i=>({ menu_item_id: i.id, quantity: i.quantity })),
+          special_instructions: this.specialInstructions,
+          customer_name: this.customerName,
+        };
+        if (this.isEditingOrder) {
+          payload.active_order_id = this.editingOrderId;
+        }
+
         const res = await fetch(`/order/place/${tableId}/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-          body: JSON.stringify({
-            items: this.cart.map(i=>({ menu_item_id: i.id, quantity: i.quantity })),
-            special_instructions: this.specialInstructions,
-            customer_name: this.customerName,
-          })
+          body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (data.success) {
@@ -557,7 +603,7 @@ function menuApp(tableId) {
           localStorage.setItem('active_order_' + tableId, JSON.stringify({
             id: data.order_id,
             number: data.order_number,
-            status: 'pending'
+            status: data.status || 'pending'
           }));
           window.location.href = `/order/success/${data.order_number}/`;
         } else {

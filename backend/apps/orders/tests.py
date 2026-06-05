@@ -86,3 +86,79 @@ class NotificationSystemTests(TestCase):
         notification_payload = data['notifications'][0]
         self.assertEqual(notification_payload['recipient_type'], 'staff')
         self.assertEqual(notification_payload['title'], 'New Order Placed')
+
+    def test_customer_order_edit_updates_items_and_notifies_staff(self):
+        from apps.menu.models import Category, MenuItem
+        from apps.orders.models import OrderItem, OrderLog
+        
+        # 1. Create a category and menu items
+        category = Category.objects.create(restaurant=self.restaurant, name="Main Course")
+        item1 = MenuItem.objects.create(category=category, name="Burger", price=100.00, is_available=True)
+        item2 = MenuItem.objects.create(category=category, name="Pizza", price=200.00, is_available=True)
+        
+        # 2. Place an order via API
+        payload = {
+            'items': [{'menu_item_id': item1.id, 'quantity': 2}],
+            'customer_name': 'Test Cust',
+            'special_instructions': 'No ketchup'
+        }
+        import json
+        response = self.client.post(
+            f'/order/place/{self.table.id}/',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        res_data = response.json()
+        self.assertTrue(res_data['success'])
+        order_id = res_data['order_id']
+        
+        # Verify initial order values
+        order = Order.objects.get(id=order_id)
+        self.assertEqual(order.total_amount, 200.00)
+        self.assertEqual(order.items.count(), 1)
+        
+        # 3. Edit order (session must contain order ID to allow edit)
+        session = self.client.session
+        session['customer_orders'] = [order_id]
+        session.save()
+        
+        update_payload = {
+            'active_order_id': order_id,
+            'items': [
+                {'menu_item_id': item1.id, 'quantity': 1},
+                {'menu_item_id': item2.id, 'quantity': 1}
+            ],
+            'customer_name': 'Test Cust Updated',
+            'special_instructions': 'Add mayo'
+        }
+        
+        # Clear notifications
+        Notification.objects.all().delete()
+        
+        response = self.client.post(
+            f'/order/place/{self.table.id}/',
+            data=json.dumps(update_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        res_data_update = response.json()
+        self.assertTrue(res_data_update['success'])
+        
+        # 4. Assert order items are updated and total recalculated
+        order.refresh_from_db()
+        self.assertEqual(order.total_amount, 300.00)
+        self.assertEqual(order.items.count(), 2)
+        self.assertEqual(order.customer_name, 'Test Cust Updated')
+        self.assertEqual(order.special_instructions, 'Add mayo')
+        
+        # 5. Assert OrderLog created
+        logs = OrderLog.objects.filter(order=order, action='edited')
+        self.assertEqual(logs.count(), 1)
+        self.assertIn("Burger", logs.first().details)
+        self.assertIn("Pizza", logs.first().details)
+        
+        # 6. Assert Notification sent to staff
+        notifications = Notification.objects.filter(order=order, recipient_type=Notification.STAFF)
+        self.assertEqual(notifications.count(), 1)
+        self.assertEqual(notifications.first().title, "Order Updated by Customer")
