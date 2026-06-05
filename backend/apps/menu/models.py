@@ -19,6 +19,36 @@ class Category(models.Model):
     def __str__(self):
         return f"{self.name} - {self.restaurant.name}"
 
+    def save(self, *args, **kwargs):
+        is_new_image = False
+        if self.image:
+            from django.core.files.uploadedfile import UploadedFile
+            try:
+                if isinstance(self.image.file, UploadedFile):
+                    is_new_image = True
+            except Exception:
+                pass
+            
+            if not is_new_image:
+                if self.pk:
+                    try:
+                        old_obj = Category.objects.get(pk=self.pk)
+                        if old_obj.image != self.image:
+                            is_new_image = True
+                    except Category.DoesNotExist:
+                        is_new_image = True
+                else:
+                    is_new_image = True
+
+        if is_new_image:
+            from apps.menu.utils import process_image
+            processed = process_image(self.image)
+            if processed:
+                self.image = processed
+
+        super().save(*args, **kwargs)
+
+
 
 class MenuItem(models.Model):
     VEG = 'veg'
@@ -50,3 +80,33 @@ class MenuItem(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.category.name}"
+
+    def save(self, *args, **kwargs):
+        is_new_image = False
+        if self.image:
+            from django.core.files.uploadedfile import UploadedFile
+            try:
+                if isinstance(self.image.file, UploadedFile):
+                    is_new_image = True
+            except Exception:
+                pass
+            
+            if not is_new_image:
+                if self.pk:
+                    try:
+                        old_obj = MenuItem.objects.get(pk=self.pk)
+                        if old_obj.image != self.image:
+                            is_new_image = True
+                    except MenuItem.DoesNotExist:
+                        is_new_image = True
+                else:
+                    is_new_image = True
+
+        if is_new_image:
+            from apps.menu.utils import process_image
+            processed = process_image(self.image)
+            if processed:
+                self.image = processed
+
+        super().save(*args, **kwargs)
+

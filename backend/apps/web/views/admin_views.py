@@ -64,9 +64,14 @@ def admin_dashboard(request):
     today_qs = qs.filter(created_at__date=today)
 
     from django.db.models import Sum
+    today_orders = today_qs.count()
+    today_revenue = today_qs.exclude(status='cancelled').aggregate(t=Sum('total_amount'))['t'] or 0
+    active_tables = qs.filter(is_paid=False).exclude(status='cancelled').values('table').distinct().count()
+    aov = today_revenue / today_orders if today_orders > 0 else 0
+
     stats = {
-        'today_orders': today_qs.count(),
-        'today_revenue': today_qs.exclude(status='cancelled').aggregate(t=Sum('total_amount'))['t'] or 0,
+        'today_orders': today_orders,
+        'today_revenue': today_revenue,
         'pending': qs.filter(status='pending').count(),
         'preparing': qs.filter(status='preparing').count(),
         'ready': qs.filter(status='ready').count(),
@@ -74,13 +79,15 @@ def admin_dashboard(request):
     }
     recent_orders = qs.select_related('table').prefetch_related('items').order_by('-created_at')[:10]
     from django.urls import reverse
-    rev = stats['today_revenue']
-    rev_fmt = f"₹{int(rev):,}" if rev == int(rev) else f"₹{rev:,.2f}"
+    
+    rev_fmt = f"₹{int(today_revenue):,}" if today_revenue == int(today_revenue) else f"₹{today_revenue:,.2f}"
+    aov_fmt = f"₹{int(aov):,}" if aov == int(aov) else f"₹{aov:,.2f}"
+
     stats_cards = [
-        ('📦', "Today's Orders", stats['today_orders'], 'bg-blue-100',    reverse('web:admin_orders')),
-        ('💰', "Today's Revenue", rev_fmt,               'bg-emerald-100', reverse('web:admin_orders') + '?paid=1'),
-        ('⏳', 'Pending',         stats['pending'],      'bg-yellow-100',  reverse('web:admin_orders') + '?status=pending'),
-        ('🍳', 'Preparing',       stats['preparing'],    'bg-orange-100',  reverse('web:admin_orders') + '?status=preparing'),
+        ('💰', "Today's Revenue", rev_fmt,               'bg-emerald-50 text-emerald-700', reverse('web:admin_orders') + '?paid=1'),
+        ('📦', "Today's Orders",  today_orders,          'bg-blue-50 text-blue-700',    reverse('web:admin_orders')),
+        ('🪑', "Active Tables",   active_tables,         'bg-amber-50 text-amber-700',   reverse('web:admin_orders')),
+        ('📊', "Avg Order Value", aov_fmt,               'bg-indigo-50 text-indigo-700',  reverse('web:admin_orders')),
     ]
     return render(request, 'admin_panel/dashboard.html', {
         'stats': stats,
