@@ -58,6 +58,24 @@ class Order(models.Model):
         self.save(update_fields=['total_amount'])
         return total
 
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        old_status = None
+        if not is_new:
+            try:
+                old_status = Order.objects.get(pk=self.pk).status
+            except Order.DoesNotExist:
+                pass
+        
+        super().save(*args, **kwargs)
+        
+        # Trigger notification safely without blocking the transaction
+        try:
+            from apps.orders.utils import notify_order_change
+            notify_order_change(self, is_new, old_status)
+        except Exception:
+            pass
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
@@ -116,3 +134,26 @@ class OrderLog(models.Model):
 
     def __str__(self):
         return f"{self.action} — {self.order.order_number}"
+
+
+class Notification(models.Model):
+    STAFF = 'staff'
+    CUSTOMER = 'customer'
+    RECIPIENT_CHOICES = [
+        (STAFF, 'Staff'),
+        (CUSTOMER, 'Customer'),
+    ]
+
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='notifications')
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications')
+    recipient_type = models.CharField(max_length=10, choices=RECIPIENT_CHOICES, default=STAFF)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} - {self.recipient_type}"

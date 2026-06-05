@@ -104,6 +104,16 @@ else:
         }
     }
 
+# Use SQLite for faster and isolated testing to prevent Neon Postgres locks
+import sys
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -183,3 +193,6 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
 ).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
+
+# Redis connection URL for notifications
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
