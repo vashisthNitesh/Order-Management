@@ -1,23 +1,23 @@
 {% extends "admin_panel/base.html" %}
 {% block page_title %}{% if table %}Edit Table {{ table.table_number }}{% else %}Add Table{% endif %}{% endblock %}
 {% block content %}
-<div class="p-6 max-w-xl">
+<div class="p-6 max-w-xl mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{% url 'web:admin_tables' %}" class="glass-btn-secondary w-9 h-9 rounded-xl flex items-center justify-center transition-all text-slate-600 dark:text-slate-400 active:scale-[0.97] flex-shrink-0">
+    <a href="{% url 'web:admin_tables' %}" class="glass-btn-secondary w-9 h-9 rounded-xl flex items-center justify-center transition-all text-slate-600 active:scale-[0.97] flex-shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
-    <h2 class="text-lg font-bold text-slate-950 dark:text-white">{% if table %}Edit Table {{ table.table_number }}{% else %}Add New Table{% endif %}</h2>
+    <h2 class="text-lg font-bold text-slate-900">{% if table %}Edit Table {{ table.table_number }}{% else %}Add New Table{% endif %}</h2>
   </div>
 
-  <div class="glass-panel rounded-3xl border border-slate-200/40 dark:border-white/5 shadow-2xl p-6 md:p-8">
+  <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-6 md:p-8">
     <form method="post" class="space-y-6">
       {% csrf_token %}
 
       {# Table Number #}
       <div class="space-y-2">
-        <label class="text-xs font-bold text-slate-650 dark:text-slate-300 uppercase tracking-wider">Table Number <span class="text-red-500">*</span></label>
+        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Table Number <span class="text-red-500">*</span></label>
         <div class="relative">
           <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🔢</span>
           <input name="table_number" type="text" required value="{{ table.table_number|default:'' }}" placeholder="e.g. 1, 2, A1"
@@ -27,7 +27,7 @@
 
       {# Capacity #}
       <div class="space-y-2">
-        <label class="text-xs font-bold text-slate-650 dark:text-slate-300 uppercase tracking-wider">Capacity (People)</label>
+        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Capacity (People)</label>
         <div class="relative">
           <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">👥</span>
           <input name="capacity" type="number" min="1" max="50" value="{{ table.capacity|default:'4' }}"
@@ -36,18 +36,18 @@
       </div>
 
       {# Active Toggle #}
-      <div class="bg-slate-500/5 dark:bg-slate-900/20 border border-slate-200/40 dark:border-white/5 rounded-3xl p-5">
+      <div class="bg-slate-50 border border-slate-200 rounded-3xl p-5 shadow-sm">
         <label class="relative inline-flex items-center cursor-pointer select-none">
           <input type="checkbox" name="is_active" id="is_active" {% if not table or table.is_active %}checked{% endif %} class="sr-only peer">
-          <div class="w-11 h-6 bg-slate-200 dark:bg-slate-805 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-          <span class="ms-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Active (visible to customers, generates QR)</span>
+          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600 shadow-inner"></div>
+          <span class="ms-3 text-sm font-semibold text-slate-700">Active (visible to customers, generates QR)</span>
         </label>
       </div>
 
       {# Buttons #}
-      <div class="flex gap-4 pt-4 border-t border-slate-200/40 dark:border-white/5">
+      <div class="flex gap-4 pt-4 border-t border-slate-100">
         <a href="{% url 'web:admin_tables' %}" class="flex-1 text-center py-3 glass-btn-secondary rounded-2xl text-sm font-semibold active:scale-[0.97]">Cancel</a>
-        <button type="submit" class="flex-1 glass-btn-primary rounded-2xl py-3 text-sm font-bold shadow-lg border border-white/10 active:scale-[0.97]">
+        <button type="submit" class="flex-1 glass-btn-primary rounded-2xl py-3 text-sm font-bold shadow-md border border-white/10 active:scale-[0.97]">
           {% if table %}Save Changes{% else %}Add Table{% endif %}
         </button>
       </div>

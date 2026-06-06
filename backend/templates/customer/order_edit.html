@@ -3,24 +3,24 @@
 {% block title %}Edit Order #{{ order.order_number }}{% endblock %}
 
 {% block body %}
-<div class="min-h-screen pb-16" x-data="{ addOpen: false }">
+<div class="min-h-screen pb-16 bg-slate-50" x-data="{ addOpen: false }">
 
   {# Header #}
-  <div class="glass-panel border-b border-slate-200/50 dark:border-slate-800/50 px-4 py-3.5 flex items-center gap-3 sticky top-0 z-30">
-    <a href="{% url 'web:track_order' order.id %}" class="w-9 h-9 glass-card rounded-xl flex items-center justify-center hover:scale-105 transition-all flex-shrink-0">
-      <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+  <div class="bg-white border-b border-slate-200 px-4 py-3.5 flex items-center gap-3 sticky top-0 z-30">
+    <a href="{% url 'web:track_order' order.id %}" class="w-9 h-9 bg-white border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-50 hover:scale-102 transition-all flex-shrink-0">
+      <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
     <div class="flex-1 min-w-0">
-      <h1 class="font-bold text-slate-900 dark:text-white text-sm">Modify Items</h1>
-      <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">#{{ order.order_number }}</p>
+      <h1 class="font-bold text-slate-900 text-sm">Modify Items</h1>
+      <p class="text-[10px] text-slate-500 font-bold font-mono">#{{ order.order_number }}</p>
     </div>
     <div class="flex-shrink-0">
       {% if order.is_paid %}
-      <span class="text-[11px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-500/25 px-2.5 py-1 rounded-full">✓ Paid & Locked</span>
+      <span class="text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-full">✓ Paid & Locked</span>
       {% else %}
-      <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/15 px-2.5 py-1 rounded-full border border-emerald-100/60 dark:border-emerald-500/20">Editable</span>
+      <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">Editable</span>
       {% endif %}
     </div>
   </div>
@@ -29,7 +29,7 @@
   {% if messages %}
   <div class="px-4 pt-4 space-y-2 max-w-lg mx-auto">
     {% for msg in messages %}
-    <div class="px-4 py-3 rounded-2xl text-xs font-semibold {% if 'error' in msg.tags %}bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200/60 dark:border-rose-500/20{% else %}bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-500/20{% endif %}">
+    <div class="px-4 py-3 rounded-2xl text-xs font-semibold {% if 'error' in msg.tags %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-emerald-50 text-emerald-700 border border-emerald-100{% endif %}">
       {{ msg }}
     </div>
     {% endfor %}
@@ -40,43 +40,43 @@
 
     {% if order.is_paid %}
     {# Locked State Card #}
-    <div class="glass-card rounded-3xl p-8 text-center border border-emerald-200/40 dark:border-emerald-500/20">
-      <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg shadow-emerald-100 dark:shadow-emerald-500/10">✓</div>
-      <h2 class="font-bold text-emerald-900 dark:text-emerald-200 text-base">Invoice Already Paid</h2>
-      <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1">This invoice has been completed and is now locked for changes.</p>
+    <div class="bg-white rounded-3xl p-8 text-center border border-emerald-200 shadow-sm">
+      <div class="w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm">✓</div>
+      <h2 class="font-bold text-emerald-900 text-base">Invoice Already Paid</h2>
+      <p class="text-xs text-emerald-600 mt-1">This invoice has been completed and is now locked for changes.</p>
       {% if order.paid_at %}
-      <p class="text-[10px] text-emerald-500 dark:text-emerald-500 font-medium mt-2">Processed on {{ order.paid_at|date:"d M Y, H:i" }}</p>
+      <p class="text-[10px] text-emerald-500 font-bold mt-2">Processed on {{ order.paid_at|date:"d M Y, H:i" }}</p>
       {% endif %}
     </div>
 
     {# Read-only Items Card #}
-    <div class="glass-card rounded-3xl overflow-hidden border border-slate-200/50 dark:border-slate-700/30">
-      <div class="px-5 py-4 border-b border-slate-100/60 dark:border-slate-800/60 bg-slate-50/40 dark:bg-slate-900/20">
-        <h2 class="font-bold text-slate-900 dark:text-white text-sm">Your Invoice Summary</h2>
+    <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+      <div class="px-5 py-4 border-b border-slate-200 bg-slate-50">
+        <h2 class="font-bold text-slate-800 text-sm">Your Invoice Summary</h2>
       </div>
-      <div class="divide-y divide-slate-100/60 dark:divide-slate-800/60 px-5">
+      <div class="divide-y divide-slate-100 px-5">
         {% for item in order.items.all %}
         <div class="flex items-center justify-between py-3.5 text-sm">
           <div class="flex items-center gap-2.5">
-            <span class="w-6 h-6 bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-100/60 dark:border-emerald-500/20 rounded-xl flex items-center justify-center text-xs font-bold">{{ item.quantity }}</span>
-            <span class="text-slate-700 dark:text-slate-300 font-medium">{{ item.menu_item.name|default:"Item" }}</span>
+            <span class="w-6 h-6 bg-slate-50 text-slate-700 border border-slate-200 rounded-xl flex items-center justify-center text-xs font-bold">{{ item.quantity }}</span>
+            <span class="text-slate-800 font-medium">{{ item.menu_item.name|default:"Item" }}</span>
           </div>
-          <span class="font-bold text-slate-900 dark:text-white">{{ item.subtotal|inr }}</span>
+          <span class="font-bold text-slate-900">{{ item.subtotal|inr }}</span>
         </div>
         {% endfor %}
       </div>
-      <div class="flex justify-between px-5 py-4 font-bold border-t border-slate-200/50 dark:border-slate-800/50 bg-slate-50/30 dark:bg-slate-900/20">
-        <span class="text-xs text-slate-700 dark:text-slate-300">Paid Total</span>
-        <span class="text-emerald-600 dark:text-emerald-400 text-base">{{ order.total_amount|inr }}</span>
+      <div class="flex justify-between px-5 py-4 font-bold border-t border-slate-200 bg-slate-50">
+        <span class="text-xs text-slate-600 uppercase tracking-wider">Paid Total</span>
+        <span class="text-emerald-600 text-base">{{ order.total_amount|inr }}</span>
       </div>
     </div>
 
     {% elif not can_edit %}
     {# Locked Access Card #}
-    <div class="glass-card rounded-3xl p-8 text-center border border-amber-200/40 dark:border-amber-500/20">
-      <div class="w-16 h-16 bg-amber-100 dark:bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg shadow-amber-100 dark:shadow-amber-500/10">🔒</div>
-      <h2 class="font-bold text-amber-900 dark:text-amber-200 text-base">Ownership Required</h2>
-      <p class="text-xs text-amber-600 dark:text-amber-400 mt-1.5">You can only edit orders placed from this browser tab.</p>
+    <div class="bg-white rounded-3xl p-8 text-center border border-amber-200 shadow-sm bg-amber-50/10">
+      <div class="w-16 h-16 bg-amber-50 border border-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm">🔒</div>
+      <h2 class="font-bold text-amber-900 text-base">Ownership Required</h2>
+      <p class="text-xs text-amber-600 mt-1.5 font-medium">You can only edit orders placed from this browser tab.</p>
       <a href="{% url 'web:track_order' order.id %}" class="glass-btn-primary mt-5 inline-block px-5 py-2.5 rounded-2xl text-xs font-bold transition-all active:scale-[0.98]">Track Status</a>
     </div>
 
@@ -84,33 +84,33 @@
     {# EDITABLE STATE #}
 
     {# Current Items list card #}
-    <div class="glass-card rounded-3xl overflow-hidden border border-slate-200/50 dark:border-slate-700/30">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100/60 dark:border-slate-800/60 bg-slate-50/40 dark:bg-slate-900/20">
-        <h2 class="font-bold text-slate-900 dark:text-white text-sm">Selected Items</h2>
-        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold glass-card-static border border-slate-200/50 dark:border-slate-700/50 px-2 py-0.5 rounded-lg">{{ order.items.count }} item{{ order.items.count|pluralize }}</span>
+    <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 bg-slate-50">
+        <h2 class="font-bold text-slate-900 text-sm">Selected Items</h2>
+        <span class="text-[10px] text-slate-500 font-bold bg-white border border-slate-200 px-2 py-0.5 rounded-lg shadow-sm">{{ order.items.count }} item{{ order.items.count|pluralize }}</span>
       </div>
 
-      <div class="divide-y divide-slate-100/60 dark:divide-slate-800/60 px-5">
+      <div class="divide-y divide-slate-100 px-5 bg-white">
         {% for item in order.items.all %}
         <div class="flex items-center gap-3 py-4">
           <div class="flex-1 min-w-0">
-            <p class="font-bold text-slate-900 dark:text-white text-sm truncate">{{ item.menu_item.name|default:"Item" }}</p>
-            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">{{ item.unit_price|inr }} each</p>
+            <p class="font-bold text-slate-900 text-sm truncate">{{ item.menu_item.name|default:"Item" }}</p>
+            <p class="text-[10px] text-slate-400 font-bold mt-0.5">{{ item.unit_price|inr }} each</p>
           </div>
           
           {# Increment decrement controls #}
-          <form method="post" action="{% url 'web:customer_item_update' order.order_number %}" class="flex items-center gap-1.5 glass-card-static rounded-xl p-1 border border-slate-200/60 dark:border-slate-700/50">
+          <form method="post" action="{% url 'web:customer_item_update' order.order_number %}" class="flex items-center gap-1.5 bg-slate-50 rounded-xl p-1 border border-slate-200">
             {% csrf_token %}
             <input type="hidden" name="item_id" value="{{ item.id }}">
             <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}"
-              class="w-7 h-7 bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-sm font-extrabold text-slate-600 dark:text-slate-300 transition-colors flex items-center justify-center shadow-sm">−</button>
-            <span class="w-6 text-center font-extrabold text-xs text-slate-900 dark:text-white">{{ item.quantity }}</span>
+              class="w-7 h-7 bg-white hover:bg-slate-50 rounded-lg text-sm font-extrabold text-slate-600 transition-colors flex items-center justify-center shadow-sm border border-slate-200">−</button>
+            <span class="w-6 text-center font-extrabold text-xs text-slate-800" x-text="{{ item.quantity }}"></span>
             <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}"
-              class="w-7 h-7 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-extrabold transition-colors flex items-center justify-center shadow-sm">+</button>
+              class="w-7 h-7 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-extrabold transition-colors flex items-center justify-center shadow-sm">+</button>
           </form>
           
           {# Item Total #}
-          <span class="font-bold text-slate-900 dark:text-white text-sm min-w-[70px] text-right">{{ item.subtotal|inr }}</span>
+          <span class="font-bold text-slate-900 text-sm min-w-[70px] text-right">{{ item.subtotal|inr }}</span>
           
           {# Remove Button #}
           <form method="post" action="{% url 'web:customer_item_update' order.order_number %}" class="flex items-center">
@@ -127,49 +127,49 @@
         {% empty %}
         <div class="text-center py-10">
           <span class="text-4xl">🍽️</span>
-          <p class="text-slate-400 dark:text-slate-500 text-xs mt-2">Your order has no items. Choose some dishes below!</p>
+          <p class="text-slate-400 text-xs mt-2 font-bold">Your order has no items. Choose some dishes below!</p>
         </div>
         {% endfor %}
       </div>
 
       {% if order.items.exists %}
-      <div class="flex justify-between px-5 py-4 font-bold border-t border-slate-200/50 dark:border-slate-800/50 bg-slate-50/30 dark:bg-slate-900/20">
-        <span class="text-sm text-slate-700 dark:text-slate-300">Total Amount</span>
-        <span class="text-emerald-600 dark:text-emerald-400 text-base">{{ order.total_amount|inr }}</span>
+      <div class="flex justify-between px-5 py-4 font-bold border-t border-slate-200 bg-slate-50">
+        <span class="text-xs text-slate-600 uppercase tracking-wider">Total Amount</span>
+        <span class="text-emerald-600 text-base">{{ order.total_amount|inr }}</span>
       </div>
       {% endif %}
     </div>
 
     {# Add More Items Card #}
-    <div class="glass-card rounded-3xl overflow-hidden border border-slate-200/50 dark:border-slate-700/30">
+    <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
       <button @click="addOpen = !addOpen"
-        class="w-full flex items-center justify-between px-5 py-4 text-sm font-bold text-slate-900 dark:text-white hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors focus:outline-none">
+        class="w-full flex items-center justify-between px-5 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 transition-colors focus:outline-none">
         <span class="flex items-center gap-2">
-          <span class="w-7 h-7 bg-emerald-100 dark:bg-emerald-500/20 rounded-xl flex items-center justify-center text-sm">➕</span>
+          <span class="w-7 h-7 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl flex items-center justify-center text-xs shadow-sm">➕</span>
           <span>Add More Dishes</span>
         </span>
-        <svg :class="addOpen ? 'rotate-180' : ''" class="w-4 h-4 text-slate-400 dark:text-slate-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg :class="addOpen ? 'rotate-180' : ''" class="w-4 h-4 text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
 
-      <div x-show="addOpen" x-transition class="border-t border-slate-200/40 dark:border-slate-800/40">
+      <div x-show="addOpen" x-transition class="border-t border-slate-200 bg-slate-50/30">
         <form method="post" action="{% url 'web:customer_item_add' order.order_number %}" class="p-5 space-y-4">
           {% csrf_token %}
           
           {# Custom Select Dish Dropdown #}
           <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Select Dish</label>
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Select Dish</label>
             <div x-data="{ open: false, selectedValue: '', selectedLabel: '— Choose item —' }" class="relative">
               <input type="text" name="menu_item_id" :value="selectedValue" required class="absolute opacity-0 w-px h-px pointer-events-none" tabindex="-1">
               <button type="button" @click="open = !open" @click.away="open = false"
-                class="glass-input w-full h-11 rounded-2xl px-4 text-sm text-left flex items-center justify-between focus:outline-none active:scale-[0.99] transition-all">
+                class="glass-input w-full h-11 rounded-2xl px-4 text-xs text-left flex items-center justify-between focus:outline-none active:scale-[0.99] transition-all">
                 <div class="flex items-center gap-2">
-                  <span class="text-slate-400 dark:text-slate-500">🍛</span>
-                  <span x-text="selectedLabel" class="text-slate-700 dark:text-slate-300 font-medium"></span>
+                  <span class="text-slate-400">🍛</span>
+                  <span x-text="selectedLabel" class="text-slate-700 font-bold"></span>
                 </div>
-                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
               
@@ -181,20 +181,20 @@
                 x-transition:leave="transition ease-in duration-75" 
                 x-transition:leave-start="transform opacity-100 scale-100 translate-y-0" 
                 x-transition:leave-end="transform opacity-0 scale-95 -translate-y-2"
-                class="absolute z-50 w-full mt-2 glass-panel rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-2xl max-h-60 overflow-y-auto p-2">
+                class="absolute z-50 w-full mt-2 bg-white rounded-2xl border border-slate-200 shadow-2xl max-h-60 overflow-y-auto p-2">
                 
                 {% regroup menu_items by category.name as cat_groups %}
                 {% for group in cat_groups %}
-                <div class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-500/10 uppercase tracking-wider px-3 py-1.5 rounded-lg select-none mb-1 mt-2 first:mt-0">
+                <div class="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 uppercase tracking-wider px-3 py-1.5 rounded-lg select-none mb-1 mt-2 first:mt-0">
                   {{ group.grouper }}
                 </div>
                 <div class="space-y-0.5 mb-2 last:mb-0">
                   {% for mi in group.list %}
                   <button type="button" @click="selectedValue = '{{ mi.id }}'; selectedLabel = '{{ mi.name }} — {{ mi.price|inr }}'; open = false"
-                    :class="selectedValue == '{{ mi.id }}' ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-semibold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm transition-colors flex items-center justify-between">
-                    <span>{{ mi.name }} — {{ mi.price|inr }}</span>
-                    <span x-show="selectedValue == '{{ mi.id }}'" class="text-emerald-600 dark:text-emerald-400 font-bold text-base">✓</span>
+                    :class="selectedValue == '{{ mi.id }}' ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-slate-700 hover:bg-slate-50'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs transition-colors flex items-center justify-between">
+                    <span class="font-medium">{{ mi.name }} — {{ mi.price|inr }}</span>
+                    <span x-show="selectedValue == '{{ mi.id }}'" class="text-emerald-600 font-bold text-base">✓</span>
                   </button>
                   {% endfor %}
                 </div>
@@ -206,14 +206,14 @@
           {# Quantity & Add button #}
           <div class="flex gap-3">
             <div class="flex-1 space-y-2">
-              <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Quantity</label>
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quantity</label>
               <div class="relative">
                 <input name="quantity" type="number" min="1" max="20" value="1"
-                  class="glass-input w-full h-11 rounded-2xl px-4 text-sm text-center font-bold focus:outline-none">
+                  class="glass-input w-full h-11 rounded-2xl px-4 text-xs text-center font-extrabold focus:outline-none">
               </div>
             </div>
             <div class="flex items-end">
-              <button type="submit" class="glass-btn-primary h-11 px-6 rounded-2xl text-sm font-bold transition-all active:scale-[0.97]">
+              <button type="submit" class="glass-btn-primary h-11 px-6 rounded-2xl text-xs font-bold transition-all active:scale-[0.97]">
                 Add Item
               </button>
             </div>
@@ -223,29 +223,29 @@
     </div>
 
     {# Special Instructions Box #}
-    <div class="glass-card rounded-3xl p-5 border border-slate-200/50 dark:border-slate-700/30">
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-        <span class="w-7 h-7 bg-slate-100 dark:bg-slate-800/80 rounded-xl flex items-center justify-center text-sm">💬</span>
+    <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
+      <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-2">
+        <span class="w-7 h-7 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-sm shadow-sm">💬</span>
         Chef Instructions
       </h3>
-      <form method="post" action="{% url 'web:customer_update_note' order.order_number %}" class="flex flex-col sm:flex-row gap-3">
+      <form method="post" action="{% url 'web:customer_update_note' order.order_number %}" class="flex flex-col gap-3">
         {% csrf_token %}
         <textarea name="special_instructions" rows="2" placeholder="Describe allergies, spice levels, or preparation preferences..."
-          class="glass-input flex-1 rounded-2xl px-4 py-3 text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none resize-none">{{ order.special_instructions }}</textarea>
-        <button type="submit" class="glass-btn-secondary self-end sm:self-center w-full sm:w-auto h-11 px-6 rounded-2xl text-xs font-bold transition-all active:scale-[0.98]">Save Note</button>
+          class="glass-input flex-1 rounded-2xl px-4 py-3 text-xs placeholder-slate-400 focus:outline-none resize-none shadow-sm">{{ order.special_instructions }}</textarea>
+        <button type="submit" class="glass-btn-secondary w-full h-11 px-6 rounded-2xl text-xs font-bold transition-all active:scale-[0.98]">Save Note</button>
       </form>
     </div>
 
     {# Warning callout #}
-    <div class="glass-card rounded-3xl p-5 flex items-start gap-3.5 border border-amber-200/40 dark:border-amber-500/20">
+    <div class="bg-white rounded-3xl p-5 flex items-start gap-3.5 border border-amber-200/60 shadow-sm bg-amber-50/20">
       <span class="text-xl mt-0.5">⚠️</span>
-      <p class="text-[11px] text-amber-700 dark:text-amber-400 font-medium leading-relaxed">This order is open for changes until a waiter completes payment processing at your table. Once marked paid, the invoice cannot be modified.</p>
+      <p class="text-[11px] text-amber-700 font-bold leading-relaxed">This order is open for changes until a waiter completes payment processing at your table. Once marked paid, the invoice cannot be modified.</p>
     </div>
 
     {% endif %}
 
     <a href="{% url 'web:track_order' order.id %}"
-       class="glass-btn-secondary block text-center rounded-3xl py-3.5 font-bold text-sm transition-all active:scale-[0.98] border border-slate-200/60 dark:border-slate-700/50">
+       class="glass-btn-secondary block text-center rounded-3xl py-3.5 font-bold text-sm transition-all active:scale-[0.98]">
       Return to Live Tracking
     </a>
   </div>

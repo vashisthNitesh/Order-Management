@@ -6,64 +6,64 @@
 <div x-data="menuApp({{ table.id }})" class="min-h-screen pb-32">
 
   {# ── Header ─────────────────────────────────────────────────────── #}
-  <div class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900">
-    <!-- Ambient blobs in header -->
-    <div class="absolute -top-8 -right-8 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 -left-8 w-36 h-36 bg-teal-500/15 rounded-full blur-2xl pointer-events-none"></div>
-    <div class="relative px-4 pt-8 pb-5">
+  <div class="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50/40 to-slate-50 border-b border-slate-200">
+    <!-- Ambient light blobs in header -->
+    <div class="absolute -top-8 -right-8 w-40 h-40 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 -left-8 w-36 h-36 bg-teal-100/30 rounded-full blur-2xl pointer-events-none"></div>
+    <div class="relative px-4 pt-8 pb-5 max-w-lg mx-auto">
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
-          <div class="w-7 h-7 bg-white/10 rounded-xl flex items-center justify-center">
-            <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+          <div class="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center shadow-sm">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
           </div>
-          <span class="text-white/80 text-sm font-semibold tracking-tight">{{ restaurant.name }}</span>
+          <span class="text-slate-800 text-sm font-bold tracking-tight">{{ restaurant.name }}</span>
         </div>
-        <span class="bg-white/10 backdrop-blur-sm border border-white/15 text-white text-xs font-bold px-3 py-1.5 rounded-xl">
+        <span class="bg-white border border-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm">
           🍽️ Table {{ table.table_number }}
         </span>
       </div>
-      <h1 class="text-2xl font-extrabold text-white mb-1 leading-tight">What would you like?</h1>
-      <p class="text-white/60 text-sm">Browse and order directly from your table</p>
+      <h1 class="text-2xl font-extrabold text-slate-900 mb-1 leading-tight">What would you like?</h1>
+      <p class="text-slate-500 text-sm">Browse and order directly from your table</p>
     </div>
 
     {# Search #}
-    <div class="px-4 pb-5">
+    <div class="px-4 pb-5 max-w-lg mx-auto">
       <div class="relative">
         <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
         </svg>
         <input x-model="search" type="text" placeholder="Search dishes..."
-          class="w-full pl-10 pr-10 h-12 rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md shadow-lg text-sm text-white placeholder-white/50 focus:outline-none focus:border-emerald-400/60 focus:bg-white/15 transition-all duration-300">
-        <button x-show="search" @click="search=''" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors">
+          class="w-full pl-10 pr-10 h-12 rounded-2xl border border-slate-200 bg-white shadow-sm text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200">
+        <button x-show="search" @click="search=''" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
     </div>
   </div>
 
-  <div class="px-4 py-5 space-y-4">
+  <div class="px-4 py-5 space-y-4 max-w-lg mx-auto">
 
     {# ── Active Order Tracker Banner ─────────────────────────────────── #}
     <template x-if="activeOrder && !isEditingOrder">
-      <div class="glass-card rounded-2xl p-4 border border-emerald-200/50 dark:border-emerald-500/20">
+      <div class="glass-card rounded-2xl p-4 border border-emerald-200 bg-emerald-50/30">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-lg">📋</div>
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center text-lg shadow-sm">📋</div>
             <div>
-              <p class="text-xs font-bold text-slate-800 dark:text-slate-200">
-                Active Order <span class="font-mono text-emerald-600 dark:text-emerald-400 font-extrabold" x-text="'#' + activeOrder.number"></span>
+              <p class="text-xs font-bold text-slate-800">
+                Active Order <span class="font-mono text-emerald-600 font-extrabold" x-text="'#' + activeOrder.number"></span>
               </p>
-              <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-                Status: <span class="font-bold text-emerald-700 dark:text-emerald-400 uppercase" x-text="activeOrder.status"></span>
+              <p class="text-[10px] text-slate-500 font-semibold">
+                Status: <span class="font-extrabold text-emerald-600 uppercase" x-text="activeOrder.status"></span>
               </p>
             </div>
           </div>
           <a :href="'/order/track/' + activeOrder.id + '/'"
-             class="glass-btn-primary text-[11px] font-bold px-3 py-1.5 rounded-xl transition-all active:scale-95">
+             class="glass-btn-primary text-[11px] font-bold px-3.5 py-2 rounded-xl transition-all active:scale-95">
             Track Live →
           </a>
         </div>
@@ -72,18 +72,18 @@
 
     {# ── Editing Mode Banner ─────────────────────────────────────────── #}
     <template x-if="isEditingOrder">
-      <div class="glass-card rounded-2xl p-4 border border-amber-200/50 dark:border-amber-500/20 flex items-center justify-between">
+      <div class="glass-card rounded-2xl p-4 border border-amber-200 bg-amber-50/20 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center text-lg">✏️</div>
+          <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-lg shadow-sm">✏️</div>
           <div>
-            <p class="text-xs font-bold text-slate-800 dark:text-slate-200">
-              Editing Order <span class="font-mono text-amber-700 dark:text-amber-400 font-extrabold" x-text="'#' + (activeOrder ? activeOrder.number : '')"></span>
+            <p class="text-xs font-bold text-slate-800">
+              Editing Order <span class="font-mono text-amber-600 font-extrabold" x-text="'#' + (activeOrder ? activeOrder.number : '')"></span>
             </p>
-            <p class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">Modifying items in your active order</p>
+            <p class="text-[10px] text-amber-600 font-semibold">Modifying items in your active order</p>
           </div>
         </div>
         <button @click="cancelEditing()"
-           class="glass-btn-secondary text-amber-700 dark:text-amber-400 border-amber-200/60 dark:border-amber-500/25 text-[11px] font-bold px-3 py-1.5 rounded-xl transition-all active:scale-95">
+           class="glass-btn-secondary text-amber-700 border-amber-200 hover:bg-amber-50/50 text-[11px] font-bold px-3 py-1.5 rounded-xl transition-all active:scale-95">
           Cancel Edit
         </button>
       </div>
@@ -94,11 +94,11 @@
     <div class="overflow-x-auto scrollbar-hide">
       <div class="flex gap-3 pb-1">
         {% for offer in offers %}
-        <div class="flex-shrink-0 relative overflow-hidden rounded-2xl p-4 min-w-[260px] bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/20">
+        <div class="flex-shrink-0 relative overflow-hidden rounded-2xl p-4 min-w-[260px] bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-550/10">
           <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
-          <p class="text-xs font-medium opacity-90 mb-1">🏷️ Limited Offer</p>
+          <p class="text-[10px] font-bold uppercase tracking-wider opacity-90 mb-1">🏷️ Special Deal</p>
           <h3 class="font-bold text-sm">{{ offer.title }}</h3>
-          <p class="text-xs opacity-70 mt-0.5 truncate">{{ offer.description }}</p>
+          <p class="text-xs opacity-80 mt-0.5 truncate">{{ offer.description }}</p>
           <span class="mt-3 inline-block bg-white/20 backdrop-blur-sm text-xs font-extrabold px-3 py-1 rounded-lg">
             {% if offer.discount_type == 'percentage' %}{{ offer.discount_value }}% OFF{% else %}₹{{ offer.discount_value }} OFF{% endif %}
           </span>
@@ -112,25 +112,25 @@
     <div class="overflow-x-auto scrollbar-hide">
       <div class="flex gap-2 pb-1">
         <button @click="setTab('popular')"
-          :class="activeTab==='popular' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 border-emerald-600' : 'glass-card text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60 hover:border-emerald-300'"
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all border">
+          :class="activeTab==='popular' ? 'bg-emerald-600 text-white shadow-md border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'"
+          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all border shadow-sm">
           ⭐ Popular
-          <span :class="activeTab==='popular'?'bg-white/30 text-white':'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'"
+          <span :class="activeTab==='popular'?'bg-white/30 text-white':'bg-slate-100 text-slate-500'"
             class="text-xs px-1.5 py-0.5 rounded-full">{{ popular_items|length }}</span>
         </button>
         <button @click="setTab('specials')"
-          :class="activeTab==='specials' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 border-emerald-600' : 'glass-card text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60 hover:border-emerald-300'"
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all border">
+          :class="activeTab==='specials' ? 'bg-emerald-600 text-white shadow-md border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'"
+          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all border shadow-sm">
           👨‍🍳 Specials
-          <span :class="activeTab==='specials'?'bg-white/30 text-white':'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'"
+          <span :class="activeTab==='specials'?'bg-white/30 text-white':'bg-slate-100 text-slate-500'"
             class="text-xs px-1.5 py-0.5 rounded-full">{{ special_items|length }}</span>
         </button>
         {% for cat in categories %}
         <button @click="setTab({{ cat.id }})"
-          :class="activeTab==={{ cat.id }} ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 border-emerald-600' : 'glass-card text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60 hover:border-emerald-300'"
-          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all border">
+          :class="activeTab==={{ cat.id }} ? 'bg-emerald-600 text-white shadow-md border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'"
+          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all border shadow-sm">
           {% if cat.icon %}{{ cat.icon }} {% endif %}{{ cat.name }}
-          <span :class="activeTab==={{ cat.id }}?'bg-white/30 text-white':'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'"
+          <span :class="activeTab==={{ cat.id }}?'bg-white/30 text-white':'bg-slate-100 text-slate-500'"
             class="text-xs px-1.5 py-0.5 rounded-full">{{ cat.item_count }}</span>
         </button>
         {% endfor %}
@@ -140,76 +140,74 @@
     {# ── Items Grid ──────────────────────────────────────────────── #}
     <div>
       <div class="flex items-center gap-2 mb-4">
-        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
         </svg>
-        <h2 class="font-bold text-slate-900 dark:text-white" x-text="sectionTitle"></h2>
-        <span class="text-xs text-slate-400 dark:text-slate-500 font-medium" x-text="displayedItems.length + ' items'"></span>
+        <h2 class="font-bold text-slate-900" x-text="sectionTitle"></h2>
+        <span class="text-xs text-slate-400 font-bold" x-text="displayedItems.length + ' items'"></span>
       </div>
 
       {# Loading skeleton #}
-      <div x-show="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div x-show="loading" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <template x-for="i in 4">
-          <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/50 dark:border-slate-700/30">
-            <div class="h-44 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse"></div>
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200">
+            <div class="h-44 bg-slate-100 animate-pulse"></div>
             <div class="p-4 space-y-2">
-              <div class="h-4 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded w-3/4"></div>
-              <div class="h-3 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded"></div>
-              <div class="h-8 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-xl w-1/2 mt-2"></div>
+              <div class="h-4 bg-slate-100 animate-pulse rounded w-3/4"></div>
+              <div class="h-3 bg-slate-100 animate-pulse rounded"></div>
+              <div class="h-8 bg-slate-100 animate-pulse rounded-xl w-1/2 mt-2"></div>
             </div>
           </div>
         </template>
       </div>
 
       {# Empty state #}
-      <div x-show="!loading && displayedItems.length === 0" class="glass-card flex flex-col items-center justify-center py-16 text-center rounded-2xl p-6">
-        <span class="text-6xl mb-4">🍽️</span>
-        <p class="font-bold text-slate-700 dark:text-slate-300" x-text="search ? 'No items found' : 'No items available'"></p>
-        <p class="text-sm text-slate-400 dark:text-slate-500 mt-1" x-text="search ? 'Try a different search' : 'Check back later'"></p>
+      <div x-show="!loading && displayedItems.length === 0" class="bg-white flex flex-col items-center justify-center py-16 text-center rounded-2xl p-6 border border-slate-200 shadow-sm">
+        <span class="text-5xl mb-3">🍽️</span>
+        <p class="font-bold text-slate-700" x-text="search ? 'No items found' : 'No items available'"></p>
+        <p class="text-sm text-slate-400 mt-1" x-text="search ? 'Try a different search query' : 'Check back later'"></p>
       </div>
 
       {# Items grid #}
       <div x-show="!loading && displayedItems.length > 0"
-           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+           class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <template x-for="item in displayedItems" :key="item.id">
-          <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/50 dark:border-slate-700/30 group">
-            <div class="relative h-44 bg-slate-100 dark:bg-slate-800/50 overflow-hidden">
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 group">
+            <div class="relative h-44 bg-slate-50 overflow-hidden border-b border-slate-100">
               <img :src="item.image_url || '/static/web/placeholder.png'"
                    :alt="item.name"
-                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                    @error="$el.src='/static/web/placeholder.png'">
-              <!-- Gradient overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div class="absolute top-2 left-2 flex gap-1.5">
                 <span x-show="item.is_popular" class="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">⭐ Popular</span>
                 <span x-show="item.is_special" class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">👨‍🍳 Special</span>
               </div>
             </div>
             <div class="p-4">
-              <div class="flex items-center gap-1.5 mb-1">
+              <div class="flex items-center gap-1.5 mb-1.5">
                 <span x-html="foodDot(item.food_type)"></span>
-                <h3 class="font-bold text-slate-900 dark:text-white text-sm" x-text="item.name"></h3>
+                <h3 class="font-bold text-slate-900 text-sm" x-text="item.name"></h3>
               </div>
-              <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3" x-text="item.description"></p>
-              <div class="flex items-center gap-3 mb-3">
-                <span x-show="item.preparation_time" class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+              <p class="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed" x-text="item.description"></p>
+              <div class="flex items-center gap-3 mb-4">
+                <span x-show="item.preparation_time" class="text-[11px] text-slate-400 font-semibold flex items-center gap-1">
                   ⏱️ <span x-text="item.preparation_time + 'm'"></span>
                 </span>
-                <span x-show="item.calories" class="text-[11px] text-slate-400 dark:text-slate-500" x-text="item.calories + ' cal'"></span>
+                <span x-show="item.calories" class="text-[11px] text-slate-400 font-semibold" x-text="item.calories + ' cal'"></span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-lg font-extrabold text-slate-900 dark:text-white" x-text="'₹' + parseInt(item.price).toLocaleString('en-IN')"></span>
+                <span class="text-lg font-extrabold text-slate-900" x-text="'₹' + parseInt(item.price).toLocaleString('en-IN')"></span>
                 <div>
                   <button x-show="!cartQty(item.id)" @click="addToCart(item)"
-                    class="glass-btn-primary flex items-center gap-1 text-sm font-bold px-4 py-2 rounded-xl transition-all active:scale-95">
+                    class="glass-btn-primary flex items-center gap-1 text-xs font-bold px-4 py-2 rounded-xl transition-all active:scale-95">
                     + Add
                   </button>
-                  <div x-show="cartQty(item.id)" class="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-500/15 rounded-xl p-1 border border-emerald-200/50 dark:border-emerald-500/25">
+                  <div x-show="cartQty(item.id)" class="flex items-center gap-1.5 bg-emerald-50 rounded-xl p-1 border border-emerald-100">
                     <button @click="updateQty(item.id, cartQty(item.id)-1)"
-                      class="w-7 h-7 bg-white dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                      <span class="text-emerald-600 dark:text-emerald-400 font-bold text-lg leading-none">−</span>
+                      class="w-7 h-7 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors border border-slate-200">
+                      <span class="text-emerald-600 font-bold text-lg leading-none">−</span>
                     </button>
-                    <span class="w-6 text-center font-extrabold text-emerald-700 dark:text-emerald-400 text-sm" x-text="cartQty(item.id)"></span>
+                    <span class="w-6 text-center font-extrabold text-emerald-700 text-sm" x-text="cartQty(item.id)"></span>
                     <button @click="addToCart(item)"
                       class="w-7 h-7 bg-emerald-600 rounded-lg shadow-sm flex items-center justify-center hover:bg-emerald-700 transition-colors">
                       <span class="text-white font-bold text-lg leading-none">+</span>
@@ -233,78 +231,79 @@
        x-transition:leave-end="translate-y-full opacity-0"
        class="fixed bottom-6 left-4 right-4 z-30 max-w-sm mx-auto">
     <button @click="cartOpen=true"
-      class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl shadow-2xl shadow-emerald-500/40 p-4 flex items-center justify-between text-white active:scale-[0.98] transition-all">
+      class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl shadow-xl shadow-emerald-500/20 p-4 flex items-center justify-between text-white active:scale-[0.98] transition-all">
       <div class="flex items-center gap-3">
         <div class="relative">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
           </svg>
           <span class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-white text-emerald-700 rounded-full text-[10px] font-extrabold flex items-center justify-center" x-text="cartCount"></span>
         </div>
-        <span class="font-semibold" x-text="cartCount + (cartCount===1?' item':' items')"></span>
+        <span class="font-semibold text-sm" x-text="cartCount + (cartCount===1?' item':' items')"></span>
       </div>
-      <span class="font-extrabold" x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
+      <span class="font-extrabold text-sm" x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
     </button>
   </div>
 
   {# ── Cart Drawer ──────────────────────────────────────────────────── #}
   <div x-show="cartOpen" x-cloak class="fixed inset-0 z-40 flex">
-    <div @click="cartOpen=false" class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div @click="cartOpen=false" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
     <div x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full"
          x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-         class="relative ml-auto w-full max-w-md glass-panel h-full flex flex-col shadow-2xl border-l border-slate-200/50 dark:border-slate-700/50">
-      <div class="flex items-center justify-between p-5 border-b border-slate-200/50 dark:border-slate-800/50">
+         class="relative ml-auto w-full max-w-md bg-white h-full flex flex-col shadow-2xl border-l border-slate-200">
+      
+      <div class="flex items-center justify-between p-5 border-b border-slate-200">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 bg-emerald-100 dark:bg-emerald-500/20 rounded-xl flex items-center justify-center">
-            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+          <div class="w-9 h-9 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl flex items-center justify-center shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
           </div>
           <div>
-            <h2 class="font-bold text-slate-900 dark:text-white">Your Cart</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400" x-text="cartCount + ' items'"></p>
+            <h2 class="font-extrabold text-slate-900 text-sm">Your Cart</h2>
+            <p class="text-[10px] text-slate-400 font-bold" x-text="cartCount + ' items'"></p>
           </div>
         </div>
-        <button @click="cartOpen=false" class="w-8 h-8 glass-card rounded-xl flex items-center justify-center hover:scale-105 transition-all">
-          <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        <button @click="cartOpen=false" class="w-8 h-8 bg-slate-50 border border-slate-200 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
 
-      <div class="mx-4 mt-4 glass-card-static rounded-xl px-3 py-2.5 flex items-center gap-2 border border-emerald-200/50 dark:border-emerald-500/20">
-        <span class="text-lg">🍽️</span>
-        <span class="text-sm text-emerald-700 dark:text-emerald-400 font-semibold">Table {{ table.table_number }}</span>
+      <div class="mx-4 mt-4 bg-slate-50 rounded-xl px-3 py-2.5 flex items-center gap-2 border border-slate-200">
+        <span class="text-base">🍽️</span>
+        <span class="text-xs text-slate-700 font-bold">Table {{ table.table_number }}</span>
       </div>
 
       <div class="flex-1 overflow-y-auto p-4 space-y-3">
         <template x-if="cart.length === 0">
-          <div class="flex flex-col items-center justify-center h-40 text-center">
-            <span class="text-5xl mb-3">🛒</span>
-            <p class="text-slate-600 dark:text-slate-300 font-bold">Your cart is empty</p>
-            <p class="text-slate-400 dark:text-slate-500 text-sm mt-1">Add items from the menu</p>
+          <div class="flex flex-col items-center justify-center h-48 text-center">
+            <span class="text-4xl mb-2">🛒</span>
+            <p class="text-slate-700 font-bold text-sm">Your cart is empty</p>
+            <p class="text-slate-400 text-xs mt-1">Add items from the menu</p>
           </div>
         </template>
         <template x-for="item in cart" :key="item.id">
-          <div class="flex gap-3 glass-card-static rounded-2xl p-3 border border-slate-200/50 dark:border-slate-700/40">
+          <div class="flex gap-3 bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
             <img :src="item.image_url || '/static/web/placeholder.png'"
-                 :alt="item.name" class="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                 :alt="item.name" class="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-slate-100"
                  @error="$el.src='/static/web/placeholder.png'">
             <div class="flex-1 min-w-0">
-              <p class="font-semibold text-slate-900 dark:text-white text-sm truncate" x-text="item.name"></p>
-              <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm mt-0.5" x-text="'₹' + (parseInt(item.price)*item.quantity).toLocaleString('en-IN')"></p>
+              <p class="font-bold text-slate-900 text-xs truncate" x-text="item.name"></p>
+              <p class="text-emerald-600 font-extrabold text-xs mt-1" x-text="'₹' + (parseInt(item.price)*item.quantity).toLocaleString('en-IN')"></p>
               <div class="flex items-center justify-between mt-2">
                 <div class="flex items-center gap-1.5">
-                  <button @click="updateQty(item.id,item.quantity-1)" class="w-6 h-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700/50">
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-300">−</span>
+                  <button @click="updateQty(item.id,item.quantity-1)" class="w-6 h-6 bg-white border border-slate-200 rounded-lg shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors">
+                    <span class="text-sm font-bold text-slate-600">−</span>
                   </button>
-                  <span class="w-5 text-center font-extrabold text-sm text-slate-900 dark:text-white" x-text="item.quantity"></span>
+                  <span class="w-5 text-center font-extrabold text-xs text-slate-800" x-text="item.quantity"></span>
                   <button @click="updateQty(item.id,item.quantity+1)" class="w-6 h-6 bg-emerald-600 rounded-lg shadow-sm flex items-center justify-center hover:bg-emerald-700">
                     <span class="text-white text-sm font-bold">+</span>
                   </button>
                 </div>
-                <button @click="removeItem(item.id)" class="text-rose-400 hover:text-rose-500 dark:text-rose-500 dark:hover:text-rose-400 transition-colors p-1">
+                <button @click="removeItem(item.id)" class="text-slate-400 hover:text-red-500 transition-colors p-1">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                   </svg>
@@ -315,13 +314,13 @@
         </template>
       </div>
 
-      <div x-show="cart.length > 0" class="p-4 border-t border-slate-200/50 dark:border-slate-800/50 space-y-3">
-        <div class="flex justify-between text-sm text-slate-600 dark:text-slate-400">
+      <div x-show="cart.length > 0" class="p-4 border-t border-slate-200 space-y-3 bg-slate-50/50">
+        <div class="flex justify-between text-xs font-bold text-slate-600">
           <span>Subtotal</span>
-          <span class="font-semibold text-slate-900 dark:text-white" x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
+          <span class="text-slate-900" x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
         </div>
         <div class="flex gap-2">
-          <button @click="clearCart()" class="glass-btn-danger px-3 py-2.5 text-xs font-bold rounded-xl transition-all">Clear</button>
+          <button @click="clearCart()" class="glass-btn-danger px-4 py-2.5 text-xs font-bold rounded-xl transition-all">Clear</button>
           <button @click="checkout()"
             class="glass-btn-primary flex-1 flex items-center justify-center gap-2 rounded-xl py-3 font-bold text-sm transition-all active:scale-95">
             <span x-text="isEditingOrder ? 'Update Order' : 'Place Order'"></span>
@@ -335,62 +334,62 @@
 
   {# ── Order Review Modal ──────────────────────────────────────────── #}
   <div x-show="reviewOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div @click="reviewOpen=false" class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
-    <div class="relative glass-panel w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
-      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200/50 dark:border-slate-800/50">
+    <div @click="reviewOpen=false" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+    <div class="relative bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200">
         <div>
-          <h2 class="font-bold text-slate-900 dark:text-white text-lg" x-text="isEditingOrder ? 'Review Order Update' : 'Review Order'"></h2>
-          <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Table {{ table.table_number }}</p>
+          <h2 class="font-extrabold text-slate-900 text-base" x-text="isEditingOrder ? 'Review Order Update' : 'Review Order'"></h2>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Table {{ table.table_number }}</p>
         </div>
-        <button @click="reviewOpen=false" class="w-8 h-8 glass-card rounded-xl flex items-center justify-center">
-          <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        <button @click="reviewOpen=false" class="w-8 h-8 bg-slate-50 border border-slate-200 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
       <div class="overflow-y-auto flex-1 p-6 space-y-5">
         <div class="space-y-1">
           <template x-for="item in cart" :key="item.id">
-            <div class="flex items-center justify-between text-sm py-2.5 border-b border-slate-100/60 dark:border-slate-800/60">
+            <div class="flex items-center justify-between text-xs py-2.5 border-b border-slate-100">
               <div class="flex items-center gap-2.5">
-                <span class="w-5 h-5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-md flex items-center justify-center text-xs font-bold" x-text="item.quantity"></span>
-                <span class="text-slate-700 dark:text-slate-300" x-text="item.name"></span>
+                <span class="w-5 h-5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded flex items-center justify-center text-[10px] font-extrabold" x-text="item.quantity"></span>
+                <span class="text-slate-800 font-medium" x-text="item.name"></span>
               </div>
-              <span class="font-bold text-slate-900 dark:text-white" x-text="'₹' + (parseInt(item.price)*item.quantity).toLocaleString('en-IN')"></span>
+              <span class="font-extrabold text-slate-900" x-text="'₹' + (parseInt(item.price)*item.quantity).toLocaleString('en-IN')"></span>
             </div>
           </template>
         </div>
         <div class="space-y-2">
-          <label class="text-sm font-bold text-slate-700 dark:text-slate-300">Your Name <span class="text-xs text-slate-400 dark:text-slate-500 font-normal">(optional)</span></label>
+          <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Your Name <span class="text-[10px] text-slate-400 font-bold lowercase">(optional)</span></label>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 text-sm">👤</span>
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">👤</span>
             <input x-model="customerName" type="text" placeholder="Enter your name"
-              class="glass-input w-full h-11 rounded-2xl pl-10 pr-4 text-sm focus:outline-none placeholder-slate-400 dark:placeholder-slate-500">
+              class="glass-input w-full h-11 rounded-xl pl-10 pr-4 text-xs focus:outline-none placeholder-slate-400">
           </div>
         </div>
         <div class="space-y-2">
-          <label class="text-sm font-bold text-slate-700 dark:text-slate-300">Special Instructions</label>
+          <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Special Instructions</label>
           <textarea x-model="specialInstructions" rows="2" placeholder="Any allergies, spice levels, or preferences..."
-            class="glass-input w-full rounded-2xl px-4 py-3 text-sm focus:outline-none placeholder-slate-400 dark:placeholder-slate-500 resize-none"></textarea>
+            class="glass-input w-full rounded-xl px-4 py-3 text-xs focus:outline-none placeholder-slate-400 resize-none"></textarea>
         </div>
-        <div class="glass-card-static rounded-xl p-4 space-y-2.5 text-sm border border-slate-200/50 dark:border-slate-700/40">
-          <div class="flex justify-between text-slate-500 dark:text-slate-400">
+        <div class="bg-slate-50 rounded-xl p-4 space-y-2.5 text-xs border border-slate-200 shadow-sm">
+          <div class="flex justify-between text-slate-600 font-medium">
             <span>Subtotal</span>
-            <span x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
+            <span class="text-slate-800" x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
           </div>
-          <div class="flex justify-between text-slate-500 dark:text-slate-400">
+          <div class="flex justify-between text-slate-600 font-medium">
             <span>Tax (5%)</span>
-            <span x-text="'₹' + Math.round(cartTotal*0.05).toLocaleString('en-IN')"></span>
+            <span class="text-slate-800" x-text="'₹' + Math.round(cartTotal*0.05).toLocaleString('en-IN')"></span>
           </div>
-          <div class="flex justify-between font-extrabold text-slate-900 dark:text-white text-base pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+          <div class="flex justify-between font-extrabold text-slate-900 text-sm pt-2 border-t border-slate-200">
             <span>Total</span>
-            <span class="text-emerald-600 dark:text-emerald-400" x-text="'₹' + Math.round(cartTotal*1.05).toLocaleString('en-IN')"></span>
+            <span class="text-emerald-600" x-text="'₹' + Math.round(cartTotal*1.05).toLocaleString('en-IN')"></span>
           </div>
         </div>
       </div>
-      <div class="p-6 border-t border-slate-200/50 dark:border-slate-800/50">
+      <div class="p-6 border-t border-slate-200 bg-slate-50/50">
         <button @click="submitOrder()" :disabled="placing"
-          class="glass-btn-primary w-full flex items-center justify-center gap-2 rounded-2xl py-4 font-bold text-base transition-all active:scale-95 disabled:opacity-60">
+          class="glass-btn-primary w-full flex items-center justify-center gap-2 rounded-xl py-3.5 font-bold text-sm transition-all active:scale-95 disabled:opacity-60">
           <template x-if="placing">
             <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
@@ -399,7 +398,7 @@
           </template>
           <template x-if="!placing"><span x-text="isEditingOrder ? 'Confirm Update →' : 'Confirm Order →'"></span></template>
         </button>
-        <p x-show="orderError" class="text-xs text-rose-500 dark:text-rose-400 text-center mt-2" x-text="orderError"></p>
+        <p x-show="orderError" class="text-xs text-red-500 text-center mt-2 font-bold" x-text="orderError"></p>
       </div>
     </div>
   </div>
@@ -435,6 +434,7 @@ function menuApp(tableId) {
     customerName: '',
     specialInstructions: '',
     lastSeenNotificationId: null,
+    isNotificationInitialized: false,
 
     get sectionTitle() {
       const tabs = { popular: 'Popular Items', specials: "Chef's Specials" };
@@ -465,18 +465,14 @@ function menuApp(tableId) {
       if (this.activeOrder) {
         const stored = sessionStorage.getItem('customer_last_seen_notification_id_order_' + this.activeOrder.id);
         this.lastSeenNotificationId = stored !== null ? parseInt(stored) : null;
+        this.isNotificationInitialized = this.lastSeenNotificationId !== null;
         
         this.refreshActiveOrderStatus();
         
         // Initial setup for notification polling watermark
-        if (this.lastSeenNotificationId === null) {
-          this.pollActiveOrderNotifications().then(() => {
-            setInterval(() => this.pollActiveOrderNotifications(), 5000);
-          });
-        } else {
+        this.pollActiveOrderNotifications().then(() => {
           setInterval(() => this.pollActiveOrderNotifications(), 5000);
-          this.pollActiveOrderNotifications();
-        }
+        });
       }
     },
 
@@ -487,8 +483,8 @@ function menuApp(tableId) {
 
     async pollActiveOrderNotifications() {
       if (!this.activeOrder) return;
-      const isFirst = this.lastSeenNotificationId === null;
-      const queryId = isFirst ? 0 : this.lastSeenNotificationId;
+      const isFirst = !this.isNotificationInitialized;
+      const queryId = isFirst ? 0 : (this.lastSeenNotificationId || 0);
       try {
         const res = await fetch(`/api/orders/notifications/poll/?order_id=${this.activeOrder.id}&last_seen_id=${queryId}`);
         if (res.status === 200) {
@@ -511,6 +507,7 @@ function menuApp(tableId) {
             this.lastSeenNotificationId = 0;
             sessionStorage.setItem('customer_last_seen_notification_id_order_' + this.activeOrder.id, 0);
           }
+          this.isNotificationInitialized = true;
         }
       } catch(e) {}
     },
@@ -560,7 +557,7 @@ function menuApp(tableId) {
     foodDot(type) {
       const map = { veg:'#16a34a', non_veg:'#dc2626', vegan:'#059669' };
       const c = map[type] || '#6b7280';
-      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:1.5px solid ${c};border-radius:2px;flex-shrink:0"><span style="width:8px;height:8px;background:${c};border-radius:50%;display:inline-block"></span></span>`;
+      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border:1.5px solid ${c};border-radius:2px;flex-shrink:0"><span style="width:6px;height:6px;background:${c};border-radius:50%;display:inline-block"></span></span>`;
     },
 
     cartQty(id) { return (this.cart.find(i=>i.id===id)||{}).quantity || 0; },

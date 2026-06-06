@@ -243,9 +243,11 @@ def place_order(request, table_id):
 def order_success(request, order_number):
     order = get_object_or_404(Order, order_number=order_number)
     can_edit = _customer_can_edit(request, order)
+    is_edit = order.logs.filter(action='edited').exists()
     return render(request, 'customer/order_success.html', {
         'order': order,
         'can_edit': can_edit,
+        'is_edit': is_edit,
     })
 
 
