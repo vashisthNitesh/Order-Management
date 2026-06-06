@@ -26,6 +26,19 @@ def _get_restaurant(request):
         return Restaurant.objects.first()
 
 
+
+def _paginate_queryset(request, queryset, page_size):
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    paginator = Paginator(queryset, page_size)
+    page = request.GET.get('page')
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+    return page_obj
+
 # ── Auth ─────────────────────────────────────────────────────────────────
 
 def admin_login(request):
@@ -129,9 +142,10 @@ def admin_dashboard(request):
 @admin_required
 def admin_tables(request):
     restaurant = _get_restaurant(request)
-    tables = Table.objects.filter(restaurant=restaurant).order_by('table_number')
+    tables_qs = Table.objects.filter(restaurant=restaurant).order_by('table_number')
+    tables = _paginate_queryset(request, tables_qs, 10)
     return render(request, 'admin_panel/tables.html', {
-        'tables': tables, 'restaurant': restaurant
+        'tables': tables, 'restaurant': restaurant, 'page_obj': tables
     })
 
 
@@ -236,9 +250,11 @@ def admin_menu(request):
         items = items.filter(category_id=cat_filter)
     if search:
         items = items.filter(name__icontains=search)
+    
+    items_paginated = _paginate_queryset(request, items, 10)
     return render(request, 'admin_panel/menu.html', {
-        'items': items, 'categories': categories,
-        'cat_filter': cat_filter, 'search': search,
+        'items': items_paginated, 'categories': categories,
+        'cat_filter': cat_filter, 'search': search, 'page_obj': items_paginated
     })
 
 
@@ -326,8 +342,9 @@ def admin_menu_delete(request, item_id):
 def admin_categories(request):
     restaurant = _get_restaurant(request)
     cats = Category.objects.filter(restaurant=restaurant).order_by('sort_order', 'name')
+    cats_paginated = _paginate_queryset(request, cats, 10)
     return render(request, 'admin_panel/categories.html', {
-        'categories': cats, 'restaurant': restaurant,
+        'categories': cats_paginated, 'restaurant': restaurant, 'page_obj': cats_paginated
     })
 
 
@@ -389,7 +406,10 @@ def admin_category_delete(request, cat_id):
 def admin_offers(request):
     restaurant = _get_restaurant(request)
     offers = Offer.objects.filter(restaurant=restaurant).order_by('-created_at')
-    return render(request, 'admin_panel/offers.html', {'offers': offers})
+    offers_paginated = _paginate_queryset(request, offers, 10)
+    return render(request, 'admin_panel/offers.html', {
+        'offers': offers_paginated, 'page_obj': offers_paginated
+    })
 
 
 @admin_required
@@ -456,7 +476,10 @@ def admin_staff(request):
     staff_list = StaffProfile.objects.filter(
         restaurant=restaurant
     ).select_related('user').order_by('user__first_name')
-    return render(request, 'admin_panel/staff.html', {'staff_list': staff_list})
+    staff_paginated = _paginate_queryset(request, staff_list, 10)
+    return render(request, 'admin_panel/staff.html', {
+        'staff_list': staff_paginated, 'page_obj': staff_paginated
+    })
 
 
 @admin_required
@@ -537,8 +560,10 @@ def admin_orders(request):
     if search:
         qs = qs.filter(order_number__icontains=search)
 
+    orders_paginated = _paginate_queryset(request, qs, 15)
     return render(request, 'admin_panel/orders.html', {
-        'orders': qs[:150],
+        'orders': orders_paginated,
+        'page_obj': orders_paginated,
         'status_filter': status_filter,
         'paid_filter': paid_filter,
         'search': search,
@@ -760,8 +785,10 @@ def admin_logs(request):
     if actor_filter:
         logs = logs.filter(actor_type=actor_filter)
 
+    logs_paginated = _paginate_queryset(request, logs, 25)
     return render(request, 'admin_panel/logs.html', {
-        'logs': logs[:300],
+        'logs': logs_paginated,
+        'page_obj': logs_paginated,
         'order_q': order_q,
         'action_filter': action_filter,
         'actor_filter': actor_filter,

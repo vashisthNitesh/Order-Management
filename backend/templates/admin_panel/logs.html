@@ -4,7 +4,7 @@
 <div class="p-6 space-y-6">
   <div>
     <h2 class="text-xl font-bold text-slate-900">Order Audit Logs</h2>
-    <p class="text-sm text-slate-500">{{ logs|length }} entr{{ logs|length|pluralize:"y,ies" }} shown</p>
+    <p class="text-sm text-slate-500">{{ logs.paginator.count }} entr{{ logs.paginator.count|pluralize:"y,ies" }} total</p>
   </div>
 
   {# Filters #}
@@ -99,6 +99,7 @@
       </table>
     </div>
   </div>
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}

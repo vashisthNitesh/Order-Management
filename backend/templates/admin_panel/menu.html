@@ -6,7 +6,7 @@
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h2 class="text-lg font-bold text-slate-900">Menu Items</h2>
-      <p class="text-xs text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">{{ items.count }} item{{ items.count|pluralize }}</p>
+      <p class="text-xs text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">{{ items.paginator.count }} item{{ items.paginator.count|pluralize }}</p>
     </div>
     <a href="{% url 'web:admin_menu_add' %}"
        class="glass-btn-primary px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2">
@@ -136,6 +136,7 @@
     </div>
     {% endfor %}
   </div>
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}

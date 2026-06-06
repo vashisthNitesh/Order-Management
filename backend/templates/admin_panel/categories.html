@@ -5,7 +5,7 @@
   <div class="flex items-center justify-between">
     <div>
       <h2 class="text-lg font-bold text-slate-900">Categories</h2>
-      <p class="text-xs text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">{{ categories.count }} categor{{ categories.count|pluralize:"y,ies" }}</p>
+      <p class="text-xs text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">{{ categories.paginator.count }} categor{{ categories.paginator.count|pluralize:"y,ies" }}</p>
     </div>
     <a href="{% url 'web:admin_category_add' %}"
        class="glass-btn-primary px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2">
@@ -77,6 +77,7 @@
     </div>
     {% endfor %}
   </div>
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% block admin_scripts %}

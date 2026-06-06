@@ -6,7 +6,7 @@
   <div class="flex items-center justify-between">
     <div>
       <h2 class="text-xl font-bold text-slate-900">Offers & Promotions</h2>
-      <p class="text-sm text-slate-500">{{ offers.count }} offer{{ offers.count|pluralize }} active</p>
+      <p class="text-sm text-slate-500">{{ offers.paginator.count }} offer{{ offers.paginator.count|pluralize }} active</p>
     </div>
     <a href="{% url 'web:admin_offer_add' %}"
        class="glass-btn-primary flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all">
@@ -84,6 +84,7 @@
     </div>
     {% endfor %}
   </div>
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}

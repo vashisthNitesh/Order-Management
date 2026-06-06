@@ -8,7 +8,7 @@
     <div>
       <h2 class="text-xl font-bold text-slate-900 tracking-tight">Manage Orders</h2>
       <p class="text-xs text-slate-500 mt-1">
-        <span class="font-extrabold text-emerald-600">{{ orders|length }}</span> order{{ orders|length|pluralize }} found in system
+        <span class="font-extrabold text-emerald-600">{{ orders.paginator.count }}</span> order{{ orders.paginator.count|pluralize }} found in system
       </p>
     </div>
   </div>
@@ -155,6 +155,7 @@
       </table>
     </div>
   </div>
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}

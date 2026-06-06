@@ -5,7 +5,7 @@
   <div class="flex items-center justify-between">
     <div>
       <h2 class="text-xl font-bold text-slate-900">Staff Members</h2>
-      <p class="text-sm text-slate-500">{{ staff_list.count }} member{{ staff_list.count|pluralize }}</p>
+      <p class="text-sm text-slate-500">{{ staff_list.paginator.count }} member{{ staff_list.paginator.count|pluralize }}</p>
     </div>
     <a href="{% url 'web:admin_staff_add' %}"
        class="glass-btn-primary flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all">
@@ -80,6 +80,7 @@
       </tbody>
     </table>
   </div>
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}
