@@ -193,7 +193,7 @@
       </form>
       {% else %}
       <div class="inline-flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl px-5 py-3 font-bold">
-        <svg class="w-4.5 h-4.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span>Paid on {{ order.paid_at|date:"d M Y, H:i" }}{% if order.paid_by %} by {{ order.paid_by.get_full_name|default:order.paid_by.username }}{% endif %}</span>
@@ -210,7 +210,7 @@
 
   <!-- Invoice Breakdown Card -->
   <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4.5 border-b border-slate-200 bg-slate-50">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 bg-slate-50">
       <h3 class="font-bold text-slate-900">Invoice Summary</h3>
       {% if not order.is_paid %}
       <span class="text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md font-bold shadow-sm">Editable until paid</span>
@@ -270,7 +270,7 @@
                     onsubmit="return confirm('Mark {{ item.menu_item.name }} as unavailable on the menu?')">
                 {% csrf_token %}
                 <button type="submit" title="Mark unavailable"
-                  class="glass-btn-secondary w-7.5 h-7.5 hover:bg-amber-50 text-amber-600 border border-slate-200 rounded-lg flex items-center justify-center transition-colors">
+                  class="glass-btn-secondary w-8 h-8 hover:bg-amber-50 text-amber-600 border border-slate-200 rounded-lg flex items-center justify-center transition-colors">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                   </svg>
@@ -281,7 +281,7 @@
                     onsubmit="return confirm('Remove {{ item.menu_item.name|default:"this item" }} from invoice?')">
                 {% csrf_token %}
                 <button type="submit" title="Remove item"
-                  class="glass-btn-secondary w-7.5 h-7.5 hover:bg-rose-50 text-rose-600 border border-slate-200 rounded-lg flex items-center justify-center transition-colors">
+                  class="glass-btn-secondary w-8 h-8 hover:bg-rose-50 text-rose-600 border border-slate-200 rounded-lg flex items-center justify-center transition-colors">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
@@ -368,7 +368,7 @@
 
   <!-- Audit Log Card -->
   <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-    <div class="px-6 py-4.5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+    <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
       <h3 class="font-bold text-slate-900">Invoice History</h3>
       <span class="text-xs text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded font-bold shadow-sm">{{ order.logs.count }} event{{ order.logs.count|pluralize }}</span>
     </div>

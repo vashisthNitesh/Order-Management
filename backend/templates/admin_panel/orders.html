@@ -104,10 +104,10 @@
           {% for order in orders %}
           <tr class="hover:bg-slate-50/70 transition-colors group cursor-pointer"
               onclick="if (!event.target.closest('a') && !event.target.closest('button')) window.location.href = '{% url 'web:admin_order_detail' order.id %}'">
-            <td class="px-6 py-4.5 whitespace-nowrap">
+            <td class="px-6 py-5 whitespace-nowrap">
               <span class="font-mono font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">#{{ order.order_number }}</span>
             </td>
-            <td class="px-6 py-4.5 whitespace-nowrap">
+            <td class="px-6 py-5 whitespace-nowrap">
               {% if order.table %}
               <div class="flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -117,16 +117,16 @@
               <span class="text-slate-400 font-medium">—</span>
               {% endif %}
             </td>
-            <td class="px-6 py-4.5 whitespace-nowrap hidden md:table-cell">
+            <td class="px-6 py-5 whitespace-nowrap hidden md:table-cell">
               <div class="text-slate-800 font-semibold">{{ order.customer_name|default:"Walk-in Customer" }}</div>
             </td>
-            <td class="px-6 py-4.5 text-right whitespace-nowrap font-extrabold text-slate-900">
+            <td class="px-6 py-5 text-right whitespace-nowrap font-extrabold text-slate-900">
               {{ order.total_amount|inr }}
             </td>
-            <td class="px-6 py-4.5 text-center whitespace-nowrap">
+            <td class="px-6 py-5 text-center whitespace-nowrap">
               {{ order.status|status_badge }}
             </td>
-            <td class="px-6 py-4.5 text-center whitespace-nowrap">
+            <td class="px-6 py-5 text-center whitespace-nowrap">
               {% if order.is_paid %}
               <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PAID
@@ -137,10 +137,10 @@
               </span>
               {% endif %}
             </td>
-            <td class="px-6 py-4.5 whitespace-nowrap text-slate-400 text-xs font-semibold hidden lg:table-cell">
+            <td class="px-6 py-5 whitespace-nowrap text-slate-400 text-xs font-semibold hidden lg:table-cell">
               {{ order.created_at|date:"d M Y, H:i" }}
             </td>
-            <td class="px-6 py-4.5 text-right whitespace-nowrap">
+            <td class="px-6 py-5 text-right whitespace-nowrap">
               <a href="{% url 'web:admin_order_detail' order.id %}" 
                 class="glass-btn-secondary inline-flex items-center justify-center gap-1 px-3 py-1.5 font-bold rounded-xl text-xs shadow-sm">
                 <span>View Invoice</span>
