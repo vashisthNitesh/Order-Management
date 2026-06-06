@@ -1,6 +1,55 @@
 {% extends "admin_panel/base.html" %}
 {% load web_extras %}
 {% block page_title %}Dashboard Overview{% endblock %}
+
+{% block header_actions %}
+<div x-data="{ open: false }" class="relative">
+  <button @click="open = !open" 
+          class="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl transition-all duration-200 focus:outline-none shadow-sm">
+    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+    <span>{{ period_label }}</span>
+    <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+  
+  <div x-show="open" @click.away="open = false" x-cloak
+       x-transition:enter="transition ease-out duration-100 transform"
+       x-transition:enter-start="opacity-0 scale-95"
+       x-transition:enter-end="opacity-100 scale-100"
+       x-transition:leave="transition ease-in duration-75 transform"
+       class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden py-1">
+    <a href="?period=today" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'today' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+      <span>Today</span>
+      {% if period == 'today' %}<span class="text-xs">✓</span>{% endif %}
+    </a>
+    <a href="?period=yesterday" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'yesterday' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+      <span>Yesterday</span>
+      {% if period == 'yesterday' %}<span class="text-xs">✓</span>{% endif %}
+    </a>
+    <a href="?period=7days" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == '7days' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+      <span>Last 7 Days</span>
+      {% if period == '7days' %}<span class="text-xs">✓</span>{% endif %}
+    </a>
+    <a href="?period=30days" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == '30days' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+      <span>Last 30 Days</span>
+      {% if period == '30days' %}<span class="text-xs">✓</span>{% endif %}
+    </a>
+    <a href="?period=this_month" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'this_month' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+      <span>This Month</span>
+      {% if period == 'this_month' %}<span class="text-xs">✓</span>{% endif %}
+    </a>
+    <div class="border-t border-slate-100 my-1"></div>
+    <a href="?period=all" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'all' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+      <span>All Time</span>
+      {% if period == 'all' %}<span class="text-xs">✓</span>{% endif %}
+    </a>
+  </div>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="p-6 space-y-6">
 
@@ -31,8 +80,31 @@
     <a href="{{ link }}" class="glass-card rounded-2xl p-5 flex flex-col justify-between min-h-36">
       <div class="flex items-center justify-between">
         <span class="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest">{{ label }}</span>
-        <div class="w-8 h-8 rounded-lg {{ color }} bg-emerald-50 border border-emerald-100 flex items-center justify-center text-sm group-hover:scale-105 duration-200 transition-transform shadow-sm">
-          {{ icon }}
+        
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-105 duration-200 transition-transform shadow-sm
+          {% if 'Revenue' in label %}bg-emerald-50 text-emerald-600 border border-emerald-100
+          {% elif 'Orders' in label %}bg-blue-50 text-blue-600 border border-blue-100
+          {% elif 'Tables' in label %}bg-amber-50 text-amber-600 border border-amber-100
+          {% elif 'Avg Order' in label %}bg-indigo-50 text-indigo-600 border border-indigo-100
+          {% endif %}">
+          
+          {% if 'Revenue' in label %}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          {% elif 'Orders' in label %}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          {% elif 'Tables' in label %}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          {% elif 'Avg Order' in label %}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          {% endif %}
         </div>
       </div>
       <div class="mt-4">

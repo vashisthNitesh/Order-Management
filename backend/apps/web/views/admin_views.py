@@ -59,19 +59,44 @@ def admin_logout(request):
 @admin_required
 def admin_dashboard(request):
     restaurant = _get_restaurant(request)
-    today = timezone.now().date()
+    period = request.GET.get('period', 'today')
+    now = timezone.now()
     qs = Order.objects.filter(restaurant=restaurant)
-    today_qs = qs.filter(created_at__date=today)
+    
+    # Calculate stats based on period
+    if period == 'yesterday':
+        start_date = (now - timedelta(days=1)).date()
+        period_qs = qs.filter(created_at__date=start_date)
+        period_label = "Yesterday"
+    elif period == '7days':
+        start_date = (now - timedelta(days=6)).date()
+        period_qs = qs.filter(created_at__date__gte=start_date)
+        period_label = "Last 7 Days"
+    elif period == '30days':
+        start_date = (now - timedelta(days=29)).date()
+        period_qs = qs.filter(created_at__date__gte=start_date)
+        period_label = "Last 30 Days"
+    elif period == 'this_month':
+        start_date = now.date().replace(day=1)
+        period_qs = qs.filter(created_at__date__gte=start_date)
+        period_label = "This Month"
+    elif period == 'all':
+        period_qs = qs
+        period_label = "All Time"
+    else:  # today
+        period = 'today'
+        period_qs = qs.filter(created_at__date=now.date())
+        period_label = "Today"
 
     from django.db.models import Sum
-    today_orders = today_qs.count()
-    today_revenue = today_qs.exclude(status='cancelled').aggregate(t=Sum('total_amount'))['t'] or 0
+    total_orders = period_qs.count()
+    total_revenue = period_qs.exclude(status='cancelled').aggregate(t=Sum('total_amount'))['t'] or 0
     active_tables = qs.filter(is_paid=False).exclude(status='cancelled').values('table').distinct().count()
-    aov = today_revenue / today_orders if today_orders > 0 else 0
+    aov = total_revenue / total_orders if total_orders > 0 else 0
 
     stats = {
-        'today_orders': today_orders,
-        'today_revenue': today_revenue,
+        'total_orders': total_orders,
+        'total_revenue': total_revenue,
         'pending': qs.filter(status='pending').count(),
         'preparing': qs.filter(status='preparing').count(),
         'ready': qs.filter(status='ready').count(),
@@ -80,20 +105,22 @@ def admin_dashboard(request):
     recent_orders = qs.select_related('table').prefetch_related('items').order_by('-created_at')[:10]
     from django.urls import reverse
     
-    rev_fmt = f"₹{int(today_revenue):,}" if today_revenue == int(today_revenue) else f"₹{today_revenue:,.2f}"
+    rev_fmt = f"₹{int(total_revenue):,}" if total_revenue == int(total_revenue) else f"₹{total_revenue:,.2f}"
     aov_fmt = f"₹{int(aov):,}" if aov == int(aov) else f"₹{aov:,.2f}"
 
     stats_cards = [
-        ('💰', "Today's Revenue", rev_fmt,               'bg-emerald-50 text-emerald-700', reverse('web:admin_orders') + '?paid=1'),
-        ('📦', "Today's Orders",  today_orders,          'bg-blue-50 text-blue-700',    reverse('web:admin_orders')),
-        ('🪑', "Active Tables",   active_tables,         'bg-amber-50 text-amber-700',   reverse('web:admin_orders')),
-        ('📊', "Avg Order Value", aov_fmt,               'bg-indigo-50 text-indigo-700',  reverse('web:admin_orders')),
+        ('💰', f"Revenue ({period_label})", rev_fmt,      'bg-emerald-50 text-emerald-700', reverse('web:admin_orders') + '?paid=1'),
+        ('📦', f"Orders ({period_label})",  total_orders, 'bg-blue-50 text-blue-700',    reverse('web:admin_orders')),
+        ('🪑', "Active Tables",            active_tables, 'bg-amber-50 text-amber-700',   reverse('web:admin_orders')),
+        ('📊', f"Avg Order Value ({period_label})", aov_fmt, 'bg-indigo-50 text-indigo-700',  reverse('web:admin_orders')),
     ]
     return render(request, 'admin_panel/dashboard.html', {
         'stats': stats,
         'stats_cards': stats_cards,
         'recent_orders': recent_orders,
         'restaurant': restaurant,
+        'period': period,
+        'period_label': period_label,
     })
 
 
