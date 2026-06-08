@@ -101,7 +101,11 @@ def admin_dashboard(request):
         period_qs = qs.filter(created_at__date=now.date())
         period_label = "Today"
 
-    from django.db.models import Sum
+    from django.db.models import Sum, Count, F, Avg, Q
+    from django.db.models.functions import TruncHour, TruncDay, TruncMonth
+    from django.utils.timezone import localtime
+    import json
+
     total_orders = period_qs.count()
     total_revenue = period_qs.exclude(status='cancelled').aggregate(t=Sum('total_amount'))['t'] or 0
     active_tables = qs.filter(is_paid=False).exclude(status='cancelled').values('table').distinct().count()
@@ -127,6 +131,131 @@ def admin_dashboard(request):
         ('🪑', "Active Tables",            active_tables, 'bg-amber-50 text-amber-700',   reverse('web:admin_orders')),
         ('📊', f"Avg Order Value ({period_label})", aov_fmt, 'bg-indigo-50 text-indigo-700',  reverse('web:admin_orders')),
     ]
+
+    # 1. Revenue Trend Data
+    if period in ('today', 'yesterday'):
+        trend_qs = (
+            period_qs.exclude(status='cancelled')
+            .annotate(group_time=TruncHour('created_at'))
+            .values('group_time')
+            .annotate(total=Sum('total_amount'))
+            .order_by('group_time')
+        )
+        labels = [localtime(x['group_time']).strftime('%I %p') for x in trend_qs]
+        values = [float(x['total']) for x in trend_qs]
+    elif period == 'all':
+        trend_qs = (
+            period_qs.exclude(status='cancelled')
+            .annotate(group_time=TruncMonth('created_at'))
+            .values('group_time')
+            .annotate(total=Sum('total_amount'))
+            .order_by('group_time')
+        )
+        labels = [localtime(x['group_time']).strftime('%b %Y') for x in trend_qs]
+        values = [float(x['total']) for x in trend_qs]
+    else:  # 7days, 30days, this_month
+        trend_qs = (
+            period_qs.exclude(status='cancelled')
+            .annotate(group_time=TruncDay('created_at'))
+            .values('group_time')
+            .annotate(total=Sum('total_amount'))
+            .order_by('group_time')
+        )
+        labels = [localtime(x['group_time']).strftime('%d %b') for x in trend_qs]
+        values = [float(x['total']) for x in trend_qs]
+
+    # 2. Top Selling Items Data
+    top_items_qs = (
+        OrderItem.objects.filter(order__in=period_qs)
+        .exclude(order__status='cancelled')
+        .annotate(item_revenue=F('quantity') * F('unit_price'))
+        .values('menu_item__name')
+        .annotate(quantity=Sum('quantity'), revenue=Sum('item_revenue'))
+        .order_by('-quantity')[:5]
+    )
+    top_item_labels = [x['menu_item__name'] or 'Deleted Item' for x in top_items_qs]
+    top_item_qtys = [int(x['quantity']) for x in top_items_qs]
+    top_item_revs = [float(x['revenue']) for x in top_items_qs]
+
+    # 3. Category Sales Data
+    cat_sales_qs = (
+        OrderItem.objects.filter(order__in=period_qs)
+        .exclude(order__status='cancelled')
+        .annotate(item_revenue=F('quantity') * F('unit_price'))
+        .values('menu_item__category__name')
+        .annotate(revenue=Sum('item_revenue'))
+        .order_by('-revenue')
+    )
+    cat_labels = [x['menu_item__category__name'] or 'Uncategorized' for x in cat_sales_qs]
+    cat_revenues = [float(x['revenue']) for x in cat_sales_qs]
+
+    # 4. Insights Metrics
+    peak_hour_data = (
+        period_qs.annotate(hour=TruncHour('created_at'))
+        .values('hour')
+        .annotate(count=Count('id'))
+        .order_by('-count')
+        .first()
+    )
+    peak_hour = ""
+    if peak_hour_data:
+        peak_hour = f"{localtime(peak_hour_data['hour']).strftime('%I %p')} ({peak_hour_data['count']} orders)"
+    else:
+        peak_hour = "No orders yet"
+
+    top_table_data = (
+        period_qs.exclude(status='cancelled')
+        .values('table__table_number')
+        .annotate(revenue=Sum('total_amount'))
+        .order_by('-revenue')
+        .first()
+    )
+    top_table = ""
+    if top_table_data:
+        top_table = f"Table {top_table_data['table__table_number']} (₹{float(top_table_data['revenue']):,.2f})"
+    else:
+        top_table = "No billings yet"
+
+    avg_items = (
+        OrderItem.objects.filter(order__in=period_qs)
+        .exclude(order__status='cancelled')
+        .values('order')
+        .annotate(items_count=Sum('quantity'))
+        .aggregate(avg_items=Avg('items_count'))['avg_items'] or 0
+    )
+    avg_items_fmt = f"{avg_items:.1f} items"
+
+    popular_dish_data = (
+        OrderItem.objects.filter(order__in=period_qs)
+        .exclude(order__status='cancelled')
+        .values('menu_item__name')
+        .annotate(quantity=Sum('quantity'))
+        .order_by('-quantity')
+        .first()
+    )
+    popular_dish = ""
+    if popular_dish_data:
+        popular_dish = f"{popular_dish_data['menu_item__name']} ({popular_dish_data['quantity']} sold)"
+    else:
+        popular_dish = "No sales yet"
+
+    insights = {
+        'peak_hour': peak_hour,
+        'top_table': top_table,
+        'avg_items': avg_items_fmt,
+        'popular_dish': popular_dish,
+    }
+
+    chart_data = {
+        'trend_labels': json.dumps(labels),
+        'trend_values': json.dumps(values),
+        'top_item_labels': json.dumps(top_item_labels),
+        'top_item_qtys': json.dumps(top_item_qtys),
+        'top_item_revs': json.dumps(top_item_revs),
+        'cat_labels': json.dumps(cat_labels),
+        'cat_revenues': json.dumps(cat_revenues),
+    }
+
     return render(request, 'admin_panel/dashboard.html', {
         'stats': stats,
         'stats_cards': stats_cards,
@@ -134,6 +263,8 @@ def admin_dashboard(request):
         'restaurant': restaurant,
         'period': period,
         'period_label': period_label,
+        'chart_data': chart_data,
+        'insights': insights,
     })
 
 

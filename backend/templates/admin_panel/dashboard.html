@@ -51,37 +51,39 @@
 {% endblock %}
 
 {% block content %}
-<div class="p-6 space-y-6">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="p-4 space-y-4 max-w-7xl mx-auto">
 
   {# Welcome Header Card #}
-  <div class="bg-gradient-to-br from-emerald-600/90 to-teal-500/90 border border-white/20 backdrop-blur-md text-white p-6 md:p-8 rounded-2xl relative overflow-hidden shadow-lg shadow-emerald-600/5">
+  <div class="bg-gradient-to-br from-emerald-600/90 to-teal-500/90 border border-white/20 backdrop-blur-md text-white p-5 rounded-xl relative overflow-hidden shadow-md">
     <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
     
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
       <div>
-        <h2 class="text-xl md:text-2xl font-bold tracking-tight">Welcome back, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
-        <p class="text-emerald-50 text-xs mt-1">Here is the live performance summary for <span class="text-white font-bold">{{ restaurant.name }}</span> today.</p>
+        <h2 class="text-lg md:text-xl font-bold tracking-tight">Welcome back, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
+        <p class="text-emerald-50 text-[11px] mt-0.5">Here is the live performance summary for <span class="text-white font-bold">{{ restaurant.name }}</span> today.</p>
       </div>
       
-      <div class="flex items-center gap-2 self-start sm:self-center bg-white/15 border border-white/20 px-3.5 py-2 rounded-xl shadow-sm">
-        <span class="relative flex h-2 w-2">
+      <div class="flex items-center gap-2 self-start sm:self-center bg-white/15 border border-white/20 px-3 py-1.5 rounded-lg shadow-sm">
+        <span class="relative flex h-1.5 w-1.5">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-200"></span>
+          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-200"></span>
         </span>
-        <span class="text-[9px] font-extrabold text-white uppercase tracking-widest">Live Monitoring</span>
+        <span class="text-[8px] font-extrabold text-white uppercase tracking-widest">Live Monitoring</span>
       </div>
     </div>
   </div>
 
   {# Stats Grid #}
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     {% for icon, label, value, color, link in stats_cards %}
-    <a href="{{ link }}" class="glass-card stagger-item rounded-2xl p-5 flex flex-col justify-between min-h-36" style="--sibling-index: {{ forloop.counter }};">
+    <a href="{{ link }}" class="glass-card stagger-item rounded-xl p-4 flex flex-col justify-between min-h-[100px]" style="--sibling-index: {{ forloop.counter }};">
       <div class="flex items-center justify-between">
         <span class="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest">{{ label }}</span>
         
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-105 duration-200 transition-transform shadow-sm
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-105 duration-200 transition-transform shadow-xs
           {% if 'Revenue' in label %}bg-emerald-50 text-emerald-600 border border-emerald-100
           {% elif 'Orders' in label %}bg-blue-50 text-blue-600 border border-blue-100
           {% elif 'Tables' in label %}bg-amber-50 text-amber-600 border border-amber-100
@@ -89,91 +91,118 @@
           {% endif %}">
           
           {% if 'Revenue' in label %}
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           {% elif 'Orders' in label %}
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           {% elif 'Tables' in label %}
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
           {% elif 'Avg Order' in label %}
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           {% endif %}
         </div>
       </div>
-      <div class="mt-4">
-        <p class="text-3xl font-black text-slate-900 tracking-tight">{{ value }}</p>
+      <div class="mt-2.5">
+        <p class="text-2xl font-black text-slate-900 tracking-tight">{{ value }}</p>
       </div>
     </a>
     {% endfor %}
   </div>
 
+  {# Charts Grid #}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    
+    {# Revenue Trend Chart #}
+    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 5;">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-xs tracking-tight">Revenue Trend</h3>
+        <span class="text-[9px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Billing Flow</span>
+      </div>
+      <div class="h-60 relative w-full">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
+    {# Top Selling Items Chart #}
+    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 6;">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-xs tracking-tight">Top Selling Dishes</h3>
+        <span class="text-[9px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-bold">Demand Rank</span>
+      </div>
+      <div class="h-60 relative w-full">
+        <canvas id="topItemsChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
   {# Live Kitchen Status Grid #}
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     
     {# Pending Card #}
     <a href="{% url 'web:admin_orders' %}?status=pending"
-       class="glass-card stagger-item border-amber-200 bg-amber-50/10 hover:bg-amber-50/30 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden"
-       style="--sibling-index: 5;">
+       class="glass-card stagger-item border-amber-200 bg-amber-50/10 hover:bg-amber-50/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden"
+       style="--sibling-index: 7;">
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-amber-500/5 rounded-full pointer-events-none"></div>
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-          <span class="text-[10px] font-extrabold text-amber-800 uppercase tracking-wider">Pending Confirmation</span>
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+          <span class="text-[9px] font-extrabold text-amber-800 uppercase tracking-wider">Pending Confirmation</span>
         </div>
-        <span class="text-2xl font-black text-amber-600" x-text="'{{ stats.pending }}'"></span>
+        <span class="text-xl font-black text-amber-600">{{ stats.pending }}</span>
       </div>
       <div>
-        <div class="w-full bg-amber-100 rounded-full h-1.5 mb-2 overflow-hidden">
-          <div class="bg-amber-500 h-1.5 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.pending stats.total 100 %}{% else %}0{% endif %}%"></div>
+        <div class="w-full bg-amber-100 rounded-full h-1 mb-1.5 overflow-hidden">
+          <div class="bg-amber-500 h-1 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.pending stats.total 100 %}{% else %}0{% endif %}%"></div>
         </div>
-        <p class="text-[9px] text-amber-700/80 font-bold uppercase tracking-widest">Requires Action & Confirm</p>
+        <p class="text-[9px] text-amber-700/80 font-bold uppercase tracking-widest">Requires Action</p>
       </div>
     </a>
 
     {# Preparing Card #}
     <a href="{% url 'web:admin_orders' %}?status=preparing"
-       class="glass-card stagger-item border-orange-200 bg-orange-50/10 hover:bg-orange-50/30 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden"
-       style="--sibling-index: 6;">
+       class="glass-card stagger-item border-orange-200 bg-orange-50/10 hover:bg-orange-50/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden"
+       style="--sibling-index: 8;">
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-orange-500/5 rounded-full pointer-events-none"></div>
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-          <span class="text-[10px] font-extrabold text-orange-800 uppercase tracking-wider">Active In Kitchen</span>
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+          <span class="text-[9px] font-extrabold text-orange-800 uppercase tracking-wider">Active In Kitchen</span>
         </div>
-        <span class="text-2xl font-black text-orange-600" x-text="'{{ stats.preparing }}'"></span>
+        <span class="text-xl font-black text-orange-600">{{ stats.preparing }}</span>
       </div>
       <div>
-        <div class="w-full bg-orange-100 rounded-full h-1.5 mb-2 overflow-hidden">
-          <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.preparing stats.total 100 %}{% else %}0{% endif %}%"></div>
+        <div class="w-full bg-orange-100 rounded-full h-1 mb-1.5 overflow-hidden">
+          <div class="bg-orange-500 h-1 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.preparing stats.total 100 %}{% else %}0{% endif %}%"></div>
         </div>
-        <p class="text-[9px] text-orange-700/80 font-bold uppercase tracking-widest">Currently Cooking</p>
+        <p class="text-[9px] text-orange-700/80 font-bold uppercase tracking-widest">Cooking</p>
       </div>
     </a>
 
     {# Ready Card #}
     <a href="{% url 'web:admin_orders' %}?status=ready"
-       class="glass-card stagger-item border-emerald-200 bg-emerald-50/10 hover:bg-emerald-50/30 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden"
-       style="--sibling-index: 7;">
+       class="glass-card stagger-item border-emerald-200 bg-emerald-50/10 hover:bg-emerald-50/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden"
+       style="--sibling-index: 9;">
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/5 rounded-full pointer-events-none"></div>
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider">Ready to Serve</span>
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-[9px] font-extrabold text-emerald-800 uppercase tracking-wider">Ready to Serve</span>
         </div>
-        <span class="text-2xl font-black text-emerald-600" x-text="'{{ stats.ready }}'"></span>
+        <span class="text-xl font-black text-emerald-600">{{ stats.ready }}</span>
       </div>
       <div>
-        <div class="w-full bg-emerald-100 rounded-full h-1.5 mb-2 overflow-hidden">
-          <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.ready stats.total 100 %}{% else %}0{% endif %}%"></div>
+        <div class="w-full bg-emerald-100 rounded-full h-1 mb-1.5 overflow-hidden">
+          <div class="bg-emerald-500 h-1 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.ready stats.total 100 %}{% else %}0{% endif %}%"></div>
         </div>
-        <p class="text-[9px] text-emerald-700/80 font-bold uppercase tracking-widest">Needs delivery to table</p>
+        <p class="text-[9px] text-emerald-700/80 font-bold uppercase tracking-widest">Deliver to Table</p>
       </div>
     </a>
 
@@ -182,64 +211,123 @@
   {# Ready Alert Banner #}
   {% if stats.ready > 0 %}
   <a href="{% url 'web:admin_orders' %}?status=ready"
-     class="flex items-center gap-4 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all hover:scale-[1.002] active:scale-[0.998] stagger-item"
-     style="--sibling-index: 8;">
-    <div class="w-10 h-10 bg-white/15 border border-white/10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 animate-bounce">🔔</div>
+     class="flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:scale-[1.002] active:scale-[0.998] stagger-item"
+     style="--sibling-index: 10;">
+    <div class="w-8 h-8 bg-white/15 border border-white/10 rounded-lg flex items-center justify-center text-sm flex-shrink-0 animate-bounce">🔔</div>
     <div>
-      <p class="font-bold text-sm tracking-tight">{{ stats.ready }} order{{ stats.ready|pluralize }} ready to serve!</p>
-      <p class="text-white/80 text-[11px] font-bold mt-0.5">Please check and deliver to the table coordinates.</p>
+      <p class="font-bold text-xs tracking-tight">{{ stats.ready }} order{{ stats.ready|pluralize }} ready to serve!</p>
+      <p class="text-white/80 text-[10px] font-bold mt-0.5">Please check and deliver to the table coordinates.</p>
     </div>
-    <span class="ml-auto font-bold text-base">→</span>
+    <span class="ml-auto font-bold text-sm">→</span>
   </a>
   {% endif %}
 
+  {# Category Sales & Operational Insights Grid #}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    
+    {# Category Distribution Doughnut #}
+    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 11;">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-xs tracking-tight">Sales by Category</h3>
+        <span class="text-[9px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full font-bold">Revenue Share</span>
+      </div>
+      <div class="h-52 relative w-full">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+
+    {# SaaS Operational Insights Panel #}
+    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 12;">
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-slate-900 text-xs tracking-tight">Operational Insights</h3>
+          <span class="text-[9px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full font-bold">Business intelligence</span>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Peak Order hour</span>
+            <span class="font-bold text-slate-800 text-xs mt-0.5 block">{{ insights.peak_hour }}</span>
+          </div>
+          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Top Dining Table</span>
+            <span class="font-bold text-slate-800 text-xs mt-0.5 block">{{ insights.top_table }}</span>
+          </div>
+          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Avg Items / Order</span>
+            <span class="font-bold text-slate-800 text-xs mt-0.5 block">{{ insights.avg_items }}</span>
+          </div>
+          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Popular Dish</span>
+            <span class="font-bold text-slate-800 text-xs mt-0.5 block truncate" title="{{ insights.popular_dish }}">{{ insights.popular_dish }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-emerald-50/50 border border-emerald-100 p-3 rounded-lg flex gap-2">
+        <span class="text-sm">💡</span>
+        <div>
+          <span class="text-[9px] text-emerald-800 font-extrabold uppercase tracking-wider block">Recommendation</span>
+          <p class="text-[11px] text-emerald-700 font-medium leading-relaxed mt-0.5">
+            {% if stats.total_orders > 0 %}
+              Peak hours require active kitchen dispatch. Monitor preparation backlogs and focus promotion banners on low-revenue menu categories to optimize your inventory.
+            {% else %}
+              No orders have been recorded in the selected period. Launch new promo codes or customer dining offers to stimulate foot traffic and drive orders.
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   {# Quick Navigation Links #}
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <a href="{% url 'web:admin_orders' %}?paid=0" class="glass-card stagger-item rounded-2xl p-5 flex items-start gap-4" style="--sibling-index: 9;">
-      <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 border border-rose-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="{% url 'web:admin_orders' %}?paid=0" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 13;">
+      <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 border border-rose-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
       <div>
         <p class="text-xs font-bold text-slate-800">Unpaid Invoices</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1">Pending Cashout</p>
+        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Pending Cashout</p>
       </div>
     </a>
 
-    <a href="{% url 'web:staff_kitchen' %}" class="glass-card stagger-item rounded-2xl p-5 flex items-start gap-4" style="--sibling-index: 10;">
-      <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-700 border border-orange-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="{% url 'web:staff_kitchen' %}" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 14;">
+      <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-700 border border-orange-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
         </svg>
       </div>
       <div>
         <p class="text-xs font-bold text-slate-800">Kitchen Display</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1">Cooking Queue</p>
+        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Cooking Queue</p>
       </div>
     </a>
 
-    <a href="{% url 'web:admin_menu' %}" class="glass-card stagger-item rounded-2xl p-5 flex items-start gap-4" style="--sibling-index: 11;">
-      <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="{% url 'web:admin_menu' %}" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 15;">
+      <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       </div>
       <div>
         <p class="text-xs font-bold text-slate-800">Manage Menu</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1">Dishes & Pricing</p>
+        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Dishes & Pricing</p>
       </div>
     </a>
 
-    <a href="{% url 'web:admin_logs' %}" class="glass-card stagger-item rounded-2xl p-5 flex items-start gap-4" style="--sibling-index: 12;">
-      <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="{% url 'web:admin_logs' %}" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 16;">
+      <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
         </svg>
       </div>
       <div>
         <p class="text-xs font-bold text-slate-800">System Logs</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1">Audit Trails</p>
+        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Audit Trails</p>
       </div>
     </a>
   </div>
@@ -249,7 +337,169 @@
 
 {% block admin_scripts %}
 <script>
-  // Dynamic refresh
+  // Dynamic refresh every 30 seconds
   setTimeout(() => location.reload(), 30000);
+
+  // --- Charts Rendering ---
+
+  // 1. Revenue Line Chart
+  const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+  const gradientRev = ctxRevenue.createLinearGradient(0, 0, 0, 220);
+  gradientRev.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+  gradientRev.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+  new Chart(ctxRevenue, {
+    type: 'line',
+    data: {
+      labels: {{ chart_data.trend_labels|safe }},
+      datasets: [{
+        label: 'Revenue (₹)',
+        data: {{ chart_data.trend_values|safe }},
+        borderColor: '#10b981',
+        borderWidth: 2.5,
+        backgroundColor: gradientRev,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#10b981',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 1.5,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleFont: { family: 'Outfit', size: 12, weight: 'bold' },
+          bodyFont: { family: 'Outfit', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            label: function(context) {
+              return ` Revenue: ₹${context.raw.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Outfit', size: 10 }, color: '#64748b' }
+        },
+        y: {
+          grid: { color: 'rgba(226, 232, 240, 0.4)' },
+          ticks: { 
+            font: { family: 'Outfit', size: 10 }, 
+            color: '#64748b',
+            callback: function(value) {
+              return '₹' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // 2. Top Items Horizontal Bar Chart
+  const ctxItems = document.getElementById('topItemsChart').getContext('2d');
+  new Chart(ctxItems, {
+    type: 'bar',
+    data: {
+      labels: {{ chart_data.top_item_labels|safe }},
+      datasets: [{
+        label: 'Quantity Sold',
+        data: {{ chart_data.top_item_qtys|safe }},
+        backgroundColor: '#3b82f6',
+        hoverBackgroundColor: '#2563eb',
+        borderRadius: 4,
+        borderSkipped: false,
+        barThickness: 10
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleFont: { family: 'Outfit', size: 12, weight: 'bold' },
+          bodyFont: { family: 'Outfit', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(226, 232, 240, 0.4)' },
+          ticks: { font: { family: 'Outfit', size: 10 }, color: '#64748b', stepSize: 1 }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { family: 'Outfit', size: 10 }, color: '#475569', weight: 'semibold' }
+        }
+      }
+    }
+  });
+
+  // 3. Category Sales Share Doughnut Chart
+  const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+  new Chart(ctxCategory, {
+    type: 'doughnut',
+    data: {
+      labels: {{ chart_data.cat_labels|safe }},
+      datasets: [{
+        data: {{ chart_data.cat_revenues|safe }},
+        backgroundColor: [
+          '#10b981', // emerald
+          '#3b82f6', // blue
+          '#f59e0b', // amber
+          '#8b5cf6', // purple
+          '#ec4899', // rose
+          '#14b8a6', // teal
+          '#6366f1', // indigo
+        ],
+        borderWidth: 1.5,
+        borderColor: '#ffffff',
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            font: { family: 'Outfit', size: 10, weight: 'bold' },
+            color: '#475569',
+            boxWidth: 8,
+            padding: 8
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleFont: { family: 'Outfit', size: 11, weight: 'bold' },
+          bodyFont: { family: 'Outfit', size: 11 },
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            label: function(context) {
+              return ` ${context.label}: ₹${context.raw.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            }
+          }
+        }
+      },
+      cutout: '65%'
+    }
+  });
 </script>
 {% endblock %}
