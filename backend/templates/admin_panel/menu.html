@@ -1,63 +1,61 @@
 {% extends "admin_panel/base.html" %}
 {% load web_extras %}
 {% block page_title %}Menu Items{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'web:admin_menu_add' %}"
+   class="glass-btn-primary px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1.5 active:scale-[0.98]">
+  + Add Item
+</a>
+{% endblock %}
+
 {% block content %}
-<div class="p-6 space-y-6">
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <div>
-      <h2 class="text-lg font-bold text-slate-900">Menu Items</h2>
-      <p class="text-xs text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">{{ items.paginator.count }} item{{ items.paginator.count|pluralize }}</p>
-    </div>
-    <a href="{% url 'web:admin_menu_add' %}"
-       class="glass-btn-primary px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2">
-      + Add Item
-    </a>
-  </div>
+<div class="p-4 space-y-4">
 
   {# Filters #}
-  <form method="get" class="flex flex-wrap gap-3">
+  <form method="get" class="flex flex-wrap items-center gap-2.5">
     <select name="category" onchange="this.form.submit()"
-      class="h-9 rounded-xl glass-input px-3 text-sm text-slate-700 font-semibold cursor-pointer">
+      class="h-9 rounded-lg glass-input px-2.5 text-xs text-slate-800 font-semibold cursor-pointer focus:outline-none">
       <option value="">All Categories</option>
       {% for cat in categories %}
       <option value="{{ cat.id }}" {% if cat_filter == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
       {% endfor %}
     </select>
-    <div class="flex gap-2 flex-1 min-w-48">
+    <div class="flex gap-2 flex-1 min-w-[200px]">
       <input name="search" type="text" value="{{ search }}" placeholder="Search items..."
-        class="flex-1 h-9 rounded-xl glass-input px-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none">
-      <button type="submit" class="glass-btn-secondary h-9 px-4 rounded-xl text-xs font-bold shadow-sm">Search</button>
+        class="flex-1 h-9 rounded-lg glass-input px-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none">
+      <button type="submit" class="glass-btn-secondary h-9 px-3 rounded-lg text-xs font-bold shadow-sm active:scale-[0.98]">Search</button>
       {% if search or cat_filter %}
-      <a href="{% url 'web:admin_menu' %}" class="glass-btn-secondary h-9 px-3 rounded-xl text-xs font-bold flex items-center justify-center shadow-sm">✕</a>
+      <a href="{% url 'web:admin_menu' %}" class="glass-btn-secondary h-9 px-2.5 rounded-lg text-xs font-bold flex items-center justify-center shadow-sm active:scale-[0.98]">✕</a>
       {% endif %}
     </div>
   </form>
 
   {% if not items %}
-  <div class="flex flex-col items-center justify-center py-20 text-center glass-panel rounded-2xl p-6">
+  <div class="flex flex-col items-center justify-center py-20 text-center glass-panel rounded-xl p-6">
     <span class="text-5xl mb-4">🍽️</span>
     <p class="font-bold text-slate-800">No items found</p>
     <p class="text-xs text-slate-500 mt-1 font-medium">{% if search %}Try a different search query{% else %}Add your first menu item to begin{% endif %}</p>
-    {% if not search %}<a href="{% url 'web:admin_menu_add' %}" class="mt-4 glass-btn-primary px-4 py-2 rounded-xl text-sm font-bold shadow-sm">Add Item</a>{% endif %}
+    {% if not search %}<a href="{% url 'web:admin_menu_add' %}" class="mt-4 glass-btn-primary px-4 py-2 rounded-lg text-xs font-bold shadow-sm">Add Item</a>{% endif %}
   </div>
   {% else %}
   {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {% for item in items %}
-    <div class="glass-card stagger-item rounded-2xl overflow-hidden flex flex-col group" style="--sibling-index: {{ forloop.counter }};">
+    <div class="glass-card stagger-item rounded-xl overflow-hidden flex flex-col group" style="--sibling-index: {{ forloop.counter }};">
       
       {# Card Image/Icon Header #}
-      <div class="h-40 bg-slate-50 relative overflow-hidden border-b border-slate-100 flex-shrink-0 flex items-center justify-center">
+      <div class="h-32 bg-slate-50 relative overflow-hidden border-b border-slate-100 flex-shrink-0 flex items-center justify-center">
         {% if item.image %}
         <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300">
         {% else %}
         <div class="text-center">
-          <span class="text-6xl group-hover:scale-105 duration-200 transition-transform block">🍲</span>
+          <span class="text-5xl group-hover:scale-105 duration-200 transition-transform block">🍲</span>
         </div>
         {% endif %}
         
         {# Veg/Non-Veg Badge #}
-        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[10px] font-bold px-2.5 py-0.5 rounded-full select-none shadow-sm flex items-center gap-1 border border-slate-200/50">
+        <span class="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-sm text-[9px] font-bold px-2 py-0.5 rounded-full select-none shadow-sm flex items-center gap-1 border border-slate-200/50">
           {% if item.food_type == 'veg' %}
           <span class="text-emerald-600">🟢</span> Veg
           {% elif item.food_type == 'non_veg' %}
@@ -68,14 +66,14 @@
         </span>
         
         {# Availability Badge #}
-        <span class="absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full select-none shadow-sm bg-white/90 backdrop-blur-sm border border-slate-200/50
+        <span class="absolute top-2.5 right-2.5 inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full select-none shadow-sm bg-white/90 backdrop-blur-sm border border-slate-200/50
           {% if item.is_available %}text-emerald-700{% else %}text-slate-500{% endif %}">
           <span class="w-1.5 h-1.5 rounded-full {% if item.is_available %}bg-emerald-500 animate-pulse{% else %}bg-slate-400{% endif %}"></span>
           {% if item.is_available %}Available{% else %}Out of Stock{% endif %}
         </span>
-
+ 
         {# Popular/Special overlays #}
-        <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
+        <div class="absolute bottom-2.5 left-2.5 flex flex-wrap gap-1">
           {% if item.is_popular %}
           <span class="bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm select-none">
             ⭐ Popular
@@ -88,17 +86,17 @@
           {% endif %}
         </div>
       </div>
-
+ 
       {# Card Body #}
-      <div class="p-5 flex-1 flex flex-col justify-between">
-        <div class="mb-4 space-y-1">
+      <div class="p-3.5 flex-1 flex flex-col justify-between">
+        <div class="mb-3 space-y-1">
           <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{{ item.category.name }}</span>
-          <h3 class="font-bold text-slate-900 text-sm group-hover:text-emerald-600 transition-colors line-clamp-1">{{ item.name }}</h3>
+          <h3 class="font-bold text-slate-900 text-xs group-hover:text-emerald-600 transition-colors line-clamp-1">{{ item.name }}</h3>
           
           <div class="flex items-center justify-between pt-1">
-            <span class="text-base font-extrabold text-slate-900">{{ item.price|inr }}</span>
+            <span class="text-sm font-extrabold text-slate-900">{{ item.price|inr }}</span>
             {% if item.preparation_time or item.calories %}
-            <div class="flex items-center gap-2 text-xs text-slate-400 font-bold">
+            <div class="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
               {% if item.preparation_time %}
               <span>⏱️ {{ item.preparation_time }}m</span>
               {% endif %}
@@ -110,16 +108,16 @@
           </div>
           
           {% if item.description %}
-          <p class="text-xs text-slate-400 line-clamp-2 mt-2 leading-relaxed font-semibold">
+          <p class="text-[11px] text-slate-400 line-clamp-2 mt-1.5 leading-relaxed font-semibold">
             {{ item.description }}
           </p>
           {% endif %}
         </div>
-
+ 
         {# Card Actions #}
-        <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
+        <div class="flex items-center gap-1.5 pt-2.5 border-t border-slate-100">
           <a href="{% url 'web:admin_menu_edit' item.id %}"
-             class="flex-1 text-center glass-btn-secondary text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+             class="flex-1 text-center glass-btn-secondary text-xs font-bold py-1.5 rounded-lg active:scale-[0.96] transition-all block">
             ✏️ Edit
           </a>
           
@@ -127,7 +125,7 @@
                 onsubmit="return confirm('Delete {{ item.name }}?')"
                 class="flex-1">
             {% csrf_token %}
-            <button type="submit" class="w-full text-center glass-btn-danger text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+            <button type="submit" class="w-full text-center glass-btn-danger text-xs font-bold py-1.5 rounded-lg active:scale-[0.96] transition-all">
               🗑 Delete
             </button>
           </form>

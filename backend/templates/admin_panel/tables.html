@@ -1,32 +1,46 @@
 {% extends "admin_panel/base.html" %}
 {% block page_title %}Tables{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center gap-2">
+  <a href="{% url 'web:admin_tables_regenerate_all' %}"
+     class="flex items-center gap-1.5 glass-btn-secondary px-3 py-1.5 rounded-lg text-xs font-bold active:scale-[0.97] transition-all">
+    🔄 Regenerate QRs
+  </a>
+  <a href="{% url 'web:admin_table_add' %}"
+     class="flex items-center gap-1.5 glass-btn-primary px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm active:scale-[0.97]">
+    ➕ Add Table
+  </a>
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="p-6 space-y-6" x-data="{ qrModal: null }">
+<div class="p-4 space-y-4" x-data="{ qrModal: null }">
 
   {# QR Code Modal #}
   <div x-show="qrModal" x-cloak @click.self="qrModal=null"
        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
     <div x-show="qrModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform scale-95 opacity-0" x-transition:enter-end="transform scale-100 opacity-100"
-         class="bg-white rounded-2xl shadow-xl p-8 max-w-xs w-full text-center border border-slate-200 relative overflow-hidden">
+         class="bg-white rounded-xl shadow-xl p-6 max-w-xs w-full text-center border border-slate-200 relative overflow-hidden">
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full -z-10"></div>
-      <p class="font-bold text-slate-900 text-lg mb-1" x-text="qrModal ? 'Table ' + qrModal.table_number : ''"></p>
-      <p class="text-xs text-slate-400 mb-5 font-bold">Scan to open the restaurant menu</p>
-      <div class="flex items-center justify-center mb-6">
+      <p class="font-bold text-slate-900 text-base mb-1" x-text="qrModal ? 'Table ' + qrModal.table_number : ''"></p>
+      <p class="text-[10px] text-slate-400 mb-4 font-bold">Scan to open the restaurant menu</p>
+      <div class="flex items-center justify-center mb-5">
         <template x-if="qrModal && qrModal.qr_url">
           <img :src="qrModal.qr_url" :alt="'QR Table ' + qrModal.table_number"
-               class="w-52 h-52 rounded-2xl border border-slate-200 shadow-sm p-1.5 object-contain bg-white">
+               class="w-44 h-44 rounded-xl border border-slate-200 shadow-sm p-1.5 object-contain bg-white">
         </template>
         <template x-if="qrModal && !qrModal.qr_url">
-          <div class="w-52 h-52 bg-slate-50 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 text-xs">
+          <div class="w-44 h-44 bg-slate-50 rounded-xl border border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 text-xs">
             <span>⚠️</span>
             <span class="mt-1">No QR generated</span>
           </div>
         </template>
       </div>
-      <div class="flex gap-3">
-        <button @click="qrModal=null" class="flex-1 py-2.5 glass-btn-secondary rounded-xl text-sm font-semibold active:scale-[0.96]">Close</button>
+      <div class="flex gap-2">
+        <button @click="qrModal=null" class="flex-1 py-2 glass-btn-secondary rounded-lg text-xs font-semibold active:scale-[0.96]">Close</button>
         <template x-if="qrModal && qrModal.download_url">
-          <a :href="qrModal.download_url" class="flex-1 py-2.5 glass-btn-primary rounded-xl text-sm font-bold active:scale-[0.96] text-center shadow-sm">
+          <a :href="qrModal.download_url" class="flex-1 py-2 glass-btn-primary rounded-lg text-xs font-bold active:scale-[0.96] text-center shadow-sm">
             Download
           </a>
         </template>
@@ -34,54 +48,37 @@
     </div>
   </div>
 
-  <div class="flex items-center justify-between">
-    <div>
-      <h2 class="text-lg font-bold text-slate-900">Restaurant Tables</h2>
-      <p class="text-xs text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">{{ tables.paginator.count }} table{{ tables.paginator.count|pluralize }} configured</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <a href="{% url 'web:admin_tables_regenerate_all' %}"
-         class="flex items-center gap-2 glass-btn-secondary px-4 py-2.5 rounded-xl text-sm font-bold active:scale-[0.97] transition-all">
-        🔄 Regenerate QRs
-      </a>
-      <a href="{% url 'web:admin_table_add' %}"
-         class="flex items-center gap-2 glass-btn-primary px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm active:scale-[0.97]">
-        ➕ Add Table
-      </a>
-    </div>
-  </div>
-
   {% if not tables %}
-  <div class="flex flex-col items-center justify-center py-20 text-center glass-panel rounded-2xl p-6">
+  <div class="flex flex-col items-center justify-center py-20 text-center glass-panel rounded-xl p-6">
     <span class="text-5xl mb-4">🪑</span>
     <p class="font-bold text-slate-800 text-sm">No tables configured yet</p>
     <p class="text-xs text-slate-500 mt-1 font-medium">Configure your first dining table to generate a QR code</p>
-    <a href="{% url 'web:admin_table_add' %}" class="mt-4 glass-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold active:scale-[0.97] shadow-sm">Add Table</a>
+    <a href="{% url 'web:admin_table_add' %}" class="mt-4 glass-btn-primary px-4 py-2 rounded-lg text-xs font-bold active:scale-[0.97] shadow-sm">Add Table</a>
   </div>
   {% else %}
   {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   
   {# Table Cards Grid #}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
     {% for table in tables %}
-    <div class="glass-card stagger-item rounded-2xl overflow-hidden flex flex-col group" style="--sibling-index: {{ forloop.counter }};">
+    <div class="glass-card stagger-item rounded-xl overflow-hidden flex flex-col group" style="--sibling-index: {{ forloop.counter }};">
       
       {# QR Preview and circle number badge #}
-      <div class="bg-slate-50 p-6 flex flex-col items-center justify-center relative border-b border-slate-100 flex-shrink-0">
+      <div class="bg-slate-50 p-4 flex flex-col items-center justify-center relative border-b border-slate-100 flex-shrink-0">
         
         {# Table circular gradient badge #}
-        <div class="absolute top-4 left-4 w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center text-white font-extrabold text-sm shadow-md border border-white/20">
+        <div class="absolute top-3 left-3 w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center text-white font-extrabold text-[11px] shadow-sm border border-white/20">
           T{{ table.table_number }}
         </div>
         
         {% if table.qr_code %}
-        <div class="cursor-pointer bg-white p-2.5 rounded-2xl shadow-sm border border-slate-200 hover:scale-105 active:scale-95 duration-200 transition-all"
+        <div class="cursor-pointer bg-white p-2 rounded-xl shadow-xs border border-slate-200 hover:scale-105 active:scale-95 duration-200 transition-all"
              @click="qrModal={table_number:'{{ table.table_number }}', qr_url:'{{ table.qr_code.url }}', download_url:'{% url "web:admin_table_qr" table.id %}'}">
           <img src="{{ table.qr_code.url }}" alt="QR Table {{ table.table_number }}"
-               class="w-24 h-24 object-contain">
+               class="w-20 h-20 object-contain">
         </div>
         {% else %}
-        <div class="w-24 h-24 bg-slate-50 border border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-slate-400 text-xs gap-1 cursor-pointer"
+        <div class="w-20 h-20 bg-slate-50 border border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1 cursor-pointer"
              @click="qrModal={table_number:'{{ table.table_number }}', qr_url:null, download_url:'{% url "web:admin_table_qr" table.id %}'}">
           <span>⚙️</span>
           <span>No QR</span>
@@ -89,29 +86,29 @@
         {% endif %}
       </div>
 
-      <div class="p-5 flex-1 flex flex-col justify-between">
-        <div class="mb-4">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="font-bold text-slate-900 text-sm">Dining Station</h3>
+      <div class="p-3.5 flex-1 flex flex-col justify-between">
+        <div class="mb-3">
+          <div class="flex items-center justify-between mb-1.5">
+            <h3 class="font-bold text-slate-900 text-xs">Dining Station</h3>
             
             {# Glowing active state #}
-            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-slate-200/50
+            <span class="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border border-slate-200/50
               {% if table.is_active %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500{% endif %}">
               <span class="w-1.5 h-1.5 rounded-full {% if table.is_active %}bg-emerald-500 animate-pulse{% else %}bg-slate-400{% endif %}"></span>
               {% if table.is_active %}Active{% else %}Inactive{% endif %}
             </span>
           </div>
-          <p class="text-xs text-slate-400 font-bold">Capacity: {{ table.capacity }} guests</p>
+          <p class="text-[10px] text-slate-400 font-bold">Capacity: {{ table.capacity }} guests</p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5">
           <button @click="qrModal={table_number:'{{ table.table_number }}', qr_url:'{% if table.qr_code %}{{ table.qr_code.url }}{% endif %}', download_url:'{% url "web:admin_table_qr" table.id %}'}"
-             class="flex-1 text-center glass-btn-success text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+             class="flex-1 text-center glass-btn-success text-xs font-bold py-1.5 rounded-lg active:scale-[0.96] transition-all">
             📲 QR
           </button>
           
           <a href="{% url 'web:admin_table_edit' table.id %}"
-             class="flex-1 text-center glass-btn-secondary text-xs font-bold py-2 rounded-xl active:scale-[0.96] transition-all">
+             class="flex-1 text-center glass-btn-secondary text-xs font-bold py-1.5 rounded-lg active:scale-[0.96] transition-all block">
             ✏️ Edit
           </a>
           
@@ -119,7 +116,7 @@
                 onsubmit="return confirm('Delete Table {{ table.table_number }}?')"
                 class="inline-block">
             {% csrf_token %}
-            <button type="submit" class="w-8 h-8 glass-btn-danger rounded-xl flex items-center justify-center active:scale-[0.96] transition-all text-xs" title="Delete Table">
+            <button type="submit" class="w-7.5 h-7.5 glass-btn-danger rounded-lg flex items-center justify-center active:scale-[0.96] transition-all text-xs" title="Delete Table">
               🗑
             </button>
           </form>

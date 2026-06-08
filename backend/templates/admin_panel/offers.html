@@ -1,84 +1,82 @@
 {% extends "admin_panel/base.html" %}
 {% load web_extras %}
 {% block page_title %}Offers{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'web:admin_offer_add' %}"
+   class="glass-btn-primary flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-[0.98]">
+  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+  Add Offer
+</a>
+{% endblock %}
+
 {% block content %}
-<div class="p-6 space-y-6">
-  <div class="flex items-center justify-between">
-    <div>
-      <h2 class="text-xl font-bold text-slate-900">Offers & Promotions</h2>
-      <p class="text-sm text-slate-500">{{ offers.paginator.count }} offer{{ offers.paginator.count|pluralize }} active</p>
-    </div>
-    <a href="{% url 'web:admin_offer_add' %}"
-       class="glass-btn-primary flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-      Add Offer
-    </a>
-  </div>
+<div class="p-4 space-y-4">
 
   {% if not offers %}
-  <div class="glass-panel flex flex-col items-center justify-center py-20 text-center rounded-2xl p-6">
+  <div class="glass-panel flex flex-col items-center justify-center py-20 text-center rounded-xl p-6">
     <span class="text-5xl mb-4">🏷️</span>
     <p class="font-bold text-slate-800">No offers yet</p>
-    <p class="text-sm text-slate-500 mt-1 max-w-xs font-medium">Create discounts and promotions for your customers to boost sales.</p>
-    <a href="{% url 'web:admin_offer_add' %}" class="glass-btn-primary mt-4 px-5 py-2 rounded-xl text-sm font-semibold inline-block shadow-sm">Add Offer</a>
+    <p class="text-xs text-slate-500 mt-1 max-w-xs font-medium">Create discounts and promotions for your customers to boost sales.</p>
+    <a href="{% url 'web:admin_offer_add' %}" class="glass-btn-primary mt-4 px-4 py-2 rounded-lg text-xs font-bold inline-block shadow-sm">Add Offer</a>
   </div>
   {% else %}
   {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {% for offer in offers %}
-    <div class="glass-card stagger-item rounded-2xl overflow-hidden flex flex-col justify-between" style="--sibling-index: {{ forloop.counter }};">
-      <div class="p-6">
-        <div class="flex items-start justify-between gap-3 mb-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl flex items-center justify-center text-xl flex-shrink-0 shadow-sm">🏷️</div>
+    <div class="glass-card stagger-item rounded-xl overflow-hidden flex flex-col justify-between" style="--sibling-index: {{ forloop.counter }};">
+      <div class="p-4">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0 shadow-xs">🏷️</div>
             <div>
-              <h3 class="font-bold text-slate-900 text-base">{{ offer.title }}</h3>
-              <span class="inline-block mt-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border {% if offer.is_active %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-200{% endif %}">
+              <h3 class="font-bold text-slate-900 text-xs">{{ offer.title }}</h3>
+              <span class="inline-block mt-0.5 text-[9px] font-extrabold px-2 py-0.5 rounded-full border {% if offer.is_active %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-200{% endif %}">
                 {% if offer.is_active %}Active{% else %}Inactive{% endif %}
               </span>
             </div>
           </div>
-          <div class="flex-shrink-0 bg-emerald-600 text-white text-sm font-extrabold px-3 py-1.5 rounded-xl shadow-sm border border-emerald-500">
+          <div class="flex-shrink-0 bg-emerald-600 text-white text-xs font-extrabold px-2 py-1.5 rounded-lg shadow-sm border border-emerald-500">
             {% if offer.discount_type == 'percentage' %}{{ offer.discount_value }}%{% else %}{{ offer.discount_value|inr }}{% endif %} OFF
           </div>
         </div>
 
         {% if offer.description %}
-        <p class="text-xs text-slate-500 font-semibold leading-relaxed mb-4">{{ offer.description }}</p>
+        <p class="text-[11px] text-slate-500 font-semibold leading-relaxed mb-3">{{ offer.description }}</p>
         {% endif %}
 
-        <div class="grid grid-cols-2 gap-y-3 gap-x-4 text-xs text-slate-600 pt-3 border-t border-slate-100">
+        <div class="grid grid-cols-2 gap-y-2 gap-x-3 text-xs text-slate-600 pt-2.5 border-t border-slate-100">
           {% if offer.promo_code %}
           <div class="flex flex-col gap-0.5">
             <span class="text-slate-400 font-bold uppercase text-[9px]">Promo Code</span>
-            <span class="font-mono font-bold text-slate-800 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-lg w-max shadow-sm">{{ offer.promo_code }}</span>
+            <span class="font-mono font-bold text-slate-800 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-md w-max shadow-xs text-[10px]">{{ offer.promo_code }}</span>
           </div>
           {% endif %}
           {% if offer.min_order_amount %}
           <div class="flex flex-col gap-0.5">
             <span class="text-slate-400 font-bold uppercase text-[9px]">Min Order</span>
-            <span class="font-bold text-slate-800">{{ offer.min_order_amount|inr }}</span>
+            <span class="font-bold text-slate-800 text-[11px]">{{ offer.min_order_amount|inr }}</span>
           </div>
           {% endif %}
           <div class="flex flex-col gap-0.5">
             <span class="text-slate-400 font-bold uppercase text-[9px]">Start Date</span>
-            <span class="font-semibold text-slate-800">{{ offer.start_date }}</span>
+            <span class="font-semibold text-slate-800 text-[11px]">{{ offer.start_date }}</span>
           </div>
           <div class="flex flex-col gap-0.5">
             <span class="text-slate-400 font-bold uppercase text-[9px]">End Date</span>
-            <span class="font-semibold text-slate-800">{{ offer.end_date }}</span>
+            <span class="font-semibold text-slate-800 text-[11px]">{{ offer.end_date }}</span>
           </div>
         </div>
       </div>
-      <div class="px-6 pb-6 flex gap-3">
-        <a href="{% url 'web:admin_offer_edit' offer.id %}" class="glass-btn-secondary flex-1 text-center text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      <div class="px-4 pb-4 flex gap-2">
+        <a href="{% url 'web:admin_offer_edit' offer.id %}" class="glass-btn-secondary flex-1 text-center text-xs font-bold py-1.5 rounded-lg transition-all flex items-center justify-center gap-1">
+          <svg class="w-3 h-3 text-slate-400 group-hover:text-slate-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
           Edit Offer
         </a>
         <form method="post" action="{% url 'web:admin_offer_delete' offer.id %}" onsubmit="return confirm('Delete offer {{ offer.title }}?')" class="flex-shrink-0">
           {% csrf_token %}
-          <button type="submit" class="glass-btn-danger w-10 h-10 rounded-xl flex items-center justify-center transition-all">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <button type="submit" class="glass-btn-danger w-7.5 h-7.5 rounded-lg flex items-center justify-center transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           </button>
         </form>
       </div>

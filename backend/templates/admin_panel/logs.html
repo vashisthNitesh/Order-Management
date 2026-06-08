@@ -1,80 +1,76 @@
 {% extends "admin_panel/base.html" %}
 {% block page_title %}Order Logs{% endblock %}
 {% block content %}
-<div class="p-6 space-y-6">
-  <div>
-    <h2 class="text-xl font-bold text-slate-900">Order Audit Logs</h2>
-    <p class="text-sm text-slate-500">{{ logs.paginator.count }} entr{{ logs.paginator.count|pluralize:"y,ies" }} total</p>
-  </div>
+<div class="p-4 space-y-4">
 
   <!-- Filters -->
-  <form method="get" class="flex flex-wrap items-center gap-3 glass-panel rounded-2xl p-4">
+  <form method="get" class="flex flex-wrap items-center gap-2.5 glass-panel rounded-xl p-3">
     <div class="relative">
       <input name="order" type="text" value="{{ order_q }}" placeholder="Order # …"
-        class="glass-input h-10 rounded-xl px-3 pl-8 text-sm focus:outline-none w-36">
-      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">#</span>
+        class="glass-input h-9 rounded-lg px-2.5 pl-7 text-xs focus:outline-none w-32">
+      <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">#</span>
     </div>
     <select name="action" onchange="this.form.submit()"
-      class="glass-input h-10 rounded-xl px-3 text-sm text-slate-800 font-semibold focus:outline-none cursor-pointer">
+      class="glass-input h-9 rounded-lg px-2.5 text-xs text-slate-800 font-semibold focus:outline-none cursor-pointer">
       <option value="">All Actions</option>
       {% for val, label in action_choices %}
       <option value="{{ val }}" {% if action_filter == val %}selected{% endif %}>{{ label }}</option>
       {% endfor %}
     </select>
     <select name="actor" onchange="this.form.submit()"
-      class="glass-input h-10 rounded-xl px-3 text-sm text-slate-800 font-semibold focus:outline-none cursor-pointer">
+      class="glass-input h-9 rounded-lg px-2.5 text-xs text-slate-800 font-semibold focus:outline-none cursor-pointer">
       <option value="">All Actors</option>
       <option value="staff" {% if actor_filter == 'staff' %}selected{% endif %}>Staff</option>
       <option value="customer" {% if actor_filter == 'customer' %}selected{% endif %}>Customer</option>
     </select>
     
-    <button type="submit" class="glass-btn-primary h-10 px-5 rounded-xl text-sm font-bold shadow-sm">
+    <button type="submit" class="glass-btn-primary h-9 px-4 rounded-lg text-xs font-extrabold shadow-sm">
       Apply Filters
     </button>
     
     {% if order_q or action_filter or actor_filter %}
-    <a href="{% url 'web:admin_logs' %}" class="glass-btn-secondary h-10 px-4 rounded-xl text-sm flex items-center justify-center font-bold">
+    <a href="{% url 'web:admin_logs' %}" class="glass-btn-secondary h-9 px-3 rounded-lg text-xs flex items-center justify-center font-bold">
       Clear
     </a>
     {% endif %}
   </form>
 
   {% if not logs %}
-  <div class="glass-panel flex flex-col items-center justify-center py-20 text-center rounded-2xl p-6">
+  <div class="glass-panel flex flex-col items-center justify-center py-20 text-center rounded-xl p-6">
     <span class="text-5xl mb-4">📋</span>
     <p class="font-bold text-slate-800">No log entries found</p>
     <p class="text-xs text-slate-500 mt-1 font-medium">Try adjusting your filters or search terms.</p>
   </div>
   {% else %}
   {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
-  <div class="glass-panel rounded-2xl overflow-hidden">
+  <div class="glass-panel rounded-xl overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="w-full text-sm min-w-[600px] border-collapse">
+      <table class="w-full text-xs min-w-[600px] border-collapse">
         <thead>
-          <tr class="border-b border-slate-200 bg-slate-50">
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Time</th>
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Order</th>
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Actor</th>
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Details</th>
+          <tr class="border-b border-slate-200 bg-slate-50/70">
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Time</th>
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Order</th>
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Action</th>
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Actor</th>
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Details</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 bg-white">
           {% for log in logs %}
           <tr class="hover:bg-slate-50/70 transition-colors stagger-item" style="--sibling-index: {{ forloop.counter }};">
-            <td class="px-6 py-4 text-xs text-slate-500 whitespace-nowrap font-medium">{{ log.created_at|date:"d M H:i:s" }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="px-4 py-2.5 text-xs text-slate-500 whitespace-nowrap font-medium">{{ log.created_at|date:"d M H:i:s" }}</td>
+            <td class="px-4 py-2.5 whitespace-nowrap">
               <div class="flex items-center gap-2">
                 <a href="{% url 'web:admin_order_detail' log.order.id %}" class="font-mono font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
                   #{{ log.order.order_number }}
                 </a>
                 {% if log.order.table %}
-                <span class="text-[10px] text-slate-500 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded font-bold">T{{ log.order.table.table_number }}</span>
+                <span class="text-[9px] text-slate-500 bg-slate-100 border border-slate-200 px-1 py-0.5 rounded font-bold">T{{ log.order.table.table_number }}</span>
                 {% endif %}
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full border
+            <td class="px-4 py-2.5 whitespace-nowrap">
+              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full border
                 {% if log.action == 'created' %}bg-emerald-50 text-emerald-700 border-emerald-100
                 {% elif log.action == 'paid' %}bg-emerald-50 text-emerald-700 border-emerald-100
                 {% elif log.action == 'item_removed' %}bg-rose-50 text-rose-700 border-rose-100
@@ -85,15 +81,15 @@
                 {{ log.get_action_display }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="flex items-center gap-2 text-xs">
-                <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs bg-slate-50 border border-slate-200 shadow-xs">
+            <td class="px-4 py-2.5 whitespace-nowrap">
+              <span class="flex items-center gap-1.5 text-xs">
+                <span class="w-5.5 h-5.5 rounded-full flex items-center justify-center text-[10px] bg-slate-50 border border-slate-200 shadow-xs">
                   {% if log.actor_type == 'staff' %}👤{% elif log.actor_type == 'customer' %}🧑{% else %}⚙️{% endif %}
                 </span>
                 <span class="font-bold text-slate-700">{{ log.actor_name|default:log.actor_type|capfirst }}</span>
               </span>
             </td>
-            <td class="px-6 py-4 text-xs text-slate-600 max-w-xs truncate font-medium">{{ log.details|default:"—" }}</td>
+            <td class="px-4 py-2.5 text-xs text-slate-600 max-w-xs truncate font-medium">{{ log.details|default:"—" }}</td>
           </tr>
           {% endfor %}
         </tbody>

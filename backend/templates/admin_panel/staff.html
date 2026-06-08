@@ -1,56 +1,54 @@
 {% extends "admin_panel/base.html" %}
 {% block page_title %}Staff{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'web:admin_staff_add' %}"
+   class="glass-btn-primary flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-[0.98]">
+  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+  Add Staff
+</a>
+{% endblock %}
+
 {% block content %}
-<div class="p-6 space-y-6">
-  <div class="flex items-center justify-between">
-    <div>
-      <h2 class="text-xl font-bold text-slate-900">Staff Members</h2>
-      <p class="text-sm text-slate-500">{{ staff_list.paginator.count }} member{{ staff_list.paginator.count|pluralize }}</p>
-    </div>
-    <a href="{% url 'web:admin_staff_add' %}"
-       class="glass-btn-primary flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-      Add Staff
-    </a>
-  </div>
+<div class="p-4 space-y-4">
 
   {% if not staff_list %}
-  <div class="glass-panel flex flex-col items-center justify-center py-20 text-center rounded-2xl p-6">
+  <div class="glass-panel flex flex-col items-center justify-center py-20 text-center rounded-xl p-6">
     <span class="text-5xl mb-4">👥</span>
     <p class="font-bold text-slate-800">No staff members yet</p>
-    <p class="text-sm text-slate-500 mt-1 font-medium">Start by adding your first staff member.</p>
-    <a href="{% url 'web:admin_staff_add' %}" class="glass-btn-primary mt-4 px-5 py-2 rounded-xl text-sm font-semibold inline-block shadow-sm">Add Staff</a>
+    <p class="text-xs text-slate-500 mt-1 font-medium">Start by adding your first staff member.</p>
+    <a href="{% url 'web:admin_staff_add' %}" class="glass-btn-primary mt-4 px-4 py-2 rounded-lg text-xs font-bold inline-block shadow-sm">Add Staff</a>
   </div>
   {% else %}
   {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
-  <div class="glass-panel rounded-2xl overflow-hidden">
+  <div class="glass-panel rounded-xl overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+      <table class="w-full text-xs border-collapse">
         <thead>
-          <tr class="border-b border-slate-200 bg-slate-50">
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Staff Member</th>
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Role</th>
-            <th class="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Phone</th>
-            <th class="text-center px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-            <th class="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+          <tr class="border-b border-slate-200 bg-slate-50/70">
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Staff Member</th>
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Role</th>
+            <th class="text-left px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider hidden md:table-cell">Phone</th>
+            <th class="text-center px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Status</th>
+            <th class="text-right px-4 py-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 bg-white">
           {% for member in staff_list %}
           <tr class="hover:bg-slate-50/70 transition-colors stagger-item" style="--sibling-index: {{ forloop.counter }};">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 shadow-sm">
+            <td class="px-4 py-2.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7.5 h-7.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-xs">
                   {{ member.user.first_name|first|upper|default:member.user.username|first|upper }}
                 </div>
                 <div>
-                  <p class="font-bold text-slate-900">{{ member.user.get_full_name|default:member.user.username }}</p>
-                  <p class="text-xs text-slate-400 font-bold">@{{ member.user.username }}</p>
+                  <p class="font-bold text-slate-900 leading-tight">{{ member.user.get_full_name|default:member.user.username }}</p>
+                  <p class="text-[10px] text-slate-400 font-bold leading-none mt-0.5">@{{ member.user.username }}</p>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 hidden sm:table-cell">
-              <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full border
+            <td class="px-4 py-2.5 hidden sm:table-cell">
+              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full border
                 {% if member.role == 'admin' %}bg-purple-50 text-purple-800 border-purple-100
                 {% elif member.role == 'manager' %}bg-blue-50 text-blue-800 border-blue-100
                 {% elif member.role == 'chef' %}bg-amber-50 text-amber-800 border-amber-100
@@ -58,22 +56,22 @@
                 {{ member.get_role_display }}
               </span>
             </td>
-            <td class="px-6 py-4 text-slate-600 hidden md:table-cell text-sm font-semibold">{{ member.phone|default:"—" }}</td>
-            <td class="px-6 py-4 text-center">
-              <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full border {% if member.is_active %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-200{% endif %}">
+            <td class="px-4 py-2.5 text-slate-600 hidden md:table-cell text-xs font-semibold">{{ member.phone|default:"—" }}</td>
+            <td class="px-4 py-2.5 text-center">
+              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full border {% if member.is_active %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-200{% endif %}">
                 {% if member.is_active %}Active{% else %}Inactive{% endif %}
               </span>
             </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center justify-end gap-2">
-                <a href="{% url 'web:admin_staff_edit' member.id %}" class="glass-btn-secondary text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
+            <td class="px-4 py-2.5">
+              <div class="flex items-center justify-end gap-1.5">
+                <a href="{% url 'web:admin_staff_edit' member.id %}" class="glass-btn-secondary text-xs font-bold px-2.5 py-1 rounded-lg shadow-sm">
                   Edit
                 </a>
                 <form method="post" action="{% url 'web:admin_staff_delete' member.id %}"
                       onsubmit="return confirm('Remove {{ member.user.get_full_name|default:member.user.username }}? This will delete their account.')"
                       class="inline-block">
                   {% csrf_token %}
-                  <button type="submit" class="glass-btn-danger text-xs font-bold px-3 py-1.5 rounded-lg">Remove</button>
+                  <button type="submit" class="glass-btn-danger text-xs font-bold px-2.5 py-1 rounded-lg shadow-sm">Remove</button>
                 </form>
               </div>
             </td>
