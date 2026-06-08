@@ -3,7 +3,8 @@
 {% block title %}Menu – {{ restaurant.name }}{% endblock %}
 
 {% block body %}
-<div x-data="menuApp({{ table.id }})" class="min-h-screen pb-32 animate-fade-up">
+<div x-data="menuApp({{ table.id }})" class="min-h-screen pb-32">
+  <div class="animate-fade-up">
 
   {# ── Header ─────────────────────────────────────────────────────── #}
   <div class="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50/40 to-slate-50 border-b border-slate-200">
@@ -103,7 +104,7 @@
       <div class="overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-3.5 pb-1 scroll-smooth"
            @scroll.debounce.100ms="scrollHandler($event)">
         {% for offer in offers %}
-        <div class="flex-shrink-0 snap-center relative overflow-hidden rounded-2xl p-4 w-[85%] sm:w-[90%] md:w-full min-w-[260px] bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/10">
+        <div class="flex-shrink-0 snap-center relative overflow-hidden rounded-2xl p-4 w-full bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/10">
           <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
           <p class="text-[10px] font-extrabold uppercase tracking-wider opacity-90 mb-1 flex items-center gap-1">
             <span>🏷️</span> Special Promotion
@@ -243,6 +244,7 @@
         </template>
       </div>
     </div>
+  </div>
   </div>
 
   {# ── Floating Cart Button ────────────────────────────────────────── #}
