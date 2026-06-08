@@ -20,6 +20,7 @@
     <a href="{% url 'web:admin_category_add' %}" class="mt-4 glass-btn-primary px-4 py-2 rounded-xl text-sm font-bold shadow-sm">Add Category</a>
   </div>
   {% else %}
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for cat in categories %}
     <div class="glass-card stagger-item rounded-2xl overflow-hidden flex flex-col group" style="--sibling-index: {{ forloop.counter }};">
@@ -77,7 +78,6 @@
     </div>
     {% endfor %}
   </div>
-  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% block admin_scripts %}

@@ -84,6 +84,7 @@
     {% endif %}
   </div>
   {% else %}
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   <div class="glass-panel rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-sm min-w-[800px] border-collapse">
@@ -154,7 +155,6 @@
       </table>
     </div>
   </div>
-  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}

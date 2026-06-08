@@ -1,5 +1,5 @@
 {% if page_obj.paginator.num_pages > 1 %}
-<div class="flex items-center justify-between border-t border-slate-200 bg-white px-6 py-4 rounded-b-2xl">
+<div class="flex items-center justify-between glass-panel px-6 py-3 rounded-2xl mb-6 animate-fade-up">
   <div class="flex flex-1 justify-between sm:hidden">
     {% if page_obj.has_previous %}
       <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 

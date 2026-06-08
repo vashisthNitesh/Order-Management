@@ -560,7 +560,7 @@ def admin_orders(request):
     if search:
         qs = qs.filter(order_number__icontains=search)
 
-    orders_paginated = _paginate_queryset(request, qs, 15)
+    orders_paginated = _paginate_queryset(request, qs, 10)
     return render(request, 'admin_panel/orders.html', {
         'orders': orders_paginated,
         'page_obj': orders_paginated,
@@ -785,7 +785,7 @@ def admin_logs(request):
     if actor_filter:
         logs = logs.filter(actor_type=actor_filter)
 
-    logs_paginated = _paginate_queryset(request, logs, 25)
+    logs_paginated = _paginate_queryset(request, logs, 10)
     return render(request, 'admin_panel/logs.html', {
         'logs': logs_paginated,
         'page_obj': logs_paginated,

@@ -59,6 +59,7 @@
     <a href="{% url 'web:admin_table_add' %}" class="mt-4 glass-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold active:scale-[0.97] shadow-sm">Add Table</a>
   </div>
   {% else %}
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   
   {# Table Cards Grid #}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -128,7 +129,6 @@
     </div>
     {% endfor %}
   </div>
-  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}

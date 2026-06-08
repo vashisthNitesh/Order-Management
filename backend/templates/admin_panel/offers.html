@@ -23,6 +23,7 @@
     <a href="{% url 'web:admin_offer_add' %}" class="glass-btn-primary mt-4 px-5 py-2 rounded-xl text-sm font-semibold inline-block shadow-sm">Add Offer</a>
   </div>
   {% else %}
+  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     {% for offer in offers %}
     <div class="glass-card stagger-item rounded-2xl overflow-hidden flex flex-col justify-between" style="--sibling-index: {{ forloop.counter }};">
@@ -84,7 +85,6 @@
     </div>
     {% endfor %}
   </div>
-  {% include "admin_panel/_pagination.html" with page_obj=page_obj %}
   {% endif %}
 </div>
 {% endblock %}

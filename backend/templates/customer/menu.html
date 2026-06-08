@@ -89,20 +89,44 @@
       </div>
     </template>
 
-    {# ── Offers ──────────────────────────────────────────────────── #}
+    {# ── Offers Carousel ────────────────────────────────────────── #}
     {% if offers %}
-    <div class="overflow-x-auto scrollbar-hide">
-      <div class="flex gap-3 pb-1">
+    <div x-data="{ 
+           activeIdx: 0,
+           itemCount: {{ offers|length }},
+           scrollHandler(e) {
+             const el = e.target;
+             this.activeIdx = Math.round(el.scrollLeft / (el.scrollWidth / this.itemCount));
+           }
+         }" 
+         class="space-y-3">
+      <div class="overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-3.5 pb-1 scroll-smooth"
+           @scroll.debounce.100ms="scrollHandler($event)">
         {% for offer in offers %}
-        <div class="flex-shrink-0 relative overflow-hidden rounded-2xl p-4 min-w-[260px] bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-550/10">
+        <div class="flex-shrink-0 snap-center relative overflow-hidden rounded-2xl p-4 w-[85%] sm:w-[90%] md:w-full min-w-[260px] bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/10">
           <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
-          <p class="text-[10px] font-bold uppercase tracking-wider opacity-90 mb-1">🏷️ Special Deal</p>
-          <h3 class="font-bold text-sm">{{ offer.title }}</h3>
-          <p class="text-xs opacity-80 mt-0.5 truncate">{{ offer.description }}</p>
-          <span class="mt-3 inline-block bg-white/20 backdrop-blur-sm text-xs font-extrabold px-3 py-1 rounded-lg">
-            {% if offer.discount_type == 'percentage' %}{{ offer.discount_value }}% OFF{% else %}₹{{ offer.discount_value }} OFF{% endif %}
-          </span>
+          <p class="text-[10px] font-extrabold uppercase tracking-wider opacity-90 mb-1 flex items-center gap-1">
+            <span>🏷️</span> Special Promotion
+          </p>
+          <h3 class="font-extrabold text-sm tracking-tight">{{ offer.title }}</h3>
+          <p class="text-xs opacity-90 mt-1 font-semibold leading-relaxed truncate">{{ offer.description }}</p>
+          <div class="mt-3 flex items-center justify-between">
+            <span class="bg-white/20 backdrop-blur-md text-[10px] font-extrabold px-3 py-1 rounded-lg border border-white/10">
+              {% if offer.discount_type == 'percentage' %}{{ offer.discount_value }}% OFF{% else %}₹{{ offer.discount_value }} OFF{% endif %}
+            </span>
+            {% if offer.promo_code %}
+            <span class="font-mono text-[9px] bg-slate-900/30 px-2.5 py-1 rounded-md border border-white/5 font-extrabold uppercase tracking-wider">CODE: {{ offer.promo_code }}</span>
+            {% endif %}
+          </div>
         </div>
+        {% endfor %}
+      </div>
+      
+      {# Carousel Indicators (Dots) #}
+      <div class="flex justify-center items-center gap-1.5 pt-1">
+        {% for offer in offers %}
+        <span class="h-1.5 rounded-full transition-all duration-300"
+              :class="activeIdx === {{ forloop.counter0 }} ? 'w-4 bg-emerald-600' : 'w-1.5 bg-slate-300'"></span>
         {% endfor %}
       </div>
     </div>
