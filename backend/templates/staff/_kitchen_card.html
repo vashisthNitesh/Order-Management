@@ -1,5 +1,11 @@
 {% load web_extras %}
-<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3.5 group shadow-sm hover:shadow-md transition-shadow duration-200">
+<div x-data="{ leaving: false }"
+     x-show="!leaving"
+     x-transition:leave="transition ease-in duration-250 transform"
+     x-transition:leave-start="opacity-100 translate-x-0 scale-100"
+     x-transition:leave-end="opacity-0 translate-x-12 scale-95"
+     class="glass-card stagger-item rounded-2xl p-4 space-y-3.5 group shadow-sm"
+     style="--sibling-index: {{ forloop.counter|default:1 }};">
   <!-- Card Header -->
   <div class="flex items-center justify-between pb-3 border-b border-slate-100">
     <div class="flex items-center gap-2">
@@ -36,7 +42,8 @@
   {% endif %}
 
   <!-- Submit Action -->
-  <form method="post" action="{% url 'web:update_order_status' order.id %}?status={{ next_status }}">
+  <form method="post" action="{% url 'web:update_order_status' order.id %}?status={{ next_status }}"
+        @submit="leaving = true; setTimeout(() => $el.submit(), 250); event.preventDefault();">
     {% csrf_token %}
     <button type="submit" 
       class="w-full glass-btn-primary rounded-xl py-2.5 text-sm font-bold transition-all active:scale-[0.98] duration-150 shadow-sm">

@@ -5,8 +5,8 @@
 <div class="min-h-screen pb-12 bg-slate-50">
   
   {# Header #}
-  <div class="bg-white border-b border-slate-200 px-4 py-3.5 flex items-center gap-3 sticky top-0 z-30">
-    <a href="{% url 'web:menu' order.table.id %}" class="w-9 h-9 bg-white border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-50 hover:scale-102 transition-all flex-shrink-0">
+  <div class="bg-white/70 backdrop-blur-md border-b border-slate-200/60 px-4 py-3.5 flex items-center gap-3 sticky top-0 z-30">
+    <a href="{% url 'web:menu' order.table.id %}" class="w-9 h-9 bg-white/60 border border-slate-200/60 rounded-xl flex items-center justify-center hover:bg-slate-50 hover:scale-102 transition-all flex-shrink-0">
       <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -23,11 +23,10 @@
     </div>
   </div>
 
-  <div class="px-4 py-6 space-y-4 max-w-md mx-auto">
+  <div class="px-4 py-6 space-y-4 max-w-md mx-auto animate-fade-up">
     
-    {# Cancelled State #}
     {% if order.status == 'cancelled' %}
-    <div class="bg-white rounded-3xl p-8 text-center border border-rose-200 shadow-md">
+    <div class="glass-panel rounded-3xl p-8 text-center border-rose-300">
       <div class="w-16 h-16 bg-rose-50 border border-rose-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm">❌</div>
       <h2 class="font-bold text-rose-800 text-base mb-1">Order Cancelled</h2>
       <p class="text-xs text-rose-500">This order was cancelled by the staff.</p>
@@ -36,7 +35,7 @@
     {% else %}
     
     {# Live Status Tracker #}
-    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+    <div class="glass-panel rounded-3xl p-6">
       <div class="flex items-center justify-between mb-5">
         <h2 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Live Status</h2>
         <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-xl">
@@ -121,14 +120,14 @@
     </div>
     {% endif %}
 
-    {# Order Invoice Summary #}
-    <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 bg-slate-50">
+     <!-- Invoice Summary Card -->
+    <div class="glass-panel rounded-3xl overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200/50 bg-white/50">
         <h2 class="font-bold text-slate-800 text-xs uppercase tracking-wider">Order Summary</h2>
         <span class="font-mono text-[10px] text-slate-400 font-bold">#{{ order.order_number }}</span>
       </div>
       
-      <div class="divide-y divide-slate-100 px-5 bg-white">
+      <div class="divide-y divide-slate-100 px-5 bg-white/30">
         {% for item in order.items.all %}
         <div class="flex items-center justify-between py-3.5 text-sm">
           <div class="flex items-center gap-2.5">

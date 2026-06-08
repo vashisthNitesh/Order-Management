@@ -11,7 +11,7 @@
     <h2 class="text-lg font-bold text-slate-900">{% if item %}Edit {{ item.name }}{% else %}Add Menu Item{% endif %}</h2>
   </div>
 
-  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+  <div class="glass-panel rounded-2xl p-6 md:p-8">
     <form method="post" enctype="multipart/form-data" class="space-y-6" x-data="{ imagePreview: '{% if item and item.image %}{{ item.image.url }}{% endif %}' }">
       {% csrf_token %}
 

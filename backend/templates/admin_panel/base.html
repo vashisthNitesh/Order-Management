@@ -8,7 +8,7 @@
 
   {# Sidebar #}
   <aside :class="[sidebarCollapsed ? 'lg:w-20' : 'lg:w-64', sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']"
-         class="fixed lg:static inset-y-0 left-0 bg-white flex flex-col z-50 transition-all duration-300 shadow-sm lg:shadow-none text-slate-700 w-64 border-r border-slate-200">
+         class="fixed lg:static inset-y-0 left-0 lg:my-4 lg:ml-4 bg-white/70 backdrop-blur-md flex flex-col z-50 transition-all duration-300 text-slate-700 w-64 border border-slate-200/60 lg:rounded-3xl shadow-sm">
     
     <!-- Sidebar Header -->
     <div class="p-5 border-b border-slate-200 flex-shrink-0 flex items-center justify-between">
@@ -30,12 +30,19 @@
     </div>
 
     <!-- Sidebar Navigation -->
-    <nav class="flex-1 p-3.5 space-y-1 overflow-y-auto bg-transparent scrollbar-hide">
+    <nav class="flex-1 p-3.5 space-y-1 overflow-y-auto bg-transparent scrollbar-hide relative" x-data="{ showHover: false, hoverRect: { top: 0, height: 0 } }" @mouseleave="showHover = false">
+      
+      {# Sliding Hover Backdrop Pill #}
+      <div x-show="showHover" x-cloak
+           class="absolute left-3.5 right-3.5 bg-slate-900/[0.045] rounded-xl transition-all duration-250 ease-out pointer-events-none -z-10"
+           :style="{ top: hoverRect.top + 'px', height: hoverRect.height + 'px' }"></div>
+
       {% with request.resolver_match.url_name as url_name %}
       {% for href, icon, label in nav_items %}
       <a href="{{ href }}" @click="sidebarOpen=false" title="{{ label }}"
-        class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 relative group
-          {% if url_name and label|lower in request.path %}bg-emerald-50 text-emerald-600 border-l-2 border-emerald-500{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+         @mouseenter="showHover = true; hoverRect = { top: $el.offsetTop, height: $el.offsetHeight }"
+         class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 relative group z-10
+          {% if url_name and label|lower in request.path %}bg-emerald-50/70 border border-emerald-100 text-emerald-700{% else %}text-slate-600 hover:text-slate-950{% endif %}">
         
         <!-- Icon -->
         <span class="w-5 h-5 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 flex items-center justify-center {% if url_name and label|lower in request.path %}text-emerald-600{% else %}text-slate-400 group-hover:text-slate-700{% endif %}">
@@ -114,8 +121,8 @@
   </aside>
 
   {# Main Content Area #}
-  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-    <header class="bg-white border-b border-slate-200 h-16 flex items-center px-6 gap-3 flex-shrink-0 sticky top-0 z-40">
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden lg:my-4 lg:mx-4 lg:rounded-3xl border border-slate-200/60 bg-white/40 backdrop-blur-md shadow-sm">
+    <header class="bg-white/60 backdrop-blur-md border-b border-slate-200/60 h-16 flex items-center px-6 gap-3 flex-shrink-0 sticky top-0 z-40">
       <button @click="sidebarOpen=true" class="lg:hidden w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors">
         <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/>
@@ -131,6 +138,7 @@
                open: false, 
                notifications: [],
                unreadCount: 0,
+               bellRinging: false,
                init() {
                  window.addEventListener('show-toast', (e) => {
                    this.notifications.unshift({
@@ -141,6 +149,8 @@
                      unread: true
                    });
                    this.unreadCount++;
+                   this.bellRinging = true;
+                   setTimeout(() => { this.bellRinging = false; }, 800);
                  });
                  this.fetchNotifications();
                },
@@ -168,7 +178,7 @@
              class="relative">
           <button @click="open = !open; if(open) markAllRead()" 
                   class="relative p-2.5 text-slate-500 hover:text-emerald-600 bg-slate-50 border border-slate-200 hover:bg-emerald-50 rounded-xl transition-all duration-200 active:scale-95 focus:outline-none">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5" :class="bellRinging ? 'animate-bell-ring' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
             <span x-show="unreadCount > 0" class="absolute -top-0.5 -right-0.5 flex h-4 w-4">
@@ -270,7 +280,7 @@
         {% endfor %}
       </div>
     </header>
-    <main class="flex-1 overflow-y-auto">{% block content %}{% endblock %}</main>
+    <main class="flex-1 overflow-y-auto animate-fade-up">{% block content %}{% endblock %}</main>
   </div>
 </div>
 {% endblock %}

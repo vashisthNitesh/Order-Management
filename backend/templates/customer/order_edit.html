@@ -6,8 +6,8 @@
 <div class="min-h-screen pb-16 bg-slate-50" x-data="{ addOpen: false }">
 
   {# Header #}
-  <div class="bg-white border-b border-slate-200 px-4 py-3.5 flex items-center gap-3 sticky top-0 z-30">
-    <a href="{% url 'web:track_order' order.id %}" class="w-9 h-9 bg-white border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-50 hover:scale-102 transition-all flex-shrink-0">
+  <div class="bg-white/70 backdrop-blur-md border-b border-slate-200/60 px-4 py-3.5 flex items-center gap-3 sticky top-0 z-30">
+    <a href="{% url 'web:track_order' order.id %}" class="w-9 h-9 bg-white/60 border border-slate-200/60 rounded-xl flex items-center justify-center hover:bg-slate-50 hover:scale-102 transition-all flex-shrink-0">
       <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -36,11 +36,10 @@
   </div>
   {% endif %}
 
-  <div class="px-4 py-5 space-y-4 max-w-lg mx-auto">
+  <div class="px-4 py-5 space-y-4 max-w-lg mx-auto animate-fade-up">
 
     {% if order.is_paid %}
-    {# Locked State Card #}
-    <div class="bg-white rounded-3xl p-8 text-center border border-emerald-200 shadow-sm">
+    <div class="glass-panel rounded-3xl p-8 text-center border-emerald-300">
       <div class="w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm">✓</div>
       <h2 class="font-bold text-emerald-900 text-base">Invoice Already Paid</h2>
       <p class="text-xs text-emerald-600 mt-1">This invoice has been completed and is now locked for changes.</p>
@@ -50,7 +49,7 @@
     </div>
 
     {# Read-only Items Card #}
-    <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+    <div class="glass-panel rounded-3xl overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200 bg-slate-50">
         <h2 class="font-bold text-slate-800 text-sm">Your Invoice Summary</h2>
       </div>
@@ -133,15 +132,15 @@
       </div>
 
       {% if order.items.exists %}
-      <div class="flex justify-between px-5 py-4 font-bold border-t border-slate-200 bg-slate-50">
+      <div class="flex justify-between px-5 py-4 font-bold border-t border-slate-200/50 bg-slate-50/50 text-xs">
         <span class="text-xs text-slate-600 uppercase tracking-wider">Total Amount</span>
         <span class="text-emerald-600 text-base">{{ order.total_amount|inr }}</span>
       </div>
       {% endif %}
     </div>
 
-    {# Add More Items Card #}
-    <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+    <!-- Editable Items Card -->
+    <div class="glass-panel rounded-3xl overflow-hidden">
       <button @click="addOpen = !addOpen"
         class="w-full flex items-center justify-between px-5 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 transition-colors focus:outline-none">
         <span class="flex items-center gap-2">
@@ -223,7 +222,7 @@
     </div>
 
     {# Special Instructions Box #}
-    <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
+    <div class="glass-panel rounded-3xl p-5">
       <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-2">
         <span class="w-7 h-7 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-sm shadow-sm">💬</span>
         Chef Instructions
@@ -237,7 +236,7 @@
     </div>
 
     {# Warning callout #}
-    <div class="bg-white rounded-3xl p-5 flex items-start gap-3.5 border border-amber-200/60 shadow-sm bg-amber-50/20">
+    <div class="glass-panel rounded-3xl p-5 flex items-start gap-3.5 border-amber-300">
       <span class="text-xl mt-0.5">⚠️</span>
       <p class="text-[11px] text-amber-700 font-bold leading-relaxed">This order is open for changes until a waiter completes payment processing at your table. Once marked paid, the invoice cannot be modified.</p>
     </div>

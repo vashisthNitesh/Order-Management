@@ -11,7 +11,7 @@
     <h2 class="text-lg font-bold text-slate-900">{% if cat %}Edit {{ cat.name }}{% else %}Add Category{% endif %}</h2>
   </div>
 
-  <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+  <div class="glass-panel rounded-2xl p-6 md:p-8">
     <form method="post" enctype="multipart/form-data" class="space-y-6" x-data="{ imagePreview: '{% if cat and cat.image %}{{ cat.image.url }}{% endif %}' }">
       {% csrf_token %}
 

@@ -5,7 +5,7 @@
 <div class="min-h-screen flex flex-col bg-slate-50">
   
   <!-- Navigation Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 flex-shrink-0">
+  <header class="bg-white/70 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-30 flex-shrink-0">
     <div class="max-w-3xl mx-auto px-4 flex items-center justify-between h-14">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl flex items-center justify-center text-white text-sm shadow-md">📋</div>
@@ -50,7 +50,7 @@
   </header>
 
   <!-- Main Grid Area -->
-  <main class="flex-1 max-w-3xl mx-auto w-full p-4 space-y-4 overflow-y-auto">
+  <main class="flex-1 max-w-3xl mx-auto w-full p-4 space-y-4 overflow-y-auto animate-fade-up">
     <!-- Status Filter pills -->
     <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
       {% for tab_status, tab_label, tab_cls in status_tabs %}
@@ -70,9 +70,8 @@
       {% endfor %}
     </div>
 
-    <!-- Active Orders list -->
     {% if not orders %}
-    <div class="bg-white flex flex-col items-center justify-center py-20 text-center rounded-2xl p-6 border border-slate-200 shadow-sm">
+    <div class="glass-panel flex flex-col items-center justify-center py-20 text-center rounded-2xl p-6">
       <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center text-2xl mb-4 shadow-sm">📋</div>
       <h4 class="font-bold text-slate-900 text-base">No active orders</h4>
       <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto font-medium">No orders match the "{{ status_filter|default:'active' }}" status filter right now.</p>
@@ -80,7 +79,13 @@
     {% else %}
     <div class="space-y-3.5">
       {% for order in orders %}
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" x-data="{expanded:false}">
+      <div class="glass-card rounded-2xl overflow-hidden stagger-item"
+           x-data="{ expanded: false, leaving: false }"
+           x-show="!leaving"
+           x-transition:leave="transition ease-in duration-250 transform"
+           x-transition:leave-start="opacity-100 translate-x-0 scale-100"
+           x-transition:leave-end="opacity-0 -translate-x-12 scale-95"
+           style="--sibling-index: {{ forloop.counter }};">
         
         <!-- Main details -->
         <div class="p-4 md:p-5">
@@ -144,28 +149,32 @@
         <!-- Action triggers -->
         <div class="px-4 pb-4 md:px-5 md:pb-5 flex gap-2">
           {% if order.status == 'pending' %}
-          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=confirmed" class="flex-1">
+          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=confirmed" class="flex-1"
+                @submit="leaving = true; setTimeout(() => $el.submit(), 250); event.preventDefault();">
             {% csrf_token %}
             <button type="submit" class="w-full glass-btn-primary rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Confirm Order
             </button>
           </form>
           {% elif order.status == 'confirmed' %}
-          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=preparing" class="flex-1">
+          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=preparing" class="flex-1"
+                @submit="leaving = true; setTimeout(() => $el.submit(), 250); event.preventDefault();">
             {% csrf_token %}
             <button type="submit" class="w-full glass-btn-primary rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Start Cooking
             </button>
           </form>
           {% elif order.status == 'preparing' %}
-          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=ready" class="flex-1">
+          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=ready" class="flex-1"
+                @submit="leaving = true; setTimeout(() => $el.submit(), 250); event.preventDefault();">
             {% csrf_token %}
             <button type="submit" class="w-full glass-btn-primary rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Mark Ready
             </button>
           </form>
           {% elif order.status == 'ready' %}
-          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=served" class="flex-1">
+          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=served" class="flex-1"
+                @submit="leaving = true; setTimeout(() => $el.submit(), 250); event.preventDefault();">
             {% csrf_token %}
             <button type="submit" class="w-full glass-btn-success rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Mark Served
@@ -174,7 +183,8 @@
           {% endif %}
           
           {% if order.status not in 'served,cancelled' %}
-          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=cancelled" onsubmit="return confirm('Cancel order #{{ order.order_number }}?')">
+          <form method="post" action="{% url 'web:update_order_status' order.id %}?status=cancelled"
+                @submit="if(confirm('Cancel order #{{ order.order_number }}?')) { leaving = true; setTimeout(() => $el.submit(), 250); } event.preventDefault();">
             {% csrf_token %}
             <button type="submit" class="glass-btn-danger px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-[0.98]">
               Cancel

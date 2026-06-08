@@ -14,7 +14,7 @@
   </div>
 
   <!-- Filters Panel -->
-  <form method="get" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-wrap items-center gap-3">
+  <form method="get" class="glass-panel rounded-2xl p-4 flex flex-wrap items-center gap-3">
     <!-- Search Field -->
     <div class="relative flex-1 min-w-[200px]">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -72,9 +72,8 @@
     </div>
   </form>
 
-  <!-- Table Section -->
   {% if not orders %}
-  <div class="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+  <div class="flex flex-col items-center justify-center py-24 text-center glass-panel rounded-2xl p-6">
     <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center text-2xl shadow-sm mb-4">🧾</div>
     <h3 class="font-bold text-slate-900 text-base">No orders found</h3>
     <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto font-medium">Try adjusting your filters or search query to find what you are looking for.</p>
@@ -85,7 +84,7 @@
     {% endif %}
   </div>
   {% else %}
-  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+  <div class="glass-panel rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-sm min-w-[800px] border-collapse">
         <thead>
@@ -102,7 +101,7 @@
         </thead>
         <tbody class="divide-y divide-slate-100">
           {% for order in orders %}
-          <tr class="hover:bg-slate-50/70 transition-colors group cursor-pointer"
+          <tr class="hover:bg-slate-50/70 transition-colors group cursor-pointer stagger-item" style="--sibling-index: {{ forloop.counter }};"
               onclick="if (!event.target.closest('a') && !event.target.closest('button')) window.location.href = '{% url 'web:admin_order_detail' order.id %}'">
             <td class="px-6 py-5 whitespace-nowrap">
               <span class="font-mono font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">#{{ order.order_number }}</span>
