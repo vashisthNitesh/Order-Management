@@ -56,14 +56,15 @@
 <div class="p-4 space-y-4 max-w-7xl mx-auto">
 
   {# Welcome Header Card #}
-  <div class="bg-gradient-to-br from-emerald-600/90 to-teal-500/90 border border-white/20 backdrop-blur-md text-white p-5 rounded-xl relative overflow-hidden shadow-md">
+  <div class="border border-white/20 text-white p-5 rounded-xl relative overflow-hidden shadow-md"
+       style="background: linear-gradient(135deg, {{ restaurant.primary_color|default:'#059669' }}ee, {{ restaurant.accent_color|default:'#0d9488' }}ee);">
     <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
     
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
       <div>
-        <h2 class="text-lg md:text-xl font-bold tracking-tight">Welcome back, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
-        <p class="text-emerald-50 text-[11px] mt-0.5">Here is the live performance summary for <span class="text-white font-bold">{{ restaurant.name }}</span> today.</p>
+        <h2 class="text-lg md:text-xl font-bold tracking-tight text-white">Welcome back, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
+        <p class="text-white/90 text-[11px] mt-0.5">Here is the live performance summary for <span class="text-white font-extrabold">{{ restaurant.name }}</span> today.</p>
       </div>
       
       <div class="flex items-center gap-2 self-start sm:self-center bg-white/15 border border-white/20 px-3 py-1.5 rounded-lg shadow-sm">

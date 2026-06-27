@@ -9,10 +9,13 @@ from django.core.files.base import ContentFile
 class Restaurant(models.Model):
     name = models.CharField(max_length=255)
     logo = models.ImageField(upload_to='restaurant/', null=True, blank=True)
+    banner_image = models.ImageField(upload_to='restaurant/banners/', null=True, blank=True)
     address = models.TextField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
+    primary_color = models.CharField(max_length=7, default='#059669')
+    accent_color = models.CharField(max_length=7, default='#0d9488')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

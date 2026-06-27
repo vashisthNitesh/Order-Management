@@ -1,0 +1,177 @@
+{% extends "admin_panel/base.html" %}
+{% load web_extras %}
+{% block page_title %}Restaurant Settings{% endblock %}
+
+{% block content %}
+<div class="p-6 max-w-4xl mx-auto space-y-6 animate-fade-up">
+
+  <form method="post" enctype="multipart/form-data" class="space-y-6"
+        x-data="{ 
+          primaryColor: '{{ form.primary_color.value|default:"#059669" }}',
+          accentColor: '{{ form.accent_color.value|default:"#0d9488" }}'
+        }">
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      {# Column 1: Info & Profile #}
+      <div class="md:col-span-2 space-y-6">
+        {# Metadata Card #}
+        <div class="bg-white border border-slate-200/80 shadow-sm rounded-3xl p-6 space-y-4">
+          <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <span class="w-7 h-7 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xs shadow-sm">🍽️</span>
+            General Information
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Restaurant Name</label>
+              {{ form.name }}
+              {% if form.name.errors %}<p class="text-[10px] text-rose-600 font-semibold">{{ form.name.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Phone</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}<p class="text-[10px] text-rose-600 font-semibold">{{ form.phone.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Address</label>
+            {{ form.email }}
+            {% if form.email.errors %}<p class="text-[10px] text-rose-600 font-semibold">{{ form.email.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Address</label>
+            {{ form.address }}
+            {% if form.address.errors %}<p class="text-[10px] text-rose-600 font-semibold">{{ form.address.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}<p class="text-[10px] text-rose-600 font-semibold">{{ form.description.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        {# Branding Theme Colors Card #}
+        <div class="bg-white border border-slate-200/80 shadow-sm rounded-3xl p-6">
+          <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span class="w-7 h-7 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xs shadow-sm">🎨</span>
+            Branding & Theme Colors
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="flex items-center gap-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm">
+              <div class="relative">
+                <input type="color" name="primary_color" x-model="primaryColor"
+                       class="w-14 h-14 rounded-2xl cursor-pointer border border-slate-300 bg-white p-1 shadow-sm transition-transform hover:scale-102 focus:outline-none">
+              </div>
+              <div>
+                <h4 class="font-extrabold text-slate-900 text-xs">Primary Brand Color</h4>
+                <p class="text-[10px] text-slate-400 font-bold font-mono mt-0.5" x-text="primaryColor"></p>
+                <p class="text-[9px] text-slate-500 font-semibold mt-1">Controls buttons, active states, and highlights.</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm">
+              <div class="relative">
+                <input type="color" name="accent_color" x-model="accentColor"
+                       class="w-14 h-14 rounded-2xl cursor-pointer border border-slate-300 bg-white p-1 shadow-sm transition-transform hover:scale-102 focus:outline-none">
+              </div>
+              <div>
+                <h4 class="font-extrabold text-slate-900 text-xs">Accent Theme Color</h4>
+                <p class="text-[10px] text-slate-400 font-bold font-mono mt-0.5" x-text="accentColor"></p>
+                <p class="text-[9px] text-slate-500 font-semibold mt-1">Used for secondary highlights and notifications.</p>
+              </div>
+            </div>
+          </div>
+
+          {# Theme Preview Mockup #}
+          <div class="mt-6 border border-slate-200 rounded-2xl overflow-hidden bg-slate-100/50 p-4 relative shadow-inner">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Live Theme Preview Mockup</p>
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm max-w-sm mx-auto space-y-3.5">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="w-8 h-4 bg-slate-100 rounded-md"></span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      :style="{ backgroundColor: primaryColor + '1F', color: primaryColor }">Preview Table</span>
+              </div>
+              <div class="space-y-1.5">
+                <div class="h-3 bg-slate-100 rounded w-2/3"></div>
+                <div class="h-2 bg-slate-100 rounded w-1/2"></div>
+              </div>
+              <button type="button" class="w-full text-white text-[10px] font-bold py-2 rounded-xl transition-all shadow-md"
+                      :style="{ backgroundColor: primaryColor, boxShadow: `0 4px 12px ${primaryColor}40` }">
+                Dynamic Primary Button
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Column 2: Logo and Banner Uploads #}
+      <div class="space-y-6">
+        {# Logo Upload #}
+        <div class="bg-white border border-slate-200/80 shadow-sm rounded-3xl p-6 text-center space-y-4">
+          <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider text-left mb-2 flex items-center gap-2">
+            <span class="w-7 h-7 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xs shadow-sm">🖼️</span>
+            Logo
+          </h3>
+          
+          <div class="mx-auto w-24 h-24 rounded-2xl border border-slate-200 bg-slate-50/50 flex items-center justify-center overflow-hidden shadow-sm relative">
+            {% if restaurant.logo %}
+            <img src="{{ restaurant.logo.url }}" class="object-cover w-full h-full">
+            {% else %}
+            <span class="text-3xl">🍲</span>
+            {% endif %}
+          </div>
+
+          <div class="relative overflow-hidden">
+            <input type="file" name="logo" id="id_logo" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+            <button type="button" class="w-full glass-btn-secondary py-2.5 rounded-xl text-xs font-bold transition-all active:scale-[0.98]">
+              Upload Logo
+            </button>
+          </div>
+          {% if form.logo.errors %}<p class="text-[10px] text-rose-600 font-semibold">{{ form.logo.errors.0 }}</p>{% endif %}
+        </div>
+
+        {# Banner Upload #}
+        <div class="bg-white border border-slate-200/80 shadow-sm rounded-3xl p-6 text-center space-y-4">
+          <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider text-left mb-2 flex items-center gap-2">
+            <span class="w-7 h-7 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xs shadow-sm">🌅</span>
+            Menu Banner Image
+          </h3>
+          
+          <div class="w-full h-24 rounded-2xl border border-slate-200 bg-slate-50/50 flex items-center justify-center overflow-hidden shadow-sm relative">
+            {% if restaurant.banner_image %}
+            <img src="{{ restaurant.banner_image.url }}" class="object-cover w-full h-full">
+            {% else %}
+            <span class="text-3xl">✨</span>
+            {% endif %}
+          </div>
+
+          <div class="relative overflow-hidden">
+            <input type="file" name="banner_image" id="id_banner_image" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+            <button type="button" class="w-full glass-btn-secondary py-2.5 rounded-xl text-xs font-bold transition-all active:scale-[0.98]">
+              Upload Banner
+            </button>
+          </div>
+          {% if form.banner_image.errors %}<p class="text-[10px] text-rose-600 font-semibold">{{ form.banner_image.errors.0 }}</p>{% endif %}
+          <p class="text-[9px] text-slate-400 font-semibold mt-1">Recommended width: 800px. Used at the top of the customer menu.</p>
+        </div>
+      </div>
+    </div>
+
+    {# Submit button bar #}
+    <div class="bg-white border border-slate-200/85 p-4 rounded-3xl flex items-center justify-between shadow-sm">
+      <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Settings page</span>
+      <div class="flex gap-2">
+        <a href="{% url 'web:admin_dashboard' %}" class="glass-btn-secondary px-5 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95">Cancel</a>
+        <button type="submit" class="glass-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95">Save Branding</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

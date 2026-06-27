@@ -4,8 +4,7 @@
 {% block content %}
 <div class="p-4 max-w-7xl mx-auto space-y-4">
 
-  <!-- Filters Panel -->
-  <form method="get" class="glass-panel rounded-xl p-3 flex flex-wrap items-center gap-2.5">
+  <form method="get" class="relative z-30 glass-panel rounded-xl p-3 flex flex-wrap items-center gap-2.5">
     <!-- Search Field -->
     <div class="relative flex-1 min-w-[200px]">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -14,37 +13,69 @@
         </svg>
       </div>
       <input name="q" type="text" value="{{ search }}" placeholder="Search order number or customer..."
-        class="h-9 pl-8.5 pr-3 w-full rounded-lg glass-input text-slate-800 text-xs placeholder-slate-400 focus:outline-none">
+        class="h-9 pl-10 pr-3.5 w-full rounded-lg glass-input glass-input-icon-left text-slate-800 text-xs placeholder-slate-400 focus:outline-none">
     </div>
 
     <!-- Status Filter -->
-    <div class="relative min-w-[150px]">
-      <select name="status" onchange="this.form.submit()"
-        class="h-9 w-full rounded-lg glass-input px-3 pr-8 text-xs text-slate-800 font-semibold focus:outline-none appearance-none cursor-pointer">
-        <option value="">All Statuses</option>
-        {% for val, label in status_choices %}
-        <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-      <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
-        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    <div class="relative min-w-[150px]" x-data="{ open: false, selectedLabel: '{% if status_filter %}{% for val, label in status_choices %}{% if status_filter == val %}{{ label }}{% endif %}{% endfor %}{% else %}All Statuses{% endif %}' }">
+      <input type="hidden" name="status" id="filter_status" value="{{ status_filter|default:'' }}">
+      <button type="button" @click="open = !open" @click.away="open = false"
+        class="h-9 w-full rounded-lg glass-input px-3.5 pr-8 text-xs text-slate-800 font-semibold focus:outline-none text-left flex items-center justify-between active:scale-[0.99] transition-all">
+        <span x-text="selectedLabel"></span>
+        <svg class="h-3.5 w-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
         </svg>
+      </button>
+      <div x-show="open" x-cloak
+        x-transition:enter="transition ease-out duration-100 transform"
+        x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-75 transform"
+        class="absolute left-0 top-full z-50 w-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden py-1 max-h-60 overflow-y-auto">
+        <button type="button" @click="document.getElementById('filter_status').value = ''; $el.closest('form').submit()" 
+                class="w-full text-left px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 block">
+          All Statuses
+        </button>
+        {% for val, label in status_choices %}
+        <button type="button" @click="document.getElementById('filter_status').value = '{{ val }}'; $el.closest('form').submit()"
+           class="w-full text-left flex items-center justify-between px-4 py-2 text-xs font-bold {% if status_filter == val %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+          <span>{{ label }}</span>
+          {% if status_filter == val %}<span class="text-xs">✓</span>{% endif %}
+        </button>
+        {% endfor %}
       </div>
     </div>
 
     <!-- Payment Filter -->
-    <div class="relative min-w-[150px]">
-      <select name="paid" onchange="this.form.submit()"
-        class="h-9 w-full rounded-lg glass-input px-3 pr-8 text-xs text-slate-800 font-semibold focus:outline-none appearance-none cursor-pointer">
-        <option value="">All Payments</option>
-        <option value="0" {% if paid_filter == '0' %}selected{% endif %}>Unpaid</option>
-        <option value="1" {% if paid_filter == '1' %}selected{% endif %}>Paid</option>
-      </select>
-      <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
-        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    <div class="relative min-w-[150px]" x-data="{ open: false, selectedLabel: '{% if paid_filter == '0' %}Unpaid{% elif paid_filter == '1' %}Paid{% else %}All Payments{% endif %}' }">
+      <input type="hidden" name="paid" id="filter_paid" value="{{ paid_filter|default:'' }}">
+      <button type="button" @click="open = !open" @click.away="open = false"
+        class="h-9 w-full rounded-lg glass-input px-3.5 pr-8 text-xs text-slate-800 font-semibold focus:outline-none text-left flex items-center justify-between active:scale-[0.99] transition-all">
+        <span x-text="selectedLabel"></span>
+        <svg class="h-3.5 w-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
         </svg>
+      </button>
+      <div x-show="open" x-cloak
+        x-transition:enter="transition ease-out duration-100 transform"
+        x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-75 transform"
+        class="absolute left-0 top-full z-50 w-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden py-1">
+        <button type="button" @click="document.getElementById('filter_paid').value = ''; $el.closest('form').submit()" 
+                class="w-full text-left px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 block">
+          All Payments
+        </button>
+        <button type="button" @click="document.getElementById('filter_paid').value = '0'; $el.closest('form').submit()"
+           class="w-full text-left flex items-center justify-between px-4 py-2 text-xs font-bold {% if paid_filter == '0' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+          <span>Unpaid</span>
+          {% if paid_filter == '0' %}<span class="text-xs">✓</span>{% endif %}
+        </button>
+        <button type="button" @click="document.getElementById('filter_paid').value = '1'; $el.closest('form').submit()"
+           class="w-full text-left flex items-center justify-between px-4 py-2 text-xs font-bold {% if paid_filter == '1' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+          <span>Paid</span>
+          {% if paid_filter == '1' %}<span class="text-xs">✓</span>{% endif %}
+        </button>
       </div>
     </div>
 

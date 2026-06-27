@@ -12,9 +12,20 @@ def admin_nav(request):
             (reverse('web:admin_menu'),       '🍽️',  'Menu Items'),
             (reverse('web:admin_categories'), '📂', 'Categories'),
             (reverse('web:admin_offers'),     '🏷️',  'Offers'),
+            (reverse('web:admin_charges'),    '💰', 'Charge Master'),
             (reverse('web:admin_staff'),      '👥', 'Staff'),
+            (reverse('web:admin_settings'),   '⚙️',  'Settings'),
             (reverse('web:admin_logs'),       '📋', 'Logs'),
         ]
     except Exception:
         nav_items = []
     return {'nav_items': nav_items}
+
+
+def restaurant_context(request):
+    from apps.restaurants.models import Restaurant
+    try:
+        restaurant = Restaurant.objects.first()
+    except Exception:
+        restaurant = None
+    return {'restaurant': restaurant}

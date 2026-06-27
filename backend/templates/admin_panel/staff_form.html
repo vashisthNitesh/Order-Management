@@ -19,19 +19,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">First Name</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">👤</span>
-            <input name="first_name" type="text" value="{{ staff.user.first_name|default:'' }}" placeholder="Jane"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none">
-          </div>
+          <input name="first_name" type="text" value="{{ staff.user.first_name|default:'' }}" placeholder="Jane"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
         </div>
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Last Name</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">👤</span>
-            <input name="last_name" type="text" value="{{ staff.user.last_name|default:'' }}" placeholder="Doe"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none">
-          </div>
+          <input name="last_name" type="text" value="{{ staff.user.last_name|default:'' }}" placeholder="Doe"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
         </div>
       </div>
 
@@ -39,33 +33,24 @@
       {% if not staff %}
       <div class="space-y-2">
         <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Username <span class="text-red-500">*</span></label>
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🔑</span>
-          <input name="username" type="text" required autocapitalize="none" placeholder="janedoe"
-            class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none font-mono text-slate-800">
-        </div>
+        <input name="username" type="text" required autocapitalize="none" placeholder="janedoe"
+          class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none font-mono text-slate-800">
       </div>
       {% endif %}
 
       {# Email #}
       <div class="space-y-2">
         <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Email Address</label>
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📧</span>
-          <input name="email" type="email" value="{{ staff.user.email|default:'' }}" placeholder="jane@restaurant.com"
-            class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none">
-        </div>
+        <input name="email" type="email" value="{{ staff.user.email|default:'' }}" placeholder="jane@restaurant.com"
+          class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
       </div>
 
       {# Password #}
       {% if not staff %}
       <div class="space-y-2">
         <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Password <span class="text-red-500">*</span></label>
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🔒</span>
-          <input name="password" type="password" required placeholder="Choose a secure password"
-            class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none">
-        </div>
+        <input name="password" type="password" required placeholder="Choose a secure password"
+          class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
       </div>
       {% endif %}
 
@@ -78,11 +63,8 @@
           <div x-data="{ open: false, selectedValue: '{{ staff.role|default:'waiter' }}', selectedLabel: '{% if staff %}{% if staff.role == 'waiter' %}Waiter{% elif staff.role == 'kitchen' %}Kitchen Staff{% elif staff.role == 'manager' %}Manager{% else %}Admin{% endif %}{% else %}Waiter{% endif %}' }" class="relative">
             <input type="hidden" name="role" :value="selectedValue">
             <button type="button" @click="open = !open" @click.away="open = false"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-10 text-sm focus:outline-none text-left flex items-center justify-between active:scale-[0.99] duration-155">
-              <div class="flex items-center gap-2">
-                <span class="text-gray-400">💼</span>
-                <span x-text="selectedLabel" class="text-slate-800 font-bold"></span>
-              </div>
+              class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none text-left flex items-center justify-between active:scale-[0.99] duration-155">
+              <span x-text="selectedLabel" class="text-slate-800 font-bold"></span>
               <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
@@ -96,7 +78,7 @@
               x-transition:leave="transition ease-in duration-75" 
               x-transition:leave-start="transform opacity-100 scale-100 translate-y-0" 
               x-transition:leave-end="transform opacity-0 scale-95 -translate-y-2"
-              class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-xl p-1.5 focus:outline-none border border-slate-200">
+              class="absolute left-0 top-full z-50 w-full mt-1.5 bg-white rounded-2xl shadow-xl p-1.5 focus:outline-none border border-slate-200">
               
               <button type="button" @click="selectedValue = 'waiter'; selectedLabel = 'Waiter'; open = false"
                 :class="selectedValue == 'waiter' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-50'"
@@ -132,11 +114,8 @@
         {# Phone #}
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Phone</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📞</span>
-            <input name="phone" type="tel" value="{{ staff.phone|default:'' }}" placeholder="+91 98765 43210"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none">
-          </div>
+          <input name="phone" type="tel" value="{{ staff.phone|default:'' }}" placeholder="+91 98765 43210"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
         </div>
 
       </div>

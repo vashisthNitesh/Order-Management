@@ -18,11 +18,8 @@
       {# Title #}
       <div class="space-y-2">
         <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Offer Title <span class="text-red-500">*</span></label>
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🏷️</span>
-          <input name="title" type="text" required value="{{ offer.title|default:'' }}" placeholder="e.g. Weekend Brunch 15% Off"
-            class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none">
-        </div>
+        <input name="title" type="text" required value="{{ offer.title|default:'' }}" placeholder="e.g. Weekend Brunch Special"
+          class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
       </div>
 
       {# Description #}
@@ -33,19 +30,16 @@
       </div>
 
       {# Discount Type & Value #}
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" x-data="{ discountType: '{{ offer.discount_type|default:'percentage' }}', open: false, selectedLabel: '{% if offer %}{% if offer.discount_type == 'percentage' %}Percentage (%){% else %}Flat Amount (₹){% endif %}{% else %}Percentage (%){% endif %}' }">
         
         {# Discount Type select #}
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Discount Type</label>
-          <div x-data="{ open: false, selectedValue: '{{ offer.discount_type|default:'percentage' }}', selectedLabel: '{% if offer %}{% if offer.discount_type == 'percentage' %}Percentage (%){% else %}Flat Amount (₹){% endif %}{% else %}Percentage (%){% endif %}' }" class="relative">
-            <input type="hidden" name="discount_type" :value="selectedValue">
+          <div class="relative">
+            <input type="hidden" name="discount_type" :value="discountType">
             <button type="button" @click="open = !open" @click.away="open = false"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-10 text-sm focus:outline-none text-left flex items-center justify-between active:scale-[0.99] duration-155">
-              <div class="flex items-center gap-2">
-                <span class="text-gray-400">📊</span>
-                <span x-text="selectedLabel" class="text-slate-800 font-bold"></span>
-              </div>
+              class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none text-left flex items-center justify-between active:scale-[0.99] duration-155">
+              <span x-text="selectedLabel" class="text-slate-800 font-bold"></span>
               <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
@@ -59,20 +53,20 @@
               x-transition:leave="transition ease-in duration-75" 
               x-transition:leave-start="transform opacity-100 scale-100 translate-y-0" 
               x-transition:leave-end="transform opacity-0 scale-95 -translate-y-2"
-              class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-xl p-1.5 focus:outline-none border border-slate-200">
+              class="absolute left-0 top-full z-50 w-full mt-1.5 bg-white rounded-2xl shadow-xl p-1.5 focus:outline-none border border-slate-200">
               
-              <button type="button" @click="selectedValue = 'percentage'; selectedLabel = 'Percentage (%)'; open = false"
-                :class="selectedValue == 'percentage' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-50'"
+              <button type="button" @click="discountType = 'percentage'; selectedLabel = 'Percentage (%)'; open = false"
+                :class="discountType == 'percentage' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-50'"
                 class="w-full text-left px-4 py-2.5 rounded-xl text-xs transition-colors flex items-center justify-between">
                 <span>Percentage (%)</span>
-                <span x-show="selectedValue == 'percentage'" class="text-emerald-600 font-bold">✓</span>
+                <span x-show="discountType == 'percentage'" class="text-emerald-600 font-bold">✓</span>
               </button>
 
-              <button type="button" @click="selectedValue = 'flat'; selectedLabel = 'Flat Amount (₹)'; open = false"
-                :class="selectedValue == 'flat' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-50'"
+              <button type="button" @click="discountType = 'flat'; selectedLabel = 'Flat Amount (₹)'; open = false"
+                :class="discountType == 'flat' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-50'"
                 class="w-full text-left px-4 py-2.5 rounded-xl text-xs transition-colors flex items-center justify-between">
                 <span>Flat Amount (₹)</span>
-                <span x-show="selectedValue == 'flat'" class="text-emerald-600 font-bold">✓</span>
+                <span x-show="discountType == 'flat'" class="text-emerald-600 font-bold">✓</span>
               </button>
             </div>
           </div>
@@ -80,12 +74,12 @@
 
         {# Discount Value #}
         <div class="space-y-2">
-          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Discount Value <span class="text-red-500">*</span></label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm font-medium">✂️</span>
-            <input name="discount_value" type="number" step="0.01" min="0" required value="{{ offer.discount_value|default:'' }}" placeholder="Value (e.g. 10)"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none">
-          </div>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <span x-text="discountType === 'percentage' ? 'Discount Rate (%)' : 'Discount Amount (₹)'"></span>
+            <span class="text-red-500">*</span>
+          </label>
+          <input name="discount_value" type="number" step="0.01" min="0" required value="{{ offer.discount_value|default:'' }}" placeholder="Value (e.g. 10)"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
         </div>
 
       </div>
@@ -95,20 +89,14 @@
         
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Min Order Amount (₹)</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">₹</span>
-            <input name="min_order_amount" type="number" step="0.01" min="0" value="{{ offer.min_order_amount|default:'0' }}"
-              class="w-full h-11 rounded-2xl glass-input pl-8 pr-4 text-sm focus:outline-none">
-          </div>
+          <input name="min_order_amount" type="number" step="0.01" min="0" value="{{ offer.min_order_amount|default:'0' }}"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
         </div>
 
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Promo Code</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">🔑</span>
-            <input name="promo_code" type="text" value="{{ offer.promo_code|default:'' }}" placeholder="e.g. WEEKEND20"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none font-mono uppercase text-slate-800">
-          </div>
+          <input name="promo_code" type="text" value="{{ offer.promo_code|default:'' }}" placeholder="e.g. WEEKEND20"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none font-mono uppercase text-slate-800">
         </div>
 
       </div>
@@ -118,20 +106,14 @@
         
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Start Date <span class="text-red-500">*</span></label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📅</span>
-            <input name="start_date" type="date" required value="{{ offer.start_date|date:'Y-m-d'|default:'' }}"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none text-slate-700 font-semibold">
-          </div>
+          <input name="start_date" type="date" required value="{{ offer.start_date|date:'Y-m-d'|default:'' }}"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none text-slate-700 font-semibold">
         </div>
 
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">End Date <span class="text-red-500">*</span></label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 text-sm">📅</span>
-            <input name="end_date" type="date" required value="{{ offer.end_date|date:'Y-m-d'|default:'' }}"
-              class="w-full h-11 rounded-2xl glass-input pl-10 pr-4 text-sm focus:outline-none text-slate-700 font-semibold">
-          </div>
+          <input name="end_date" type="date" required value="{{ offer.end_date|date:'Y-m-d'|default:'' }}"
+            class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none text-slate-700 font-semibold">
         </div>
 
       </div>
@@ -148,9 +130,7 @@
       {# Buttons #}
       <div class="flex gap-4 pt-4 border-t border-slate-100">
         <a href="{% url 'web:admin_offers' %}" class="flex-1 text-center py-3 glass-btn-secondary rounded-2xl text-sm font-semibold active:scale-[0.97]">Cancel</a>
-        <button type="submit" class="flex-1 glass-btn-primary rounded-2xl py-3 text-sm font-bold shadow-md border border-white/10 active:scale-[0.97]">
-          {% if offer %}Save Changes{% else %}Add Offer{% endif %}
-        </button>
+        <button type="submit" class="flex-1 text-center py-3 glass-btn-primary rounded-2xl text-sm font-semibold shadow-sm active:scale-[0.97]">Save Offer</button>
       </div>
     </form>
   </div>

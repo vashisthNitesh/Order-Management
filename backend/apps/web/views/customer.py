@@ -31,8 +31,10 @@ def _item_to_dict(item, request=None):
 
 
 def _customer_can_edit(request, order):
-    """Customer may edit if they placed this order (tracked in session) and it's unpaid."""
+    """Customer may edit if they placed this order (tracked in session), it's unpaid, and still pending."""
     if order.is_paid:
+        return False
+    if order.status != Order.PENDING:
         return False
     customer_orders = request.session.get('customer_orders', [])
     return order.id in customer_orders
@@ -111,6 +113,22 @@ def menu(request, table_id):
                 })
         active_order_items_json = json.dumps(items_list)
 
+    from apps.orders.models import ChargeMaster
+    active_charges = ChargeMaster.objects.filter(
+        restaurant=restaurant,
+        is_active=True
+    ).order_by('sequence', 'name')
+    
+    active_charges_data = []
+    for c in active_charges:
+        active_charges_data.append({
+            'name': c.name,
+            'charge_type': c.charge_type,
+            'amount': str(c.amount),
+            'sequence': c.sequence
+        })
+    active_charges_json = json.dumps(active_charges_data)
+
     return render(request, 'customer/menu.html', {
         'table': table,
         'restaurant': restaurant,
@@ -125,11 +143,12 @@ def menu(request, table_id):
         'active_order_items_json': active_order_items_json,
         'active_order_customer_name': active_order_customer_name,
         'active_order_special_instructions': active_order_special_instructions,
+        'active_charges_json': active_charges_json,
     })
 
 
 @require_GET
-def get_category_items(request, category_id):
+def get_category_items(request, table_id, category_id):
     items = MenuItem.objects.filter(
         category_id=category_id, is_available=True
     ).select_related('category').order_by('sort_order', 'name')
@@ -151,6 +170,7 @@ def place_order(request, table_id):
 
     active_order_id = body.get('active_order_id')
     is_edit = False
+    is_append = False
     order = None
 
     if active_order_id:
@@ -158,6 +178,16 @@ def place_order(request, table_id):
         if not _customer_can_edit(request, order):
             return JsonResponse({'error': 'You cannot edit this order.'}, status=403)
         is_edit = True
+    else:
+        # Check if there is an active unpaid, non-cancelled order for this table
+        table_active_order = Order.objects.filter(
+            table=table,
+            is_paid=False
+        ).exclude(status=Order.CANCELLED).first()
+        
+        if table_active_order:
+            order = table_active_order
+            is_append = True
 
     if is_edit:
         # Update existing order details and clear old items
@@ -165,6 +195,22 @@ def place_order(request, table_id):
         order.customer_name = body.get('customer_name', '')
         order.save(update_fields=['special_instructions', 'customer_name'])
         order.items.all().delete()
+    elif is_append:
+        # Append new instructions to existing ones if provided
+        new_instructions = body.get('special_instructions', '').strip()
+        if new_instructions:
+            if order.special_instructions:
+                order.special_instructions = f"{order.special_instructions} | {new_instructions}"
+            else:
+                order.special_instructions = new_instructions
+        
+        new_name = body.get('customer_name', '').strip()
+        if new_name:
+            order.customer_name = new_name
+            
+        # Reset status back to pending since new items require kitchen action
+        order.status = Order.PENDING
+        order.save(update_fields=['special_instructions', 'customer_name', 'status'])
     else:
         # Create a new order
         order = Order.objects.create(
@@ -179,7 +225,7 @@ def place_order(request, table_id):
     item_names = []
     for item_data in items_data:
         try:
-            menu_item = MenuItem.objects.get(id=item_data['menu_item_id'])
+            menu_item = MenuItem.objects.get(id=item_data['menu_item_id'], is_available=True)
         except MenuItem.DoesNotExist:
             continue
         qty = int(item_data.get('quantity', 1))
@@ -194,8 +240,8 @@ def place_order(request, table_id):
             special_instructions=item_data.get('special_instructions', ''),
         )
 
-    order.total_amount = total
-    order.save(update_fields=['total_amount'])
+    # Calculate subtotal, apply dynamic ChargeMaster charges, and set the grand total_amount
+    order.calculate_total()
 
     if is_edit:
         # Log update and notify staff
@@ -217,6 +263,34 @@ def place_order(request, table_id):
             )
         except Exception:
             pass
+    elif is_append:
+        # Create status history, order log and notify staff for the new round of items
+        OrderStatusHistory.objects.create(order=order, status=Order.PENDING)
+        OrderLog.objects.create(
+            order=order, action='item_added', actor_type='customer',
+            actor_name=body.get('customer_name', '') or 'Customer',
+            details='Added new items: ' + ', '.join(item_names),
+        )
+        try:
+            from apps.orders.utils import send_notification
+            from apps.orders.models import Notification
+            table_num = order.table.table_number if order.table else 'N/A'
+            send_notification(
+                restaurant=order.restaurant,
+                order=order,
+                recipient_type=Notification.STAFF,
+                title="New Items Added to Order",
+                message=f"New items were added to Order #{order.order_number} for Table {table_num}."
+            )
+        except Exception:
+            pass
+        
+        # Ensure order ID is in session so the customer retains edit capability
+        customer_orders = request.session.get('customer_orders', [])
+        if order.id not in customer_orders:
+            customer_orders.append(order.id)
+            request.session['customer_orders'] = customer_orders
+            request.session.modified = True
     else:
         OrderStatusHistory.objects.create(order=order, status=Order.PENDING)
         OrderLog.objects.create(

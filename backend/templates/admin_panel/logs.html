@@ -3,26 +3,74 @@
 {% block content %}
 <div class="p-4 space-y-4">
 
-  <!-- Filters -->
-  <form method="get" class="flex flex-wrap items-center gap-2.5 glass-panel rounded-xl p-3">
+  <form method="get" class="relative z-30 flex flex-wrap items-center gap-2.5 glass-panel rounded-xl p-3">
     <div class="relative">
       <input name="order" type="text" value="{{ order_q }}" placeholder="Order # …"
         class="glass-input h-9 rounded-lg px-2.5 pl-7 text-xs focus:outline-none w-32">
       <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">#</span>
     </div>
-    <select name="action" onchange="this.form.submit()"
-      class="glass-input h-9 rounded-lg px-2.5 text-xs text-slate-800 font-semibold focus:outline-none cursor-pointer">
-      <option value="">All Actions</option>
-      {% for val, label in action_choices %}
-      <option value="{{ val }}" {% if action_filter == val %}selected{% endif %}>{{ label }}</option>
-      {% endfor %}
-    </select>
-    <select name="actor" onchange="this.form.submit()"
-      class="glass-input h-9 rounded-lg px-2.5 text-xs text-slate-800 font-semibold focus:outline-none cursor-pointer">
-      <option value="">All Actors</option>
-      <option value="staff" {% if actor_filter == 'staff' %}selected{% endif %}>Staff</option>
-      <option value="customer" {% if actor_filter == 'customer' %}selected{% endif %}>Customer</option>
-    </select>
+    <!-- Action Filter -->
+    <div class="relative min-w-[140px]" x-data="{ open: false, selectedLabel: '{% if action_filter %}{% for val, label in action_choices %}{% if action_filter == val %}{{ label }}{% endif %}{% endfor %}{% else %}All Actions{% endif %}' }">
+      <input type="hidden" name="action" id="filter_action" value="{{ action_filter|default:'' }}">
+      <button type="button" @click="open = !open" @click.away="open = false"
+        class="h-9 w-full rounded-lg glass-input px-3.5 pr-8 text-xs text-slate-800 font-semibold focus:outline-none text-left flex items-center justify-between active:scale-[0.99] transition-all">
+        <span x-text="selectedLabel"></span>
+        <svg class="h-3.5 w-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div x-show="open" x-cloak
+        x-transition:enter="transition ease-out duration-100 transform"
+        x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-75 transform"
+        class="absolute left-0 top-full z-50 w-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden py-1 max-h-60 overflow-y-auto">
+        <button type="button" @click="document.getElementById('filter_action').value = ''; $el.closest('form').submit()" 
+                class="w-full text-left px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 block">
+          All Actions
+        </button>
+        {% for val, label in action_choices %}
+        <button type="button" @click="document.getElementById('filter_action').value = '{{ val }}'; $el.closest('form').submit()"
+           class="w-full text-left flex items-center justify-between px-4 py-2 text-xs font-bold {% if action_filter == val %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+          <span>{{ label }}</span>
+          {% if action_filter == val %}<span class="text-xs">✓</span>{% endif %}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Actor Filter -->
+    <div class="relative min-w-[130px]" x-data="{ open: false, selectedLabel: '{% if actor_filter == 'staff' %}Staff{% elif actor_filter == 'customer' %}Customer{% else %}All Actors{% endif %}' }">
+      <input type="hidden" name="actor" id="filter_actor" value="{{ actor_filter|default:'' }}">
+      <button type="button" @click="open = !open" @click.away="open = false"
+        class="h-9 w-full rounded-lg glass-input px-3.5 pr-8 text-xs text-slate-800 font-semibold focus:outline-none text-left flex items-center justify-between active:scale-[0.99] transition-all">
+        <span x-text="selectedLabel"></span>
+        <svg class="h-3.5 w-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div x-show="open" x-cloak
+        x-transition:enter="transition ease-out duration-100 transform"
+        x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-75 transform"
+        class="absolute left-0 top-full z-50 w-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden py-1">
+        <button type="button" @click="document.getElementById('filter_actor').value = ''; $el.closest('form').submit()" 
+                class="w-full text-left px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 block">
+          All Actors
+        </button>
+        <button type="button" @click="document.getElementById('filter_actor').value = 'staff'; $el.closest('form').submit()"
+           class="w-full text-left flex items-center justify-between px-4 py-2 text-xs font-bold {% if actor_filter == 'staff' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+          <span>Staff</span>
+          {% if actor_filter == 'staff' %}<span class="text-xs">✓</span>{% endif %}
+        </button>
+        <button type="button" @click="document.getElementById('filter_actor').value = 'customer'; $el.closest('form').submit()"
+           class="w-full text-left flex items-center justify-between px-4 py-2 text-xs font-bold {% if actor_filter == 'customer' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+          <span>Customer</span>
+          {% if actor_filter == 'customer' %}<span class="text-xs">✓</span>{% endif %}
+        </button>
+      </div>
+    </div>
     
     <button type="submit" class="glass-btn-primary h-9 px-4 rounded-lg text-xs font-extrabold shadow-sm">
       Apply Filters

@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'apps.web.context_processors.admin_nav',
+                'apps.web.context_processors.restaurant_context',
             ],
             'libraries': {
                 'web_extras': 'apps.web.templatetags.web_extras',

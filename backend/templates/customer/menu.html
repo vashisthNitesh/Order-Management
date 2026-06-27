@@ -7,24 +7,51 @@
   <div class="animate-fade-up">
 
   {# ── Header ─────────────────────────────────────────────────────── #}
+  {% if restaurant.banner_image %}
+  <div class="w-full h-44 bg-cover bg-center relative" style="background-image: url('{{ restaurant.banner_image.url }}');">
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+    <div class="absolute bottom-4 left-4 right-4 flex items-center gap-3">
+      {% if restaurant.logo %}
+      <img src="{{ restaurant.logo.url }}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">
+      {% endif %}
+      <div>
+        <h2 class="text-white text-base font-extrabold tracking-tight drop-shadow-sm">{{ restaurant.name }}</h2>
+        <p class="text-white/80 text-[10px] font-bold uppercase tracking-wider drop-shadow-sm">QR Dine-in Menu</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50/40 to-slate-50 border-b border-slate-200">
     <!-- Ambient light blobs in header -->
     <div class="absolute -top-8 -right-8 w-40 h-40 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-0 -left-8 w-36 h-36 bg-teal-100/30 rounded-full blur-2xl pointer-events-none"></div>
     <div class="relative px-4 pt-8 pb-5 max-w-lg mx-auto">
+      {% if not restaurant.banner_image %}
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
+          {% if restaurant.logo %}
+          <img src="{{ restaurant.logo.url }}" class="w-7 h-7 rounded-lg object-cover shadow-sm">
+          {% else %}
           <div class="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center shadow-sm">
             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
           </div>
+          {% endif %}
           <span class="text-slate-800 text-sm font-bold tracking-tight">{{ restaurant.name }}</span>
         </div>
         <span class="bg-white border border-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm">
           🍽️ Table {{ table.table_number }}
         </span>
       </div>
+      {% else %}
+      <div class="flex justify-end mb-2">
+        <span class="bg-white border border-slate-200 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm">
+          🍽️ Table {{ table.table_number }}
+        </span>
+      </div>
+      {% endif %}
       <h1 class="text-2xl font-extrabold text-slate-900 mb-1 leading-tight">What would you like?</h1>
       <p class="text-slate-500 text-sm">Browse and order directly from your table</p>
     </div>
@@ -36,7 +63,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
         </svg>
         <input x-model="search" type="text" placeholder="Search dishes..."
-          class="w-full pl-10 pr-10 h-12 rounded-2xl border border-slate-200 bg-white shadow-sm text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200">
+          class="w-full pl-10 pr-10 h-12 rounded-2xl border border-slate-200 bg-white shadow-sm text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 glass-input-icon-left">
         <button x-show="search" @click="search=''" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -400,15 +427,17 @@
         <div class="bg-slate-50 rounded-xl p-4 space-y-2.5 text-xs border border-slate-200 shadow-sm">
           <div class="flex justify-between text-slate-600 font-medium">
             <span>Subtotal</span>
-            <span class="text-slate-800" x-text="'₹' + cartTotal.toLocaleString('en-IN')"></span>
+            <span class="text-slate-800" x-text="'₹' + cartTotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
           </div>
-          <div class="flex justify-between text-slate-600 font-medium">
-            <span>Tax (5%)</span>
-            <span class="text-slate-800" x-text="'₹' + Math.round(cartTotal*0.05).toLocaleString('en-IN')"></span>
-          </div>
+          <template x-for="charge in appliedCharges" :key="charge.name">
+            <div class="flex justify-between text-slate-600 font-medium">
+              <span x-text="charge.name + (charge.charge_type === 'percentage' ? ' (' + parseInt(charge.amount) + '%)' : '')"></span>
+              <span class="text-slate-800" x-text="'₹' + charge.calculated_amount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+            </div>
+          </template>
           <div class="flex justify-between font-extrabold text-slate-900 text-sm pt-2 border-t border-slate-200">
             <span>Total</span>
-            <span class="text-emerald-600" x-text="'₹' + Math.round(cartTotal*1.05).toLocaleString('en-IN')"></span>
+            <span class="text-emerald-600" x-text="'₹' + grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
           </div>
         </div>
       </div>
@@ -441,6 +470,12 @@ const IS_EDIT_MODE = {{ is_edit_mode|yesno:"true,false" }};
 const ACTIVE_ORDER_ID = {% if active_order_id %}{{ active_order_id }}{% else %}null{% endif %};
 const ACTIVE_ORDER_CUSTOMER_NAME = "{{ active_order_customer_name|escapejs }}";
 const ACTIVE_ORDER_SPECIAL_INSTRUCTIONS = "{{ active_order_special_instructions|escapejs }}";
+const ACTIVE_CHARGES = {{ active_charges_json|safe }};
+const CATEGORY_NAMES = {
+  {% for cat in categories %}
+  "{{ cat.id }}": "{{ cat.name|escapejs }}",
+  {% endfor %}
+};
 
 function menuApp(tableId) {
   return {
@@ -460,11 +495,12 @@ function menuApp(tableId) {
     specialInstructions: '',
     lastSeenNotificationId: null,
     isNotificationInitialized: false,
-
+    chargesConfig: ACTIVE_CHARGES,
+    
     get sectionTitle() {
       const tabs = { popular: 'Popular Items', specials: "Chef's Specials" };
       if (tabs[this.activeTab]) return tabs[this.activeTab];
-      return '';
+      return CATEGORY_NAMES[this.activeTab] || '';
     },
 
     get displayedItems() {
@@ -478,6 +514,31 @@ function menuApp(tableId) {
 
     get cartCount() { return this.cart.reduce((s,i) => s+i.quantity, 0); },
     get cartTotal() { return this.cart.reduce((s,i) => s+parseInt(i.price)*i.quantity, 0); },
+
+    get appliedCharges() {
+      const total = this.cartTotal;
+      return this.chargesConfig.map(c => {
+        let calc = 0;
+        const amt = parseFloat(c.amount);
+        if (c.charge_type === 'percentage') {
+          calc = total * (amt / 100);
+        } else {
+          calc = amt;
+        }
+        return {
+          name: c.name,
+          charge_type: c.charge_type,
+          amount: amt,
+          calculated_amount: Math.round(calc * 100) / 100
+        };
+      });
+    },
+
+    get grandTotal() {
+      const subtotal = this.cartTotal;
+      const chargesSum = this.appliedCharges.reduce((s, c) => s + c.calculated_amount, 0);
+      return Math.round((subtotal + chargesSum) * 100) / 100;
+    },
 
     init() { 
       this.allItems = POPULAR_ITEMS;

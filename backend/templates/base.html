@@ -9,6 +9,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    function mixHex(hex1, hex2, weight) {
+      // Clean shorthand hexes like #059 to #005599
+      let h1 = hex1.replace(/^#/, '');
+      if (h1.length === 3) h1 = h1.split('').map(c => c + c).join('');
+      let h2 = hex2.replace(/^#/, '');
+      if (h2.length === 3) h2 = h2.split('').map(c => c + c).join('');
+      
+      const r1 = parseInt(h1.substring(0, 2), 16);
+      const g1 = parseInt(h1.substring(2, 4), 16);
+      const b1 = parseInt(h1.substring(4, 6), 16);
+      
+      const r2 = parseInt(h2.substring(0, 2), 16);
+      const g2 = parseInt(h2.substring(2, 4), 16);
+      const b2 = parseInt(h2.substring(4, 6), 16);
+      
+      const w = weight / 100;
+      const r = Math.round(r1 * w + r2 * (1 - w));
+      const g = Math.round(g1 * w + g2 * (1 - w));
+      const b = Math.round(b1 * w + b2 * (1 - w));
+      
+      return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+    }
+
+    const primaryColor = '{{ restaurant.primary_color|default:"#059669" }}';
+    const accentColor = '{{ restaurant.accent_color|default:"#0d9488" }}';
+    
     tailwind.config = {
       theme: {
         extend: {
@@ -16,9 +42,42 @@
             sans: ['Outfit', 'sans-serif'],
           },
           colors: {
-            brand: { 50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',
-                     400:'#34d399',500:'#10b981',600:'#059669',700:'#047857',
-                     800:'#065f46',900:'#064e3b' }
+            brand: {
+              50: mixHex(primaryColor, '#ffffff', 5),
+              100: mixHex(primaryColor, '#ffffff', 10),
+              200: mixHex(primaryColor, '#ffffff', 30),
+              300: mixHex(primaryColor, '#ffffff', 50),
+              400: mixHex(primaryColor, '#ffffff', 70),
+              500: primaryColor,
+              600: mixHex(primaryColor, '#000000', 85),
+              700: mixHex(primaryColor, '#000000', 70),
+              800: mixHex(primaryColor, '#000000', 50),
+              900: mixHex(primaryColor, '#000000', 30),
+            },
+            emerald: {
+              50: mixHex(primaryColor, '#ffffff', 5),
+              100: mixHex(primaryColor, '#ffffff', 10),
+              200: mixHex(primaryColor, '#ffffff', 30),
+              300: mixHex(primaryColor, '#ffffff', 50),
+              400: mixHex(primaryColor, '#ffffff', 70),
+              500: primaryColor,
+              600: mixHex(primaryColor, '#000000', 85),
+              700: mixHex(primaryColor, '#000000', 70),
+              800: mixHex(primaryColor, '#000000', 50),
+              900: mixHex(primaryColor, '#000000', 30),
+            },
+            teal: {
+              50: mixHex(accentColor, '#ffffff', 5),
+              100: mixHex(accentColor, '#ffffff', 10),
+              200: mixHex(accentColor, '#ffffff', 30),
+              300: mixHex(accentColor, '#ffffff', 50),
+              400: mixHex(accentColor, '#ffffff', 70),
+              500: accentColor,
+              600: mixHex(accentColor, '#000000', 85),
+              700: mixHex(accentColor, '#000000', 70),
+              800: mixHex(accentColor, '#000000', 50),
+              900: mixHex(accentColor, '#000000', 30),
+            }
           }
         }
       }
@@ -26,6 +85,15 @@
   </script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
+    :root {
+      --primary-color: {{ restaurant.primary_color|default:"#059669" }};
+      --primary-hover: color-mix(in srgb, var(--primary-color) 85%, black);
+      --primary-light: color-mix(in srgb, var(--primary-color) 12%, transparent);
+      
+      --accent-color: {{ restaurant.accent_color|default:"#0d9488" }};
+      --accent-hover: color-mix(in srgb, var(--accent-color) 85%, black);
+      --accent-light: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    }
     [x-cloak]{display:none!important}
     .scrollbar-hide::-webkit-scrollbar{display:none}
     .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
@@ -75,7 +143,8 @@
         inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.7),
         0 1px 3px 0 rgba(15, 23, 42, 0.01),
         0 1px 2px -1px rgba(15, 23, 42, 0.01);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
     }
     .glass-card:hover {
       transform: translateY(-2px) scale(1.005);
@@ -105,23 +174,55 @@
       box-shadow: inset 0 1px 1px 0 rgba(15, 23, 42, 0.01);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    .glass-input:not([class*='pl-']):not([class*='px-']):not([class*='p-']) {
+      padding-left: 0.85rem;
+    }
+    .glass-input:not([class*='pr-']):not([class*='px-']):not([class*='p-']) {
+      padding-right: 0.85rem;
+    }
+    .glass-input-icon-left {
+      padding-left: 2.25rem !important;
+    }
+    .glass-input-icon-right {
+      padding-right: 2.25rem !important;
+    }
+    select.glass-input:not(.appearance-none) {
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 0.75rem center !important;
+      background-size: 1rem 1rem !important;
+      padding-right: 2.25rem !important;
+    }
     .glass-input:focus {
       background: rgba(255, 255, 255, 0.9);
-      border-color: #10b981;
+      border-color: var(--primary-color);
       transform: scale(1.005);
       box-shadow: 
-        0 0 0 4px rgba(16, 185, 129, 0.12),
+        0 0 0 4px var(--primary-light),
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
     }
 
+    /* Hide native number input spinners globally */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
     .glass-btn-primary {
-      background: linear-gradient(135deg, #10b981, #059669);
+      background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: white;
-      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 10px var(--primary-light);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       overflow: hidden;
+      will-change: transform;
     }
     .glass-btn-primary::after {
       content: '';
@@ -139,8 +240,8 @@
     }
     .glass-btn-primary:hover {
       transform: translateY(-1.5px);
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
-      background: linear-gradient(135deg, #059669, #047857);
+      box-shadow: 0 6px 16px var(--primary-light);
+      background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
     }
     .glass-btn-primary:active {
       transform: translateY(0.5px) scale(0.98);
@@ -152,12 +253,13 @@
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(203, 213, 225, 0.6);
       color: #334155;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.7),
         0 1px 2px 0 rgba(0, 0, 0, 0.02);
       position: relative;
       overflow: hidden;
+      will-change: transform;
     }
     .glass-btn-secondary::after {
       content: '';
@@ -216,7 +318,7 @@
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(6px);
       }
       to {
         opacity: 1;
@@ -224,15 +326,17 @@
       }
     }
     .animate-fade-up {
-      animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeInUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity;
     }
 
     /* Sibling staggered animations */
     .stagger-item {
       opacity: 0;
-      transform: translateY(14px);
-      animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation-delay: calc(var(--sibling-index, 1) * 0.06s);
+      transform: translateY(8px);
+      animation: fadeInUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: calc(var(--sibling-index, 1) * 0.02s);
+      will-change: transform, opacity;
     }
 
     /* Custom keyframes for active notifications bell */

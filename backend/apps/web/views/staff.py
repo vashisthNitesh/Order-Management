@@ -106,3 +106,34 @@ def update_order_status(request, order_id):
     if 'kitchen' in referer:
         return redirect('web:staff_kitchen')
     return redirect('web:staff_dashboard')
+
+
+@staff_required
+@require_POST
+def staff_order_mark_paid(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if order.is_paid:
+        messages.info(request, 'Order is already marked as paid.')
+        return redirect('web:staff_dashboard')
+        
+    order.is_paid = True
+    from django.utils import timezone
+    order.paid_at = timezone.now()
+    order.paid_by = request.user
+    order.save(update_fields=['is_paid', 'paid_at', 'paid_by'])
+    
+    # Create logs
+    OrderStatusHistory.objects.create(order=order, status=order.status, changed_by=request.user, note='Marked as paid by staff')
+    
+    from apps.orders.models import OrderLog
+    actor_name = request.user.get_full_name() or request.user.username
+    OrderLog.objects.create(
+        order=order,
+        action='paid',
+        actor_type='staff',
+        actor_name=actor_name,
+        details=f'Invoice marked as paid via Staff Portal. Total: {order.total_amount}'
+    )
+    
+    messages.success(request, f'Order #{order.order_number} marked as paid successfully.')
+    return redirect('web:staff_dashboard')

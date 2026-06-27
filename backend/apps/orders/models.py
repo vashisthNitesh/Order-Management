@@ -52,11 +52,57 @@ class Order(models.Model):
     def is_editable(self):
         return not self.is_paid
 
+    @property
+    def subtotal(self):
+        return sum(item.subtotal for item in self.items.all())
+
     def calculate_total(self):
-        total = sum(item.subtotal for item in self.items.all())
-        self.total_amount = total
+        from decimal import Decimal
+        subtotal = sum(item.subtotal for item in self.items.all())
+        
+        # Clear system-generated charges to recalculate clean state
+        self.charges.filter(is_manual=False).delete()
+        
+        total_charges = 0
+        active_charges = ChargeMaster.objects.filter(
+            restaurant=self.restaurant,
+            is_active=True
+        ).order_by('sequence', 'name')
+        
+        for charge_config in active_charges:
+            if charge_config.charge_type == ChargeMaster.PERCENTAGE:
+                calculated_amount = Decimal(subtotal) * (Decimal(charge_config.amount) / Decimal('100.00'))
+            else:
+                calculated_amount = Decimal(charge_config.amount)
+            
+            calculated_amount = round(calculated_amount, 2)
+            
+            OrderCharge.objects.create(
+                order=self,
+                charge_master=charge_config,
+                name=charge_config.name,
+                charge_type=charge_config.charge_type,
+                amount=charge_config.amount,
+                calculated_amount=calculated_amount,
+                sequence=charge_config.sequence,
+                is_manual=False
+            )
+            total_charges += calculated_amount
+
+        # Recompute and sum any manually added charges
+        for manual_charge in self.charges.filter(is_manual=True):
+            if manual_charge.charge_type == ChargeMaster.PERCENTAGE:
+                manual_charge.calculated_amount = Decimal(subtotal) * (Decimal(manual_charge.amount) / Decimal('100.00'))
+            else:
+                manual_charge.calculated_amount = Decimal(manual_charge.amount)
+            
+            manual_charge.calculated_amount = round(manual_charge.calculated_amount, 2)
+            manual_charge.save(update_fields=['calculated_amount'])
+            total_charges += manual_charge.calculated_amount
+            
+        self.total_amount = round(Decimal(subtotal) + Decimal(total_charges), 2)
         self.save(update_fields=['total_amount'])
-        return total
+        return self.total_amount
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -134,6 +180,50 @@ class OrderLog(models.Model):
 
     def __str__(self):
         return f"{self.action} — {self.order.order_number}"
+
+
+class ChargeMaster(models.Model):
+    PERCENTAGE = 'percentage'
+    FIXED = 'fixed'
+    
+    TYPE_CHOICES = [
+        (PERCENTAGE, 'Percentage'),
+        (FIXED, 'Fixed Amount'),
+    ]
+
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='charges_config')
+    name = models.CharField(max_length=100)
+    charge_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default=PERCENTAGE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    sequence = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['sequence', 'name']
+
+    def __str__(self):
+        type_str = '%' if self.charge_type == self.PERCENTAGE else 'Flat'
+        return f"{self.name} ({self.amount}{type_str}) - {self.restaurant.name}"
+
+
+class OrderCharge(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='charges')
+    charge_master = models.ForeignKey(ChargeMaster, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=100)
+    charge_type = models.CharField(max_length=20, choices=ChargeMaster.TYPE_CHOICES)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    calculated_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    sequence = models.IntegerField(default=0)
+    is_manual = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['sequence', 'name']
+
+    def __str__(self):
+        return f"{self.name} on Order #{self.order.order_number}: {self.calculated_amount}"
 
 
 class Notification(models.Model):

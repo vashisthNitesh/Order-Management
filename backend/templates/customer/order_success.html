@@ -45,6 +45,20 @@
         {% endfor %}
       </div>
 
+      <!-- Subtotal and Charges Breakdown -->
+      <div class="bg-slate-50/20 px-4 py-3 space-y-2 border-t border-slate-100 text-xs text-left">
+        <div class="flex justify-between text-slate-500 font-semibold">
+          <span>Subtotal</span>
+          <span class="text-slate-800 font-bold">{{ order.subtotal|inr }}</span>
+        </div>
+        {% for charge in order.charges.all %}
+        <div class="flex justify-between text-slate-500 font-semibold">
+          <span>{{ charge.name }}{% if charge.charge_type == 'percentage' %} ({{ charge.amount|floatformat:0 }}%){% endif %}</span>
+          <span class="text-slate-800 font-bold">{{ charge.calculated_amount|inr }}</span>
+        </div>
+        {% endfor %}
+      </div>
+
       <div class="flex justify-between px-4 py-3 font-extrabold border-t border-slate-100 bg-slate-50/50 text-xs">
         <span class="text-slate-500 uppercase tracking-wider">Total</span>
         <span class="text-emerald-600 text-sm">{{ order.total_amount|inr }}</span>

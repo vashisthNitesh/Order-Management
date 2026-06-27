@@ -74,8 +74,13 @@
     {# Locked Access Card #}
     <div class="bg-white rounded-3xl p-8 text-center border border-amber-200 shadow-sm bg-amber-50/10">
       <div class="w-16 h-16 bg-amber-50 border border-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm">🔒</div>
+      {% if order.status != 'pending' %}
+      <h2 class="font-bold text-amber-900 text-base">Order Locked for Kitchen</h2>
+      <p class="text-xs text-amber-600 mt-1.5 font-medium">This order has been accepted by the kitchen and is already being prepared or served. You cannot modify it now.</p>
+      {% else %}
       <h2 class="font-bold text-amber-900 text-base">Ownership Required</h2>
       <p class="text-xs text-amber-600 mt-1.5 font-medium">You can only edit orders placed from this browser tab.</p>
+      {% endif %}
       <a href="{% url 'web:track_order' order.id %}" class="glass-btn-primary mt-5 inline-block px-5 py-2.5 rounded-2xl text-xs font-bold transition-all active:scale-[0.98]">Track Status</a>
     </div>
 
@@ -180,7 +185,7 @@
                 x-transition:leave="transition ease-in duration-75" 
                 x-transition:leave-start="transform opacity-100 scale-100 translate-y-0" 
                 x-transition:leave-end="transform opacity-0 scale-95 -translate-y-2"
-                class="absolute z-50 w-full mt-2 bg-white rounded-2xl border border-slate-200 shadow-2xl max-h-60 overflow-y-auto p-2">
+                class="absolute left-0 top-full z-50 w-full mt-1.5 bg-white rounded-2xl border border-slate-200 shadow-2xl max-h-60 overflow-y-auto p-2">
                 
                 {% regroup menu_items by category.name as cat_groups %}
                 {% for group in cat_groups %}

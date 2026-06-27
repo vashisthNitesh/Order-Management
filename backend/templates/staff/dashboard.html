@@ -94,6 +94,11 @@
               <div class="flex items-center gap-2 mb-1.5 flex-wrap">
                 <span class="font-mono font-bold text-slate-900 text-sm">#{{ order.order_number }}</span>
                 {{ order.status|status_badge }}
+                {% if order.is_paid %}
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full border bg-emerald-100 text-emerald-800 border-emerald-200">✓ Paid</span>
+                {% else %}
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full border bg-rose-50 text-rose-700 border-rose-200">Unpaid</span>
+                {% endif %}
               </div>
               <div class="flex items-center gap-2.5 text-xs text-slate-500 font-semibold">
                 {% if order.table %}
@@ -178,6 +183,14 @@
             {% csrf_token %}
             <button type="submit" class="w-full glass-btn-success rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
               Mark Served
+            </button>
+          </form>
+          {% elif order.status == 'served' and not order.is_paid %}
+          <form method="post" action="{% url 'web:staff_order_mark_paid' order.id %}" class="flex-1"
+                @submit="leaving = true; setTimeout(() => $el.submit(), 250); event.preventDefault();">
+            {% csrf_token %}
+            <button type="submit" class="w-full glass-btn-primary rounded-xl py-2.5 text-xs font-extrabold transition-all active:scale-[0.98]">
+              Mark Paid & Settle
             </button>
           </form>
           {% endif %}

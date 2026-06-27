@@ -35,6 +35,30 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Restaurant: {restaurant.name}')
 
+        # Create default restaurant charges config
+        from apps.orders.models import ChargeMaster
+        ChargeMaster.objects.get_or_create(
+            restaurant=restaurant,
+            name='GST',
+            defaults={
+                'charge_type': ChargeMaster.PERCENTAGE,
+                'amount': Decimal('5.00'),
+                'sequence': 1,
+                'is_active': True
+            }
+        )
+        ChargeMaster.objects.get_or_create(
+            restaurant=restaurant,
+            name='Service Charge',
+            defaults={
+                'charge_type': ChargeMaster.PERCENTAGE,
+                'amount': Decimal('5.00'),
+                'sequence': 2,
+                'is_active': True
+            }
+        )
+        self.stdout.write('Created default charges config (GST 5%, Service Charge 5%)')
+
         # Create tables
         for i in range(1, 11):
             Table.objects.get_or_create(
