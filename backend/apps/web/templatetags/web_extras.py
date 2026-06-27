@@ -25,15 +25,20 @@ def multiply(value, arg):
 
 @register.simple_tag
 def food_dot(food_type):
-    colors = {'veg': '#16a34a', 'non_veg': '#dc2626', 'vegan': '#059669'}
-    borders = {'veg': '#16a34a', 'non_veg': '#dc2626', 'vegan': '#059669'}
-    color = colors.get(food_type, '#6b7280')
-    border = borders.get(food_type, '#6b7280')
+    # FSSAI standard: square border + filled circle inside
+    cfg = {
+        'veg':     {'stroke': '#15803d', 'fill': '#15803d', 'bg': '#f0fdf4'},  # green
+        'non_veg': {'stroke': '#991b1b', 'fill': '#991b1b', 'bg': '#fff1f2'},  # dark red/maroon
+        'egg':     {'stroke': '#b45309', 'fill': '#b45309', 'bg': '#fffbeb'},  # amber
+        'vegan':   {'stroke': '#065f46', 'fill': '#065f46', 'bg': '#ecfdf5'},  # deep green
+    }.get(food_type, {'stroke': '#64748b', 'fill': '#64748b', 'bg': '#f8fafc'})
     return mark_safe(
-        f'<span style="display:inline-flex;align-items:center;justify-content:center;'
-        f'width:16px;height:16px;border:1.5px solid {border};border-radius:2px;">'
-        f'<span style="width:8px;height:8px;background:{color};border-radius:50%;'
-        f'display:inline-block;"></span></span>'
+        f'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" '
+        f'xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:inline-block;vertical-align:middle">'
+        f'<rect x="1" y="1" width="14" height="14" rx="2.5" fill="{cfg["bg"]}" '
+        f'stroke="{cfg["stroke"]}" stroke-width="1.5"/>'
+        f'<circle cx="8" cy="8" r="4" fill="{cfg["fill"]}"/>'
+        f'</svg>'
     )
 
 

@@ -560,15 +560,24 @@
                     x-text="item.food_type==='veg'?'🥗':item.food_type==='non_veg'?'🍗':item.food_type==='egg'?'🥚':item.food_type==='beverage'?'🥤':'🍽️'">
                   </div>
                 </template>
-                <!-- Veg/non-veg indicator dot -->
-                <span class="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-sm border border-white shadow-sm"
+                <!-- FSSAI-style food type icon: square border + filled circle -->
+                <div class="absolute bottom-0.5 right-0.5 w-4 h-4 rounded-sm flex items-center justify-center shadow-sm"
                   :class="{
-                    'bg-emerald-500': item.food_type==='veg',
-                    'bg-rose-500': item.food_type==='non_veg',
-                    'bg-amber-400': item.food_type==='egg',
-                    'bg-blue-400': item.food_type==='beverage',
-                    'bg-slate-400': !['veg','non_veg','egg','beverage'].includes(item.food_type)
-                  }"></span>
+                    'bg-green-50 border-2 border-green-700':  item.food_type==='veg',
+                    'bg-red-50 border-2 border-red-800':      item.food_type==='non_veg',
+                    'bg-amber-50 border-2 border-amber-600':  item.food_type==='egg',
+                    'bg-blue-50 border-2 border-blue-600':    item.food_type==='beverage',
+                    'bg-slate-50 border-2 border-slate-400':  !['veg','non_veg','egg','beverage'].includes(item.food_type)
+                  }">
+                  <div class="w-2 h-2 rounded-full"
+                    :class="{
+                      'bg-green-700':  item.food_type==='veg',
+                      'bg-red-800':    item.food_type==='non_veg',
+                      'bg-amber-600':  item.food_type==='egg',
+                      'bg-blue-600':   item.food_type==='beverage',
+                      'bg-slate-400':  !['veg','non_veg','egg','beverage'].includes(item.food_type)
+                    }"></div>
+                </div>
               </div>
 
               <!-- Name -->
