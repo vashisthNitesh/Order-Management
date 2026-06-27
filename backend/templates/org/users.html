@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Users — {{ restaurant.name }}{% endblock %}
+{% block body %}
+<div class="min-h-screen bg-slate-50">
+
+  {# ── Top Nav ────────────────────────────────────────────────────────── #}
+  <header class="bg-white border-b border-slate-200/70 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="{% url 'web:org_dashboard' %}"
+           class="w-8 h-8 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </a>
+        <div class="flex items-center gap-2.5">
+          {% if restaurant.logo %}
+          <img src="{{ restaurant.logo.url }}" class="w-8 h-8 rounded-xl object-cover border border-slate-200 shadow-sm">
+          {% else %}
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-sm shadow-sm">🍽️</div>
+          {% endif %}
+          <div>
+            <p class="font-bold text-slate-900 text-sm leading-none">{{ restaurant.name }}</p>
+            <p class="text-[10px] text-slate-400 font-medium mt-0.5">Admin Users</p>
+          </div>
+        </div>
+      </div>
+      <a href="{% url 'web:org_user_add' restaurant.id %}"
+         class="flex items-center gap-2 glass-btn-primary px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm active:scale-[0.97] transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Add user
+      </a>
+    </div>
+  </header>
+
+  <div class="max-w-5xl mx-auto px-6 py-8 space-y-6">
+
+    {% for msg in messages %}
+    <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold px-4 py-3 rounded-2xl">{{ msg }}</div>
+    {% endfor %}
+
+    {% if profiles %}
+    <div class="bg-white border border-slate-200/80 rounded-3xl shadow-sm overflow-hidden">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200">
+            <th class="text-left px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Username</th>
+            <th class="text-left px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email</th>
+            <th class="text-left px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Role</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for p in profiles %}
+          <tr class="hover:bg-slate-50/60 transition-colors">
+            <td class="px-5 py-3.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0">
+                  {{ p.user.username|first|upper }}
+                </div>
+                <p class="text-sm font-semibold text-slate-800">{{ p.user.username }}</p>
+              </div>
+            </td>
+            <td class="px-5 py-3.5">
+              <p class="text-xs text-slate-500 font-medium">{{ p.user.email|default:"—" }}</p>
+            </td>
+            <td class="px-4 py-3.5">
+              {% if p.role == 'admin' %}
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Admin</span>
+              {% else %}
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">{{ p.role|title }}</span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-3.5">
+              <div class="flex items-center gap-1.5 justify-end">
+                <a href="{% url 'web:org_user_edit' restaurant.id p.id %}"
+                   class="w-8 h-8 glass-btn-secondary rounded-lg flex items-center justify-center active:scale-[0.97] transition-all"
+                   title="Edit">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                  </svg>
+                </a>
+                <form method="post" action="{% url 'web:org_user_delete' restaurant.id p.id %}"
+                      x-data @submit.prevent="showConfirm('Delete user','Delete &ldquo;{{ p.user.username|escapejs }}&rdquo;? This cannot be undone.',{confirmLabel:'Delete'}).then(ok=>{if(ok)$el.submit()})">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="w-8 h-8 glass-btn-danger rounded-lg flex items-center justify-center active:scale-[0.97] transition-all"
+                          title="Delete">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% else %}
+    <div class="flex flex-col items-center justify-center py-24 text-center">
+      <div class="w-16 h-16 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-2xl mb-4">👤</div>
+      <h3 class="text-base font-bold text-slate-700">No users yet</h3>
+      <p class="text-xs text-slate-400 font-medium mt-1 mb-5">Add the first admin user for {{ restaurant.name }}</p>
+      <a href="{% url 'web:org_user_add' restaurant.id %}" class="glass-btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm active:scale-[0.97]">Add user</a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

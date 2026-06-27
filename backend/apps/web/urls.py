@@ -1,9 +1,25 @@
 from django.urls import path
-from apps.web.views import customer, staff, admin_views
+from apps.web.views import customer, staff, admin_views, org_views
 
 app_name = 'web'
 
 urlpatterns = [
+    # ── Org / Super Admin ─────────────────────────────────────────────────
+    path('org/login/', org_views.org_login, name='org_login'),
+    path('org/logout/', org_views.org_logout, name='org_logout'),
+    path('org/', org_views.org_dashboard, name='org_dashboard'),
+    path('org/restaurants/add/', org_views.org_restaurant_save, name='org_restaurant_add'),
+    path('org/restaurants/<int:restaurant_id>/edit/', org_views.org_restaurant_save, name='org_restaurant_edit'),
+    path('org/restaurants/<int:restaurant_id>/delete/', org_views.org_restaurant_delete, name='org_restaurant_delete'),
+    path('org/restaurants/<int:restaurant_id>/switch/', org_views.org_switch_restaurant, name='org_switch_restaurant'),
+    path('org/exit/', org_views.org_exit_restaurant, name='org_exit_restaurant'),
+
+    # Org — Users (scoped per restaurant)
+    path('org/restaurants/<int:restaurant_id>/users/', org_views.org_users, name='org_users'),
+    path('org/restaurants/<int:restaurant_id>/users/add/', org_views.org_user_save, name='org_user_add'),
+    path('org/restaurants/<int:restaurant_id>/users/<int:profile_id>/edit/', org_views.org_user_save, name='org_user_edit'),
+    path('org/restaurants/<int:restaurant_id>/users/<int:profile_id>/delete/', org_views.org_user_delete, name='org_user_delete'),
+
     # ── Customer ─────────────────────────────────────────────────────────
     path('menu/<int:table_id>/', customer.menu, name='menu'),
     path('menu/<int:table_id>/items/<int:category_id>/', customer.get_category_items, name='category_items'),
@@ -83,8 +99,15 @@ urlpatterns = [
     path('manage/charges/<int:charge_id>/edit/', admin_views.admin_charge_save, name='admin_charge_edit'),
     path('manage/charges/<int:charge_id>/delete/', admin_views.admin_charge_delete, name='admin_charge_delete'),
 
-    # Settings
-    path('manage/settings/', admin_views.admin_settings, name='admin_settings'),
+    # Configurations / Settings
+    path('manage/configurations/', admin_views.admin_settings, name='admin_settings'),
+
+    # Milestones
+    path('manage/milestones/add/', admin_views.admin_milestone_save, name='admin_milestone_add'),
+    path('manage/milestones/<int:milestone_id>/edit/', admin_views.admin_milestone_save, name='admin_milestone_edit'),
+    path('manage/milestones/<int:milestone_id>/delete/', admin_views.admin_milestone_delete, name='admin_milestone_delete'),
+    path('manage/milestones/reorder/', admin_views.admin_milestone_reorder, name='admin_milestone_reorder'),
+    path('manage/milestones/restore-defaults/', admin_views.admin_milestone_restore_defaults, name='admin_milestone_restore_defaults'),
 
     # Events / Notifications API
     path('manage/api/events/', admin_views.admin_api_events, name='admin_api_events'),

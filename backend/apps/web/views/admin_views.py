@@ -9,7 +9,7 @@ from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
-from apps.restaurants.models import Restaurant, Table
+from apps.restaurants.models import Restaurant, Table, Milestone, DEFAULT_MILESTONE_NAMES
 from apps.menu.models import Category, MenuItem
 from apps.orders.models import Order, OrderItem, OrderStatusHistory, OrderLog, ChargeMaster
 from apps.staff.models import StaffProfile
@@ -20,6 +20,12 @@ RESTAURANT_ID = 1
 
 
 def _get_restaurant(request):
+    active_id = request.session.get('active_restaurant_id')
+    if active_id:
+        try:
+            return Restaurant.objects.get(id=active_id)
+        except Restaurant.DoesNotExist:
+            pass
     try:
         return request.user.staff_profile.restaurant
     except Exception:
@@ -985,7 +991,6 @@ def admin_logs(request):
 
 
 from django import forms
-from apps.restaurants.models import Restaurant
 
 class RestaurantSettingsForm(forms.ModelForm):
     class Meta:
@@ -1009,17 +1014,85 @@ def admin_settings(request):
         form = RestaurantSettingsForm(request.POST, request.FILES, instance=restaurant)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Restaurant settings and branding updated.')
+            messages.success(request, 'Configurations saved.')
             return redirect('web:admin_settings')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
         form = RestaurantSettingsForm(instance=restaurant)
 
+    if not Milestone.objects.filter(restaurant=restaurant).exists():
+        for seq, name in enumerate(DEFAULT_MILESTONE_NAMES, 1):
+            Milestone.objects.create(restaurant=restaurant, name=name, sequence=seq, is_default=True)
+
+    milestones = Milestone.objects.filter(restaurant=restaurant).order_by('sequence', 'id')
     return render(request, 'admin_panel/settings.html', {
         'restaurant': restaurant,
-        'form': form
+        'form': form,
+        'milestones': milestones,
     })
+
+
+# ── Milestones ───────────────────────────────────────────────────────────────
+
+@admin_required
+def admin_milestone_save(request, milestone_id=None):
+    restaurant = _get_restaurant(request)
+    milestone = get_object_or_404(Milestone, id=milestone_id, restaurant=restaurant) if milestone_id else None
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        if not name:
+            messages.error(request, 'Milestone name is required.')
+            return redirect('web:admin_settings')
+
+        if milestone:
+            milestone.name = name
+            milestone.save(update_fields=['name'])
+            messages.success(request, f'Milestone updated.')
+        else:
+            from django.db.models import Max
+            max_seq = Milestone.objects.filter(restaurant=restaurant).aggregate(m=Max('sequence'))['m'] or 0
+            Milestone.objects.create(restaurant=restaurant, name=name, sequence=max_seq + 1, is_default=False)
+            messages.success(request, f'Milestone "{name}" added.')
+
+    return redirect('web:admin_settings')
+
+
+@admin_required
+@require_POST
+def admin_milestone_delete(request, milestone_id):
+    restaurant = _get_restaurant(request)
+    milestone = get_object_or_404(Milestone, id=milestone_id, restaurant=restaurant)
+    name = milestone.name
+    milestone.delete()
+    messages.success(request, f'Milestone "{name}" deleted.')
+    return redirect('web:admin_settings')
+
+
+@admin_required
+@require_POST
+def admin_milestone_reorder(request):
+    restaurant = _get_restaurant(request)
+    try:
+        data = json.loads(request.body)
+        ids = [int(i) for i in data.get('ids', [])]
+        for seq, mid in enumerate(ids, 1):
+            Milestone.objects.filter(id=mid, restaurant=restaurant).update(sequence=seq)
+        return JsonResponse({'ok': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+@admin_required
+@require_POST
+def admin_milestone_restore_defaults(request):
+    restaurant = _get_restaurant(request)
+    Milestone.objects.filter(restaurant=restaurant).delete()
+    for seq, name in enumerate(DEFAULT_MILESTONE_NAMES, 1):
+        Milestone.objects.create(restaurant=restaurant, name=name, sequence=seq, is_default=True)
+    messages.success(request, 'Default milestones restored.')
+    return redirect('web:admin_settings')
 
 
 # ── Charges (Charge Master) ──────────────────────────────────────────────────

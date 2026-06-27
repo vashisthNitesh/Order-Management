@@ -14,6 +14,7 @@ class Restaurant(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
+    region = models.CharField(max_length=100, blank=True)
     primary_color = models.CharField(max_length=7, default='#059669')
     accent_color = models.CharField(max_length=7, default='#0d9488')
     is_active = models.BooleanField(default=True)
@@ -91,4 +92,27 @@ class Table(models.Model):
         if is_new or not self.qr_code:
             self.generate_qr_code()
             super().save(update_fields=['qr_code'])
+
+
+DEFAULT_MILESTONE_NAMES = [
+    'Order received',
+    'Order confirmed',
+    'Preparing',
+    'Ready to serve',
+    'Served',
+]
+
+
+class Milestone(models.Model):
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='milestones')
+    name = models.CharField(max_length=100)
+    sequence = models.PositiveIntegerField(default=0)
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['sequence', 'id']
+
+    def __str__(self):
+        return self.name
 

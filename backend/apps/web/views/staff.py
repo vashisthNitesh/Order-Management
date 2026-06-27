@@ -79,12 +79,14 @@ def staff_kitchen(request):
     except Exception:
         pass
 
-    pending_orders = qs.filter(status='pending').order_by('created_at')
+    # "New Orders" shows both pending and confirmed — confirmed means front-of-house
+    # acknowledged the order; kitchen still needs to start cooking it.
+    queued_orders = qs.filter(status__in=['pending', 'confirmed']).order_by('created_at')
     preparing_orders = qs.filter(status='preparing').order_by('created_at')
     ready_orders = qs.filter(status='ready').order_by('created_at')
 
     return render(request, 'staff/kitchen.html', {
-        'pending_orders': pending_orders,
+        'pending_orders': queued_orders,
         'preparing_orders': preparing_orders,
         'ready_orders': ready_orders,
     })

@@ -14,7 +14,7 @@ def admin_nav(request):
             (reverse('web:admin_offers'),     '🏷️',  'Offers'),
             (reverse('web:admin_charges'),    '💰', 'Charge Master'),
             (reverse('web:admin_staff'),      '👥', 'Staff'),
-            (reverse('web:admin_settings'),   '⚙️',  'Settings'),
+            (reverse('web:admin_settings'),   '⚙️',  'Configurations'),
             (reverse('web:admin_logs'),       '📋', 'Logs'),
         ]
     except Exception:

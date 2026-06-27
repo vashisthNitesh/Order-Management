@@ -5,10 +5,15 @@
   
   <div class="w-full max-w-sm relative z-10">
     <div class="text-center mb-8">
-      <div class="w-16 h-16 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md border border-white/20">
+      <div class="w-16 h-16 rounded-2xl mx-auto mb-4 shadow-md border border-slate-200/60 overflow-hidden
+        {% if not restaurant.logo %}bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center{% endif %}">
+        {% if restaurant.logo %}
+        <img src="{{ restaurant.logo.url }}" class="w-full h-full object-cover">
+        {% else %}
         <span class="text-3xl">🍽️</span>
+        {% endif %}
       </div>
-      <h1 class="text-2xl font-bold text-slate-900 mb-1 tracking-tight">Staff Portal</h1>
+      <h1 class="text-2xl font-bold text-slate-900 mb-1 tracking-tight">{% if restaurant %}{{ restaurant.name }}{% else %}Staff Portal{% endif %}</h1>
       <p class="text-slate-400 text-xs font-extrabold uppercase tracking-wider">Sign in to manage orders</p>
     </div>
     
