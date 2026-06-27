@@ -325,7 +325,7 @@
         x-transition:enter="transition ease-out duration-150"
         x-transition:enter-start="opacity-0 -translate-y-1"
         x-transition:enter-end="opacity-100 translate-y-0"
-        class="glass-panel rounded-2xl overflow-hidden">
+        class="glass-panel rounded-2xl">
         <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50/60">
           <div>
             <p class="text-xs font-bold text-slate-800">Add Manual Charge</p>
@@ -346,7 +346,7 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1.5 block">Type</label>
-              <select name="charge_type" class="glass-input w-full h-10 rounded-xl px-3 text-sm font-semibold focus:outline-none appearance-none">
+              <select name="charge_type" class="w-full h-10 rounded-xl px-3 text-sm font-semibold focus:outline-none border border-slate-200 bg-white text-slate-700 cursor-pointer">
                 <option value="fixed">Flat Amount (₹)</option>
                 <option value="percentage">Percentage (%)</option>
               </select>
@@ -481,10 +481,8 @@
     </div>
   </div>
 
-</div>
-
-{# ── Item Picker Modal ── #}
-{% if not order.is_paid %}
+  {# ── Item Picker Modal ── #}
+  {% if not order.is_paid %}
 <div x-show="itemPickerOpen" x-cloak
   class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
   @keydown.escape.window="closePicker()">
@@ -625,8 +623,10 @@
       </div>
     </div>
   </div>
+  </div>
+  {% endif %}
+
 </div>
-{% endif %}
 
 {% endblock %}
 
