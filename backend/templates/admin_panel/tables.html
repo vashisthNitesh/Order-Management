@@ -61,24 +61,37 @@
   {# Table Cards Grid #}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
     {% for table in tables %}
-    <div class="glass-card stagger-item rounded-xl overflow-hidden flex flex-col group" style="--sibling-index: {{ forloop.counter }};">
-      
-      {# QR Preview and circle number badge #}
-      <div class="bg-slate-50 p-4 flex flex-col items-center justify-center relative border-b border-slate-100 flex-shrink-0">
-        
-        {# Table circular gradient badge #}
-        <div class="absolute top-3 left-3 w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center text-white font-extrabold text-[11px] shadow-sm border border-white/20">
+    {% with active_order=table.active_orders.0 %}
+    <div class="glass-card stagger-item rounded-xl overflow-hidden flex flex-col group transition-all duration-200
+      {% if active_order %}ring-2 ring-amber-400 shadow-lg shadow-amber-100/60{% endif %}"
+      style="--sibling-index: {{ forloop.counter }};">
+
+      {# QR area — amber tint when occupied #}
+      <div class="p-4 flex flex-col items-center justify-center relative border-b border-slate-100 flex-shrink-0
+        {% if active_order %}bg-amber-50{% else %}bg-slate-50{% endif %}">
+
+        {# Table number badge #}
+        <div class="absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center text-white font-extrabold text-[11px] shadow-sm border border-white/20
+          {% if active_order %}bg-gradient-to-br from-amber-500 to-orange-500{% else %}bg-gradient-to-br from-emerald-600 to-teal-500{% endif %}">
           T{{ table.table_number }}
         </div>
-        
+
+        {# Occupied badge (top-right) #}
+        {% if active_order %}
+        <div class="absolute top-3 right-3 flex items-center gap-1 bg-amber-500 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+          OCCUPIED
+        </div>
+        {% endif %}
+
         {% if table.qr_code %}
-        <div class="cursor-pointer bg-white p-2 rounded-xl shadow-xs border border-slate-200 hover:scale-105 active:scale-95 duration-200 transition-all"
+        <div class="cursor-pointer bg-white p-2 rounded-xl shadow-xs border {% if active_order %}border-amber-200{% else %}border-slate-200{% endif %} hover:scale-105 active:scale-95 duration-200 transition-all mt-1"
              @click="qrModal={table_number:'{{ table.table_number }}', qr_url:'{{ table.qr_code.url }}', download_url:'{% url "web:admin_table_qr" table.id %}'}">
           <img src="{{ table.qr_code.url }}" alt="QR Table {{ table.table_number }}"
                class="w-20 h-20 object-contain">
         </div>
         {% else %}
-        <div class="w-20 h-20 bg-slate-50 border border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1 cursor-pointer"
+        <div class="w-20 h-20 bg-slate-50 border border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1 cursor-pointer mt-1"
              @click="qrModal={table_number:'{{ table.table_number }}', qr_url:null, download_url:'{% url "web:admin_table_qr" table.id %}'}">
           <span>⚙️</span>
           <span>No QR</span>
@@ -89,29 +102,40 @@
       <div class="p-3.5 flex-1 flex flex-col justify-between">
         <div class="mb-3">
           <div class="flex items-center justify-between mb-1.5">
-            <h3 class="font-bold text-slate-900 text-xs">Dining Station</h3>
-            
-            {# Glowing active state #}
-            <span class="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border border-slate-200/50
-              {% if table.is_active %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500{% endif %}">
+            <h3 class="font-bold text-slate-900 text-xs">Table {{ table.table_number }}</h3>
+            <span class="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border
+              {% if table.is_active %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-200{% endif %}">
               <span class="w-1.5 h-1.5 rounded-full {% if table.is_active %}bg-emerald-500 animate-pulse{% else %}bg-slate-400{% endif %}"></span>
               {% if table.is_active %}Active{% else %}Inactive{% endif %}
             </span>
           </div>
           <p class="text-[10px] text-slate-400 font-bold">Capacity: {{ table.capacity }} guests</p>
+
+          {# Active order info row #}
+          {% if active_order %}
+          <a href="{% url 'web:admin_order_detail' active_order.id %}"
+             class="mt-2.5 flex items-center justify-between w-full px-3 py-2 rounded-lg border
+               {% if active_order.status == 'pending' %}bg-amber-50 border-amber-200 text-amber-800
+               {% elif active_order.status == 'confirmed' %}bg-blue-50 border-blue-200 text-blue-800
+               {% elif active_order.status == 'preparing' %}bg-orange-50 border-orange-200 text-orange-800
+               {% elif active_order.status == 'ready' %}bg-emerald-50 border-emerald-200 text-emerald-800
+               {% else %}bg-slate-50 border-slate-200 text-slate-600{% endif %}
+               hover:opacity-80 transition-opacity">
+            <span class="text-[10px] font-extrabold font-mono">#{{ active_order.order_number }}</span>
+            <span class="text-[9px] font-extrabold uppercase tracking-wide">{{ active_order.get_status_display }}</span>
+          </a>
+          {% endif %}
         </div>
 
         <div class="flex items-center gap-1.5">
           <button @click="qrModal={table_number:'{{ table.table_number }}', qr_url:'{% if table.qr_code %}{{ table.qr_code.url }}{% endif %}', download_url:'{% url "web:admin_table_qr" table.id %}'}"
-             class="flex-1 text-center glass-btn-success text-xs font-bold py-1.5 rounded-lg active:scale-[0.96] transition-all">
+             class="flex-1 text-center glass-btn-secondary text-xs font-bold py-1.5 rounded-lg active:scale-[0.96] transition-all">
             📲 QR
           </button>
-          
           <a href="{% url 'web:admin_table_edit' table.id %}"
              class="flex-1 text-center glass-btn-secondary text-xs font-bold py-1.5 rounded-lg active:scale-[0.96] transition-all block">
             ✏️ Edit
           </a>
-          
           <form method="post" action="{% url 'web:admin_table_delete' table.id %}"
                 onsubmit="return confirm('Delete Table {{ table.table_number }}?')"
                 class="inline-block">
@@ -122,8 +146,9 @@
           </form>
         </div>
       </div>
-      
+
     </div>
+    {% endwith %}
     {% endfor %}
   </div>
   {% endif %}

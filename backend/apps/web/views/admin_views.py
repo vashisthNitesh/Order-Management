@@ -272,8 +272,14 @@ def admin_dashboard(request):
 
 @admin_required
 def admin_tables(request):
+    from django.db.models import Prefetch
     restaurant = _get_restaurant(request)
-    tables_qs = Table.objects.filter(restaurant=restaurant).order_by('table_number')
+    active_orders_qs = Order.objects.filter(
+        is_paid=False
+    ).exclude(status__in=['cancelled', 'served']).order_by('-created_at')
+    tables_qs = Table.objects.filter(restaurant=restaurant).prefetch_related(
+        Prefetch('orders', queryset=active_orders_qs, to_attr='active_orders')
+    ).order_by('table_number')
     tables = _paginate_queryset(request, tables_qs, 10)
     return render(request, 'admin_panel/tables.html', {
         'tables': tables, 'restaurant': restaurant, 'page_obj': tables
