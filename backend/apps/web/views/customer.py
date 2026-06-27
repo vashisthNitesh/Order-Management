@@ -42,6 +42,21 @@ def _customer_can_edit(request, order):
 
 def menu(request, table_id):
     table = get_object_or_404(Table, id=table_id, is_active=True)
+
+    # ── QR-only access gate ────────────────────────────────────────────────
+    session_key = f'qr_table_{table_id}'
+    qr_token = request.GET.get('t', '')
+    expected_token = Table.qr_access_token(table_id)
+
+    if qr_token == expected_token:
+        # Valid QR scan — grant access for this browser session
+        request.session[session_key] = True
+        request.session.modified = True
+    elif not request.session.get(session_key):
+        # No valid token and no prior session — block
+        return render(request, 'customer/qr_required.html', {'table': table})
+    # ── End gate ──────────────────────────────────────────────────────────
+
     restaurant = table.restaurant
 
     from django.db.models import Count, Q
