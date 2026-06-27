@@ -731,10 +731,17 @@ def admin_order_detail(request, order_id):
     ]
 
     # Serialise menu items for AlpineJS item picker
+    def _img(mi):
+        try:
+            return mi.image.url if mi.image and mi.image.name else ''
+        except Exception:
+            return ''
+
     menu_items_json = json.dumps([
         {
             'id': str(mi.id), 'name': mi.name, 'price': str(mi.price),
             'category': mi.category.name, 'food_type': mi.food_type,
+            'image': _img(mi),
         }
         for mi in menu_items
     ])
