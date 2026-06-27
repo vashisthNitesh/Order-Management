@@ -3,12 +3,12 @@
 {% block content %}
 <div class="p-6 max-w-xl mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{% url 'web:admin_charges' %}" class="glass-btn-secondary w-9 h-9 rounded-xl flex items-center justify-center transition-all text-slate-600 active:scale-[0.97] flex-shrink-0">
+    <a href="{% url 'web:admin_charges' %}" aria-label="Back to charges" class="glass-btn-secondary w-9 h-9 rounded-xl flex items-center justify-center transition-all text-slate-600 active:scale-[0.97] flex-shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
-    <h2 class="text-lg font-bold text-slate-900">{% if charge %}Edit Charge{% else %}Add New Charge{% endif %}</h2>
+    <h2 class="text-xl font-medium text-slate-900">{% if charge %}Edit Charge{% else %}Add New Charge{% endif %}</h2>
   </div>
 
   <div class="glass-panel rounded-3xl p-6 md:p-8">
@@ -17,7 +17,7 @@
 
       {# Name #}
       <div class="space-y-2">
-        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Charge Name <span class="text-red-500">*</span></label>
+        <label class="text-sm font-medium text-slate-700">Charge Name <span class="text-red-500">*</span></label>
         <input name="name" type="text" required value="{{ charge.name|default:'' }}" placeholder="e.g. GST, CGST, Service Charge, Packaging Fee"
           class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
       </div>
@@ -27,7 +27,7 @@
         
         {# Charge Type select #}
         <div class="space-y-2">
-          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Charge Type</label>
+          <label class="text-sm font-medium text-slate-700">Charge Type</label>
           <div class="relative">
             <input type="hidden" name="charge_type" :value="chargeType">
             <button type="button" @click="open = !open" @click.away="open = false"
@@ -67,7 +67,7 @@
 
         {# Amount #}
         <div class="space-y-2">
-          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">
+          <label class="text-sm font-medium text-slate-700">
             <span x-text="chargeType === 'percentage' ? 'Rate (%)' : 'Amount (₹)'"></span>
             <span class="text-red-500">*</span>
           </label>
@@ -79,7 +79,7 @@
 
       {# Sequence #}
       <div class="space-y-2">
-        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Calculation Sequence</label>
+        <label class="text-sm font-medium text-slate-700">Calculation Sequence</label>
         <input name="sequence" type="number" min="0" value="{{ charge.sequence|default:'0' }}" placeholder="Sequence (lower sequence applies first)"
           class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none">
       </div>
@@ -95,8 +95,8 @@
 
       {# Buttons #}
       <div class="flex gap-4 pt-4 border-t border-slate-100">
-        <a href="{% url 'web:admin_charges' %}" class="flex-1 text-center py-3 glass-btn-secondary rounded-2xl text-sm font-semibold active:scale-[0.97]">Cancel</a>
-        <button type="submit" class="flex-1 text-center py-3 glass-btn-primary rounded-2xl text-sm font-semibold shadow-sm active:scale-[0.97]">Save Charge</button>
+        <a href="{% url 'web:admin_charges' %}" class="flex-1 text-center py-3 glass-btn-secondary rounded-2xl text-sm font-medium active:scale-[0.97]">Cancel</a>
+        <button type="submit" class="flex-1 text-center py-3 glass-btn-primary rounded-2xl text-sm font-medium shadow-sm active:scale-[0.97]">Save charge</button>
       </div>
     </form>
   </div>

@@ -456,9 +456,55 @@
     </template>
   </div>
 
+  {# Global Confirm Dialog #}
+  <div x-data="{
+    isOpen: false, title: '', message: '', confirmLabel: 'Confirm', isDanger: true, _resolve: null,
+    show(d) { this.title=d.title||'Confirm'; this.message=d.message||''; this.confirmLabel=d.confirmLabel||'Confirm'; this.isDanger=d.isDanger!==false; this._resolve=d.resolve; this.isOpen=true; },
+    accept() { this.isOpen=false; if(this._resolve) this._resolve(true); },
+    dismiss() { this.isOpen=false; if(this._resolve) this._resolve(false); }
+  }" @confirm-request.window="show($event.detail)"
+    x-effect="const _m=document.getElementById('admin-main'); _m?_m.style.overflow=isOpen?'hidden':'':document.body.style.overflow=isOpen?'hidden':''"
+    x-cloak>
+    <div x-show="isOpen" class="fixed inset-0 z-[500] flex items-center justify-center p-5">
+      <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-md" @click="dismiss()"></div>
+      <div x-show="isOpen"
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0 scale-95"
+           x-transition:enter-end="opacity-100 scale-100"
+           x-transition:leave="transition ease-in duration-150"
+           x-transition:leave-start="opacity-100 scale-100"
+           x-transition:leave-end="opacity-0 scale-95"
+           class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm border border-slate-200 overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1" :class="isDanger ? 'bg-rose-500' : 'bg-emerald-500'"></div>
+        <div class="p-6 pt-7">
+          <p class="font-extrabold text-slate-900 text-base mb-1.5" x-text="title"></p>
+          <p class="text-sm text-slate-500 font-medium leading-relaxed" x-text="message"></p>
+        </div>
+        <div class="flex gap-3 px-6 pb-6">
+          <button @click="dismiss()"
+                  class="flex-1 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-sm font-bold transition-colors active:scale-[0.98]">
+            Cancel
+          </button>
+          <button @click="accept()"
+                  :class="isDanger ? 'bg-rose-600 hover:bg-rose-700 border-rose-600' : 'bg-emerald-600 hover:bg-emerald-700 border-emerald-600'"
+                  class="flex-1 py-2.5 rounded-xl border text-white text-sm font-bold transition-colors active:scale-[0.98]"
+                  x-text="confirmLabel">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   {% block body %}{% endblock %}
   {% block extra_scripts %}{% endblock %}
 
+  <script>
+    window.showConfirm = (title, message, opts) => new Promise(resolve => {
+      window.dispatchEvent(new CustomEvent('confirm-request', {
+        detail: { title, message, resolve, confirmLabel: (opts||{}).confirmLabel||'Confirm', isDanger: (opts||{}).isDanger!==false }
+      }));
+    });
+  </script>
   <script>
     // Premium Synthesized Chime using Web Audio API
     // Slightly louder and cleaner chord for premium feel

@@ -51,6 +51,7 @@ urlpatterns = [
     path('manage/tables/<int:table_id>/edit/', admin_views.admin_table_save, name='admin_table_edit'),
     path('manage/tables/<int:table_id>/delete/', admin_views.admin_table_delete, name='admin_table_delete'),
     path('manage/tables/<int:table_id>/qr/', admin_views.admin_table_qr, name='admin_table_qr'),
+    path('manage/tables/<int:table_id>/qr-image/', admin_views.admin_table_qr_image, name='admin_table_qr_image'),
 
     # Menu
     path('manage/menu/', admin_views.admin_menu, name='admin_menu'),
@@ -84,4 +85,8 @@ urlpatterns = [
 
     # Settings
     path('manage/settings/', admin_views.admin_settings, name='admin_settings'),
+
+    # Events / Notifications API
+    path('manage/api/events/', admin_views.admin_api_events, name='admin_api_events'),
+    path('manage/api/notifications/mark-read/', admin_views.admin_api_mark_notifications_read, name='admin_api_mark_notifications_read'),
 ]

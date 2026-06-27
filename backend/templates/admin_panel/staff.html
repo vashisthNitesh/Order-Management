@@ -67,8 +67,8 @@
                 <a href="{% url 'web:admin_staff_edit' member.id %}" class="glass-btn-secondary text-xs font-bold px-2.5 py-1 rounded-lg shadow-sm">
                   Edit
                 </a>
-                <form method="post" action="{% url 'web:admin_staff_delete' member.id %}"
-                      onsubmit="return confirm('Remove {{ member.user.get_full_name|default:member.user.username }}? This will delete their account.')"
+                <form x-data method="post" action="{% url 'web:admin_staff_delete' member.id %}"
+                      @submit.prevent="showConfirm('Remove Staff Member','Remove {{ member.user.get_full_name|default:member.user.username }}? Their account will be permanently deleted.',{confirmLabel:'Remove'}).then(ok=>{ if(ok) $el.submit() })"
                       class="inline-block">
                   {% csrf_token %}
                   <button type="submit" class="glass-btn-danger text-xs font-bold px-2.5 py-1 rounded-lg shadow-sm">Remove</button>

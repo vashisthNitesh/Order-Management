@@ -352,12 +352,37 @@ def admin_table_qr(request, table_id):
             except Exception:
                 import requests
                 content = requests.get(table.qr_code.url).content
-        
+
         response = HttpResponse(content, content_type='image/png')
         response['Content-Disposition'] = f'attachment; filename="table-{table.table_number}-qr.png"'
         return response
     messages.error(request, 'QR code could not be generated.')
     return redirect('web:admin_tables')
+
+
+@admin_required
+def admin_table_qr_image(request, table_id):
+    """Serve QR code as an inline PNG generated with the current request host.
+    Used by the admin tables modal so the embedded URL is always correct for
+    the host the admin is currently accessing — no stale localhost URLs."""
+    import qrcode, io
+    restaurant = _get_restaurant(request)
+    table = get_object_or_404(Table, id=table_id, restaurant=restaurant)
+    base_url = f"{request.scheme}://{request.get_host()}"
+    token = Table.qr_access_token(table.id)
+    url = f"{base_url}/menu/{table.id}/?t={token}"
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, format='PNG')
+    return HttpResponse(buf.getvalue(), content_type='image/png')
 
 
 @admin_required
@@ -1138,4 +1163,51 @@ def admin_order_charge_delete(request, order_id, charge_id):
     )
     messages.success(request, f'Charge "{name}" removed.')
     return redirect('web:admin_order_detail', order_id=order_id)
+
+
+# ── Events / Notifications API ──────────────────────────────────────────────
+
+@admin_required
+def admin_api_events(request):
+    from apps.orders.models import Notification
+    from django.http import JsonResponse
+    restaurant = _get_restaurant(request)
+    qs = Notification.objects.filter(
+        restaurant=restaurant,
+        recipient_type=Notification.STAFF,
+    ).select_related('order').order_by('-id')
+    latest = qs.first()
+    latest_id = latest.id if latest else 0
+    unread_count = qs.filter(is_read=False).count()
+    notifications = [
+        {
+            'id': n.id,
+            'title': n.title,
+            'message': n.message,
+            'order_id': n.order_id,
+            'order_number': n.order.order_number if n.order else None,
+            'created_at': n.created_at.isoformat(),
+            'is_read': n.is_read,
+        }
+        for n in qs[:10]
+    ]
+    return JsonResponse({
+        'latest_id': latest_id,
+        'unread_count': unread_count,
+        'notifications': notifications,
+    })
+
+
+@admin_required
+@require_POST
+def admin_api_mark_notifications_read(request):
+    from apps.orders.models import Notification
+    from django.http import JsonResponse
+    restaurant = _get_restaurant(request)
+    Notification.objects.filter(
+        restaurant=restaurant,
+        recipient_type=Notification.STAFF,
+        is_read=False,
+    ).update(is_read=True)
+    return JsonResponse({'ok': True})
 

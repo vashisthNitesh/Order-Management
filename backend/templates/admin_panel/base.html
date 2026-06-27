@@ -77,22 +77,8 @@
         {# Realtime Pending Orders Badge #}
         {% if label == 'Orders' %}
         <span x-data="{ count: 0 }" x-init="
-          const check = async () => {
-            try {
-              const res = await fetch('/api/orders/?status=pending');
-              if (res.status === 200) {
-                const data = await res.json();
-                const newCount = data.count || 0;
-                 if (newCount > count && count > 0) {
-                   playNotificationSound();
-                 }
-                 count = newCount;
-              }
-            } catch(e) {}
-          };
-          check();
-          setInterval(check, 15000);
-        " x-show="count > 0" x-text="count" 
+          window.addEventListener('admin-unread-count', e => { count = e.detail; });
+        " x-show="count > 0" x-text="count"
         :class="sidebarCollapsed ? '-top-1 -right-1 shadow-md' : 'right-3 top-1/2 -translate-y-1/2'"
         class="absolute bg-red-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-5 h-5 shadow-sm border border-white animate-pulse">
         </span>
@@ -160,23 +146,29 @@
                },
                async fetchNotifications() {
                  try {
-                   const res = await fetch('/api/orders/notifications/poll/?restaurant_id=1&last_seen_id=0');
-                   if (res.status === 200) {
+                   const res = await fetch('/manage/api/events/');
+                   if (res.ok) {
                      const data = await res.json();
                      this.notifications = (data.notifications || []).map(n => ({
                        title: n.title,
                        message: n.message,
                        order_id: n.order_id,
                        created_at: new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                       unread: false
+                       unread: !n.is_read
                      }));
-                     this.unreadCount = 0;
+                     this.unreadCount = data.unread_count || 0;
                    }
                  } catch(e) {}
                },
-               markAllRead() {
+               async markAllRead() {
                  this.unreadCount = 0;
                  this.notifications.forEach(n => n.unread = false);
+                 try {
+                   await fetch('/manage/api/notifications/mark-read/', {
+                     method: 'POST',
+                     headers: { 'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '' }
+                   });
+                 } catch(e) {}
                }
              }" 
              class="relative">
@@ -284,14 +276,55 @@
         {% endfor %}
       </div>
     </header>
-    <main class="flex-1 overflow-y-auto animate-fade-up">{% block content %}{% endblock %}</main>
+    <main id="admin-main" class="flex-1 overflow-y-auto animate-fade-up">{% block content %}{% endblock %}</main>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-// Pass nav_items to the template via context processor equivalent
+(function() {
+  let _latestId = 0;
+  let _initialized = false;
+
+  async function pollEvents() {
+    try {
+      const res = await fetch('/manage/api/events/');
+      if (!res.ok) return;
+      const data = await res.json();
+      const newId = data.latest_id || 0;
+      const unread = data.unread_count || 0;
+
+      // Broadcast unread count to sidebar badge
+      window.dispatchEvent(new CustomEvent('admin-unread-count', { detail: unread }));
+
+      if (!_initialized) {
+        _latestId = newId;
+        _initialized = true;
+        return;
+      }
+
+      if (newId > _latestId) {
+        _latestId = newId;
+        // Fire bell animation / toast via existing listener
+        if (data.notifications && data.notifications.length > 0) {
+          const n = data.notifications[0];
+          window.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { title: n.title, message: n.message, order_id: n.order_id }
+          }));
+        }
+        // Reload page only if visible and admin isn't actively editing
+        if (!document.hidden && !window._adminSuppressReload) {
+          // Small delay so the bell animation plays first
+          setTimeout(() => window.location.reload(), 1200);
+        }
+      }
+    } catch(e) {}
+  }
+
+  pollEvents();
+  setInterval(pollEvents, 4000);
+})();
 </script>
 {% block admin_scripts %}{% endblock %}
 {% endblock %}

@@ -63,7 +63,7 @@ def status_badge(status):
     cls = classes.get(status, 'bg-slate-50 text-slate-600 border-slate-200/60')
     label = labels.get(status, status.title())
     return mark_safe(
-        f'<span class="text-xs font-semibold px-2.5 py-1 rounded-full border {cls}">{label}</span>'
+        f'<span class="text-xs font-medium px-2.5 py-0.5 rounded-full border {cls}">{label}</span>'
     )
 
 
