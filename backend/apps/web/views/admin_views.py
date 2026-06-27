@@ -1,4 +1,4 @@
-import io, base64
+import io, base64, json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -11,7 +11,7 @@ from decimal import Decimal, InvalidOperation
 
 from apps.restaurants.models import Restaurant, Table
 from apps.menu.models import Category, MenuItem
-from apps.orders.models import Order, OrderItem, OrderStatusHistory, OrderLog
+from apps.orders.models import Order, OrderItem, OrderStatusHistory, OrderLog, ChargeMaster
 from apps.staff.models import StaffProfile
 from apps.offers.models import Offer
 from apps.web.decorators import admin_required
@@ -722,6 +722,23 @@ def admin_order_detail(request, order_id):
     if 'pending' not in history_map:
         history_map['pending'] = order.created_at
 
+    status_steps = [
+        ('pending',   'Received',  1),
+        ('confirmed', 'Confirmed', 2),
+        ('preparing', 'Preparing', 3),
+        ('ready',     'Ready',     4),
+        ('served',    'Served',    5),
+    ]
+
+    # Serialise menu items for AlpineJS item picker
+    menu_items_json = json.dumps([
+        {
+            'id': str(mi.id), 'name': mi.name, 'price': str(mi.price),
+            'category': mi.category.name, 'food_type': mi.food_type,
+        }
+        for mi in menu_items
+    ])
+
     status_sequence = ['pending', 'confirmed', 'preparing', 'ready', 'served']
     next_status = None
     if order.status in status_sequence:
@@ -732,9 +749,11 @@ def admin_order_detail(request, order_id):
     return render(request, 'admin_panel/order_detail.html', {
         'order': order,
         'menu_items': menu_items,
+        'menu_items_json': menu_items_json,
         'history_map': history_map,
         'next_status': next_status,
         'status_sequence': status_sequence,
+        'status_steps': status_steps,
     })
 
 
@@ -925,3 +944,185 @@ def admin_logs(request):
         'actor_filter': actor_filter,
         'action_choices': OrderLog.ACTION_CHOICES,
     })
+
+
+from django import forms
+from apps.restaurants.models import Restaurant
+
+class RestaurantSettingsForm(forms.ModelForm):
+    class Meta:
+        model = Restaurant
+        fields = ['name', 'phone', 'email', 'address', 'description', 'primary_color', 'accent_color', 'logo', 'banner_image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'glass-input w-full h-11 rounded-2xl px-4 text-xs font-semibold focus:outline-none'}),
+            'phone': forms.TextInput(attrs={'class': 'glass-input w-full h-11 rounded-2xl px-4 text-xs font-semibold focus:outline-none'}),
+            'email': forms.EmailInput(attrs={'class': 'glass-input w-full h-11 rounded-2xl px-4 text-xs font-semibold focus:outline-none'}),
+            'address': forms.Textarea(attrs={'class': 'glass-input w-full rounded-2xl px-4 py-3 text-xs font-semibold focus:outline-none resize-none', 'rows': 3}),
+            'description': forms.Textarea(attrs={'class': 'glass-input w-full rounded-2xl px-4 py-3 text-xs font-semibold focus:outline-none resize-none', 'rows': 3}),
+            'primary_color': forms.TextInput(attrs={'type': 'color', 'class': 'w-14 h-11 rounded-2xl cursor-pointer border border-slate-300 bg-white p-1'}),
+            'accent_color': forms.TextInput(attrs={'type': 'color', 'class': 'w-14 h-11 rounded-2xl cursor-pointer border border-slate-300 bg-white p-1'}),
+        }
+
+
+@admin_required
+def admin_settings(request):
+    restaurant = _get_restaurant(request)
+    if request.method == 'POST':
+        form = RestaurantSettingsForm(request.POST, request.FILES, instance=restaurant)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Restaurant settings and branding updated.')
+            return redirect('web:admin_settings')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = RestaurantSettingsForm(instance=restaurant)
+
+    return render(request, 'admin_panel/settings.html', {
+        'restaurant': restaurant,
+        'form': form
+    })
+
+
+# ── Charges (Charge Master) ──────────────────────────────────────────────────
+
+@admin_required
+def admin_charges(request):
+    restaurant = _get_restaurant(request)
+    charges = ChargeMaster.objects.filter(restaurant=restaurant).order_by('sequence', 'name')
+    charges_paginated = _paginate_queryset(request, charges, 10)
+    return render(request, 'admin_panel/charges.html', {
+        'charges': charges_paginated, 'restaurant': restaurant, 'page_obj': charges_paginated
+    })
+
+
+@admin_required
+def admin_charge_save(request, charge_id=None):
+    restaurant = _get_restaurant(request)
+    charge = get_object_or_404(ChargeMaster, id=charge_id, restaurant=restaurant) if charge_id else None
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        charge_type = request.POST.get('charge_type', 'percentage').strip()
+        amount_str = request.POST.get('amount', '').strip()
+        sequence_str = request.POST.get('sequence', '0') or '0'
+        is_active = request.POST.get('is_active') == 'on'
+
+        if not name:
+            messages.error(request, 'Charge name is required.')
+            return render(request, 'admin_panel/charge_form.html', {'charge': charge})
+
+        try:
+            amount = Decimal(amount_str)
+            if amount < 0:
+                raise ValueError
+        except (InvalidOperation, ValueError):
+            messages.error(request, 'Invalid amount. Must be a non-negative decimal.')
+            return render(request, 'admin_panel/charge_form.html', {'charge': charge})
+
+        try:
+            sequence = int(sequence_str)
+        except ValueError:
+            sequence = 0
+
+        if charge:
+            charge.name = name
+            charge.charge_type = charge_type
+            charge.amount = amount
+            charge.sequence = sequence
+            charge.is_active = is_active
+            charge.save()
+            messages.success(request, f'Charge "{name}" updated.')
+        else:
+            ChargeMaster.objects.create(
+                restaurant=restaurant, name=name, charge_type=charge_type,
+                amount=amount, sequence=sequence, is_active=is_active
+            )
+            messages.success(request, f'Charge "{name}" created.')
+        return redirect('web:admin_charges')
+
+    return render(request, 'admin_panel/charge_form.html', {'charge': charge})
+
+
+@admin_required
+@require_POST
+def admin_charge_delete(request, charge_id):
+    restaurant = _get_restaurant(request)
+    charge = get_object_or_404(ChargeMaster, id=charge_id, restaurant=restaurant)
+    name = charge.name
+    charge.delete()
+    messages.success(request, f'Charge "{name}" deleted.')
+    return redirect('web:admin_charges')
+
+
+# ── Per-order manual charges ─────────────────────────────────────────────
+
+@admin_required
+@require_POST
+def admin_order_charge_add(request, order_id):
+    from apps.orders.models import OrderCharge
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.is_paid:
+        messages.error(request, 'Cannot edit a paid invoice.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+
+    name = request.POST.get('name', '').strip()
+    charge_type = request.POST.get('charge_type', 'fixed').strip()
+    amount_str = request.POST.get('amount', '').strip()
+
+    if not name or not amount_str:
+        messages.error(request, 'Charge name and amount are required.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+
+    try:
+        amount = Decimal(amount_str)
+        if amount <= 0:
+            raise ValueError
+    except (InvalidOperation, ValueError):
+        messages.error(request, 'Amount must be a positive number.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+
+    subtotal = order.subtotal
+    if charge_type == 'percentage':
+        calculated_amount = round(Decimal(subtotal) * amount / Decimal('100'), 2)
+    else:
+        calculated_amount = amount
+
+    OrderCharge.objects.create(
+        order=order, name=name, charge_type=charge_type,
+        amount=amount, calculated_amount=calculated_amount,
+        sequence=99, is_manual=True,
+    )
+    order.calculate_total()
+    OrderLog.objects.create(
+        order=order, action='note_updated', actor_type='staff',
+        actor_name=_actor_name(request.user),
+        details=f'Manual charge added: {name} ({amount}{"%" if charge_type == "percentage" else " flat"})',
+    )
+    messages.success(request, f'Charge "{name}" added.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_charge_delete(request, order_id, charge_id):
+    from apps.orders.models import OrderCharge
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.is_paid:
+        messages.error(request, 'Cannot edit a paid invoice.')
+        return redirect('web:admin_order_detail', order_id=order_id)
+
+    charge = get_object_or_404(OrderCharge, id=charge_id, order=order, is_manual=True)
+    name = charge.name
+    charge.delete()
+    order.calculate_total()
+    OrderLog.objects.create(
+        order=order, action='note_updated', actor_type='staff',
+        actor_name=_actor_name(request.user),
+        details=f'Manual charge removed: {name}',
+    )
+    messages.success(request, f'Charge "{name}" removed.')
+    return redirect('web:admin_order_detail', order_id=order_id)
+

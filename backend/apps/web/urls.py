@@ -21,6 +21,7 @@ urlpatterns = [
     path('staff/orders/', staff.staff_dashboard, name='staff_dashboard'),
     path('staff/kitchen/', staff.staff_kitchen, name='staff_kitchen'),
     path('staff/order/<int:order_id>/status/', staff.update_order_status, name='update_order_status'),
+    path('staff/order/<int:order_id>/mark-paid/', staff.staff_order_mark_paid, name='staff_order_mark_paid'),
 
     # ── Admin ─────────────────────────────────────────────────────────────
     path('manage/login/', admin_views.admin_login, name='admin_login'),
@@ -37,6 +38,8 @@ urlpatterns = [
     path('manage/orders/<int:order_id>/mark-paid/', admin_views.admin_order_mark_paid, name='admin_order_mark_paid'),
     path('manage/orders/<int:order_id>/note/', admin_views.admin_order_update_note, name='admin_order_update_note'),
     path('manage/orders/<int:order_id>/status/', admin_views.admin_order_status_update, name='admin_order_status_update'),
+    path('manage/orders/<int:order_id>/charge/add/', admin_views.admin_order_charge_add, name='admin_order_charge_add'),
+    path('manage/orders/<int:order_id>/charge/<int:charge_id>/delete/', admin_views.admin_order_charge_delete, name='admin_order_charge_delete'),
 
     # Logs
     path('manage/logs/', admin_views.admin_logs, name='admin_logs'),
@@ -72,4 +75,13 @@ urlpatterns = [
     path('manage/staff/add/', admin_views.admin_staff_save, name='admin_staff_add'),
     path('manage/staff/<int:staff_id>/edit/', admin_views.admin_staff_save, name='admin_staff_edit'),
     path('manage/staff/<int:staff_id>/delete/', admin_views.admin_staff_delete, name='admin_staff_delete'),
+
+    # Charges
+    path('manage/charges/', admin_views.admin_charges, name='admin_charges'),
+    path('manage/charges/add/', admin_views.admin_charge_save, name='admin_charge_add'),
+    path('manage/charges/<int:charge_id>/edit/', admin_views.admin_charge_save, name='admin_charge_edit'),
+    path('manage/charges/<int:charge_id>/delete/', admin_views.admin_charge_delete, name='admin_charge_delete'),
+
+    # Settings
+    path('manage/settings/', admin_views.admin_settings, name='admin_settings'),
 ]
