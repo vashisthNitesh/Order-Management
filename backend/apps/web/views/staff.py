@@ -143,3 +143,24 @@ def staff_order_mark_paid(request, order_id):
     
     messages.success(request, f'Order #{order.order_number} marked as paid successfully.')
     return redirect('web:staff_dashboard')
+
+
+@staff_required
+def staff_kitchen_api(request):
+    from django.db.models import Count
+    qs = Order.objects.all()
+    try:
+        qs = qs.filter(restaurant=request.user.staff_profile.restaurant)
+    except Exception:
+        pass
+    counts = dict(
+        qs.filter(status__in=['pending', 'confirmed', 'preparing', 'ready'])
+          .values('status')
+          .annotate(c=Count('id'))
+          .values_list('status', 'c')
+    )
+    return JsonResponse({
+        'queued': counts.get('pending', 0) + counts.get('confirmed', 0),
+        'preparing': counts.get('preparing', 0),
+        'ready': counts.get('ready', 0),
+    })

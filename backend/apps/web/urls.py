@@ -38,6 +38,7 @@ urlpatterns = [
     path('staff/kitchen/', staff.staff_kitchen, name='staff_kitchen'),
     path('staff/order/<int:order_id>/status/', staff.update_order_status, name='update_order_status'),
     path('staff/order/<int:order_id>/mark-paid/', staff.staff_order_mark_paid, name='staff_order_mark_paid'),
+    path('staff/api/kitchen/', staff.staff_kitchen_api, name='staff_kitchen_api'),
 
     # ── Admin ─────────────────────────────────────────────────────────────
     path('manage/login/', admin_views.admin_login, name='admin_login'),

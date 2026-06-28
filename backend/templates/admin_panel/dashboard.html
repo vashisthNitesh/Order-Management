@@ -1,46 +1,39 @@
 {% extends "admin_panel/base.html" %}
 {% load web_extras %}
-{% block page_title %}Dashboard Overview{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
 
 {% block header_actions %}
 <div x-data="{ open: false }" class="relative">
-  <button @click="open = !open" 
+  <button @click="open = !open"
           class="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl transition-all duration-200 focus:outline-none shadow-sm">
-    <i class="bi bi-calendar text-sm text-slate-500"></i>
+    <i class="bi bi-calendar3 text-sm text-slate-400"></i>
     <span>{{ period_label }}</span>
     <i class="bi bi-chevron-down text-xs text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
   </button>
-  
   <div x-show="open" @click.away="open = false" x-cloak
        x-transition:enter="transition ease-out duration-100 transform"
        x-transition:enter-start="opacity-0 scale-95"
        x-transition:enter-end="opacity-100 scale-100"
-       x-transition:leave="transition ease-in duration-75 transform"
        class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden py-1">
-    <a href="?period=today" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'today' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-      <span>Today</span>
-      {% if period == 'today' %}<span class="text-xs">✓</span>{% endif %}
+    {% for val, lbl in period_choices|default:"" %}{% endfor %}
+    <a href="?period=today" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'today' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+      <span>Today</span>{% if period == 'today' %}<i class="bi bi-check2 text-emerald-600"></i>{% endif %}
     </a>
-    <a href="?period=yesterday" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'yesterday' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-      <span>Yesterday</span>
-      {% if period == 'yesterday' %}<span class="text-xs">✓</span>{% endif %}
+    <a href="?period=yesterday" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'yesterday' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+      <span>Yesterday</span>{% if period == 'yesterday' %}<i class="bi bi-check2 text-emerald-600"></i>{% endif %}
     </a>
-    <a href="?period=7days" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == '7days' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-      <span>Last 7 Days</span>
-      {% if period == '7days' %}<span class="text-xs">✓</span>{% endif %}
+    <a href="?period=7days" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == '7days' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+      <span>Last 7 Days</span>{% if period == '7days' %}<i class="bi bi-check2 text-emerald-600"></i>{% endif %}
     </a>
-    <a href="?period=30days" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == '30days' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-      <span>Last 30 Days</span>
-      {% if period == '30days' %}<span class="text-xs">✓</span>{% endif %}
+    <a href="?period=30days" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == '30days' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+      <span>Last 30 Days</span>{% if period == '30days' %}<i class="bi bi-check2 text-emerald-600"></i>{% endif %}
     </a>
-    <a href="?period=this_month" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'this_month' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-      <span>This Month</span>
-      {% if period == 'this_month' %}<span class="text-xs">✓</span>{% endif %}
+    <a href="?period=this_month" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'this_month' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+      <span>This Month</span>{% if period == 'this_month' %}<i class="bi bi-check2 text-emerald-600"></i>{% endif %}
     </a>
     <div class="border-t border-slate-100 my-1"></div>
-    <a href="?period=all" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'all' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-      <span>All Time</span>
-      {% if period == 'all' %}<span class="text-xs">✓</span>{% endif %}
+    <a href="?period=all" class="flex items-center justify-between px-4 py-2 text-xs font-bold {% if period == 'all' %}text-emerald-600 bg-emerald-50/50{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+      <span>All Time</span>{% if period == 'all' %}<i class="bi bi-check2 text-emerald-600"></i>{% endif %}
     </a>
   </div>
 </div>
@@ -49,219 +42,236 @@
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="p-4 space-y-4 max-w-7xl mx-auto">
+<div class="p-4 md:p-5 space-y-5 max-w-7xl mx-auto">
 
-  {# Welcome Header Card #}
-  <div class="border border-white/20 text-white p-5 rounded-xl relative overflow-hidden shadow-md"
-       style="background: linear-gradient(135deg, {{ restaurant.primary_color|default:'#059669' }}ee, {{ restaurant.accent_color|default:'#0d9488' }}ee);">
-    <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-    
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+  {# ── Hero Command Strip ──────────────────────────────────────────────────── #}
+  <div class="relative rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1a2744 55%, #0c2b20 100%); border: 1px solid rgba(16,185,129,0.12);">
+    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(circle at 80% 20%, rgba(16,185,129,0.12) 0%, transparent 50%), radial-gradient(circle at 10% 80%, rgba(20,184,166,0.08) 0%, transparent 50%);"></div>
+    <div class="relative z-10 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2 class="text-lg md:text-xl font-bold tracking-tight text-white">Welcome back, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
-        <p class="text-white/90 text-[11px] mt-0.5">Here is the live performance summary for <span class="text-white font-extrabold">{{ restaurant.name }}</span> today.</p>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background: #34d399;"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2" style="background: #34d399;"></span>
+          </span>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest" style="color: #34d399;">Live · {{ restaurant.name }}</span>
+        </div>
+        <h2 class="text-xl font-black text-white tracking-tight leading-tight">Welcome back, {{ request.user.first_name|default:request.user.username }}!</h2>
+        <p class="text-xs font-medium mt-1" style="color: #94a3b8;">Performance summary for <span class="text-white font-bold">{{ restaurant.name }}</span> &mdash; <span style="color: #6ee7b7;" class="font-bold">{{ period_label }}</span></p>
       </div>
-      
-      <div class="flex items-center gap-2 self-start sm:self-center bg-white/15 border border-white/20 px-3 py-1.5 rounded-lg shadow-sm">
-        <span class="relative flex h-1.5 w-1.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-200"></span>
-        </span>
-        <span class="text-[8px] font-extrabold text-white uppercase tracking-widest">Live Monitoring</span>
+      <div class="flex items-center gap-2.5 flex-shrink-0 flex-wrap">
+        {% if stats.ready > 0 %}
+        <a href="{% url 'web:admin_orders' %}?status=ready"
+           class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+           style="background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.35); animation: pulse 2s infinite;">
+          <i class="bi bi-bell-fill text-sm" style="color: #34d399;"></i>
+          {{ stats.ready }} Ready to Serve
+        </a>
+        {% endif %}
+        {% if stats.pending > 0 %}
+        <a href="{% url 'web:admin_orders' %}?status=pending"
+           class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+           style="background: rgba(245,158,11,0.18); border: 1px solid rgba(245,158,11,0.3);">
+          <i class="bi bi-hourglass-split text-sm" style="color: #fbbf24;"></i>
+          {{ stats.pending }} Pending
+        </a>
+        {% endif %}
       </div>
     </div>
   </div>
 
-  {# Stats Grid #}
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  {# ── KPI Cards ───────────────────────────────────────────────────────────── #}
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
     {% for icon, label, value, color, link in stats_cards %}
-    <a href="{{ link }}" class="glass-card stagger-item rounded-xl p-4 flex flex-col justify-between min-h-[100px]" style="--sibling-index: {{ forloop.counter }};">
+    <a href="{{ link }}" class="glass-card stagger-item rounded-2xl p-4 group relative overflow-hidden flex flex-col gap-3" style="--sibling-index: {{ forloop.counter }};">
       <div class="flex items-center justify-between">
-        <span class="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest">{{ label }}</span>
-        
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-105 duration-200 transition-transform shadow-xs
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110
           {% if 'Revenue' in label %}bg-emerald-50 text-emerald-600 border border-emerald-100
           {% elif 'Orders' in label %}bg-blue-50 text-blue-600 border border-blue-100
-          {% elif 'Tables' in label %}bg-amber-50 text-amber-600 border border-amber-100
-          {% elif 'Avg Order' in label %}bg-indigo-50 text-indigo-600 border border-indigo-100
-          {% endif %}">
-          
-          {% if 'Revenue' in label %}
-            <i class="bi bi-cash-stack text-base"></i>
-          {% elif 'Orders' in label %}
-            <i class="bi bi-receipt text-base"></i>
-          {% elif 'Tables' in label %}
-            <i class="bi bi-grid-3x3 text-base"></i>
-          {% elif 'Avg Order' in label %}
-            <i class="bi bi-bar-chart text-base"></i>
-          {% endif %}
+          {% elif 'Tables' in label %}bg-violet-50 text-violet-600 border border-violet-100
+          {% else %}bg-amber-50 text-amber-600 border border-amber-100{% endif %}">
+          {% if 'Revenue' in label %}<i class="bi bi-cash-stack text-base"></i>
+          {% elif 'Orders' in label %}<i class="bi bi-receipt text-base"></i>
+          {% elif 'Tables' in label %}<i class="bi bi-grid text-base"></i>
+          {% else %}<i class="bi bi-graph-up-arrow text-base"></i>{% endif %}
         </div>
+        <i class="bi bi-arrow-right-short text-xl text-slate-200 group-hover:text-emerald-500 group-hover:translate-x-0.5 transition-all duration-200"></i>
       </div>
-      <div class="mt-2.5">
-        <p class="text-2xl font-black text-slate-900 tracking-tight">{{ value }}</p>
+      <div>
+        <p class="text-2xl font-black text-slate-900 tracking-tight leading-none mb-1">{{ value }}</p>
+        <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">{{ label }}</p>
       </div>
     </a>
     {% endfor %}
   </div>
 
-  {# Charts Grid #}
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    
-    {# Revenue Trend Chart #}
-    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 5;">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-slate-900 text-xs tracking-tight">Revenue Trend</h3>
-        <span class="text-[9px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Billing Flow</span>
+  {# ── Kitchen Pulse ───────────────────────────────────────────────────────── #}
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center">
+          <i class="bi bi-fire text-orange-500 text-sm"></i>
+        </div>
+        <h2 class="font-black text-slate-900 text-sm tracking-tight">Kitchen Pulse</h2>
+        <span class="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+          <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span> Live
+        </span>
       </div>
-      <div class="h-60 relative w-full">
+      <a href="{% url 'web:staff_kitchen' %}" class="flex items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-emerald-600 transition-colors">
+        Kitchen Board <i class="bi bi-arrow-right text-xs"></i>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-3 gap-3">
+      <!-- Pending -->
+      <a href="{% url 'web:admin_orders' %}?status=pending"
+         class="rounded-2xl p-5 relative overflow-hidden group transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99]"
+         style="background: linear-gradient(145deg, #fffbeb, #fef3c7); border: 1px solid rgba(252,211,77,0.4);">
+        <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-50 pointer-events-none" style="background: radial-gradient(circle, #f59e0b, transparent 70%);"></div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span class="text-[9px] font-extrabold text-amber-700 uppercase tracking-widest">Awaiting Confirm</span>
+        </div>
+        <p class="text-5xl font-black text-amber-500 leading-none mb-1">{{ stats.pending }}</p>
+        <p class="text-[10px] font-bold text-amber-700/60 uppercase tracking-widest mb-3">Pending Orders</p>
+        <div class="w-full rounded-full h-1.5" style="background: rgba(251,191,36,0.2);">
+          <div class="h-1.5 rounded-full bg-amber-400 transition-all duration-700" style="width:{% if stats.total > 0 %}{% widthratio stats.pending stats.total 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </a>
+
+      <!-- Preparing -->
+      <a href="{% url 'web:admin_orders' %}?status=preparing"
+         class="rounded-2xl p-5 relative overflow-hidden group transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99]"
+         style="background: linear-gradient(145deg, #fff7ed, #ffedd5); border: 1px solid rgba(251,146,60,0.4);">
+        <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-50 pointer-events-none" style="background: radial-gradient(circle, #f97316, transparent 70%);"></div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
+          <span class="text-[9px] font-extrabold text-orange-700 uppercase tracking-widest">Active In Kitchen</span>
+        </div>
+        <p class="text-5xl font-black text-orange-500 leading-none mb-1">{{ stats.preparing }}</p>
+        <p class="text-[10px] font-bold text-orange-700/60 uppercase tracking-widest mb-3">Cooking Now</p>
+        <div class="w-full rounded-full h-1.5" style="background: rgba(251,146,60,0.2);">
+          <div class="h-1.5 rounded-full bg-orange-400 transition-all duration-700" style="width:{% if stats.total > 0 %}{% widthratio stats.preparing stats.total 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </a>
+
+      <!-- Ready -->
+      <a href="{% url 'web:admin_orders' %}?status=ready"
+         class="rounded-2xl p-5 relative overflow-hidden group transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99]
+         {% if stats.ready > 0 %}ring-2 ring-emerald-400/50{% endif %}"
+         style="background: linear-gradient(145deg, #f0fdf4, #dcfce7); border: 1px solid rgba(74,222,128,0.4);">
+        <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-50 pointer-events-none" style="background: radial-gradient(circle, #22c55e, transparent 70%);"></div>
+        {% if stats.ready > 0 %}
+        <div class="absolute top-3 right-3">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+        </div>
+        {% endif %}
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[9px] font-extrabold text-emerald-700 uppercase tracking-widest">Ready to Deliver</span>
+        </div>
+        <p class="text-5xl font-black text-emerald-500 leading-none mb-1">{{ stats.ready }}</p>
+        <p class="text-[10px] font-bold text-emerald-700/60 uppercase tracking-widest mb-3">Serve Now</p>
+        <div class="w-full rounded-full h-1.5" style="background: rgba(74,222,128,0.2);">
+          <div class="h-1.5 rounded-full bg-emerald-400 transition-all duration-700" style="width:{% if stats.total > 0 %}{% widthratio stats.ready stats.total 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  {# ── Charts Row ──────────────────────────────────────────────────────────── #}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+    <!-- Revenue Trend -->
+    <div class="glass-panel rounded-2xl p-5 flex flex-col stagger-item" style="--sibling-index: 5;">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-black text-slate-900 text-sm tracking-tight">Revenue Trend</h3>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">{{ period_label }}</p>
+        </div>
+        <span class="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Billing</span>
+      </div>
+      <div class="h-56 relative w-full">
         <canvas id="revenueChart"></canvas>
       </div>
     </div>
 
-    {# Top Selling Items Chart #}
-    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 6;">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-slate-900 text-xs tracking-tight">Top Selling Dishes</h3>
-        <span class="text-[9px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-bold">Demand Rank</span>
+    <!-- Top Dishes -->
+    <div class="glass-panel rounded-2xl p-5 flex flex-col stagger-item" style="--sibling-index: 6;">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-black text-slate-900 text-sm tracking-tight">Top Selling Dishes</h3>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">By quantity ordered</p>
+        </div>
+        <span class="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Demand</span>
       </div>
-      <div class="h-60 relative w-full">
+      <div class="h-56 relative w-full">
         <canvas id="topItemsChart"></canvas>
       </div>
     </div>
 
   </div>
 
-  {# Live Kitchen Status Grid #}
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    
-    {# Pending Card #}
-    <a href="{% url 'web:admin_orders' %}?status=pending"
-       class="glass-card stagger-item border-amber-200 bg-amber-50/10 hover:bg-amber-50/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden"
-       style="--sibling-index: 7;">
-      <div class="absolute -top-10 -right-10 w-24 h-24 bg-amber-500/5 rounded-full pointer-events-none"></div>
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-          <span class="text-[9px] font-extrabold text-amber-800 uppercase tracking-wider">Pending Confirmation</span>
-        </div>
-        <span class="text-xl font-black text-amber-600">{{ stats.pending }}</span>
-      </div>
-      <div>
-        <div class="w-full bg-amber-100 rounded-full h-1 mb-1.5 overflow-hidden">
-          <div class="bg-amber-500 h-1 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.pending stats.total 100 %}{% else %}0{% endif %}%"></div>
-        </div>
-        <p class="text-[9px] text-amber-700/80 font-bold uppercase tracking-widest">Requires Action</p>
-      </div>
-    </a>
-
-    {# Preparing Card #}
-    <a href="{% url 'web:admin_orders' %}?status=preparing"
-       class="glass-card stagger-item border-orange-200 bg-orange-50/10 hover:bg-orange-50/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden"
-       style="--sibling-index: 8;">
-      <div class="absolute -top-10 -right-10 w-24 h-24 bg-orange-500/5 rounded-full pointer-events-none"></div>
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
-          <span class="text-[9px] font-extrabold text-orange-800 uppercase tracking-wider">Active In Kitchen</span>
-        </div>
-        <span class="text-xl font-black text-orange-600">{{ stats.preparing }}</span>
-      </div>
-      <div>
-        <div class="w-full bg-orange-100 rounded-full h-1 mb-1.5 overflow-hidden">
-          <div class="bg-orange-500 h-1 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.preparing stats.total 100 %}{% else %}0{% endif %}%"></div>
-        </div>
-        <p class="text-[9px] text-orange-700/80 font-bold uppercase tracking-widest">Cooking</p>
-      </div>
-    </a>
-
-    {# Ready Card #}
-    <a href="{% url 'web:admin_orders' %}?status=ready"
-       class="glass-card stagger-item border-emerald-200 bg-emerald-50/10 hover:bg-emerald-50/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden"
-       style="--sibling-index: 9;">
-      <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/5 rounded-full pointer-events-none"></div>
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-[9px] font-extrabold text-emerald-800 uppercase tracking-wider">Ready to Serve</span>
-        </div>
-        <span class="text-xl font-black text-emerald-600">{{ stats.ready }}</span>
-      </div>
-      <div>
-        <div class="w-full bg-emerald-100 rounded-full h-1 mb-1.5 overflow-hidden">
-          <div class="bg-emerald-500 h-1 rounded-full transition-all duration-500" style="width:{% if stats.total > 0 %}{% widthratio stats.ready stats.total 100 %}{% else %}0{% endif %}%"></div>
-        </div>
-        <p class="text-[9px] text-emerald-700/80 font-bold uppercase tracking-widest">Deliver to Table</p>
-      </div>
-    </a>
-
-  </div>
-
-  {# Ready Alert Banner #}
-  {% if stats.ready > 0 %}
-  <a href="{% url 'web:admin_orders' %}?status=ready"
-     class="flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:scale-[1.002] active:scale-[0.998] stagger-item"
-     style="--sibling-index: 10;">
-    <div class="w-8 h-8 bg-white/15 border border-white/10 rounded-lg flex items-center justify-center text-sm flex-shrink-0 animate-bounce">🔔</div>
-    <div>
-      <p class="font-bold text-xs tracking-tight">{{ stats.ready }} order{{ stats.ready|pluralize }} ready to serve!</p>
-      <p class="text-white/80 text-[10px] font-bold mt-0.5">Please check and deliver to the table coordinates.</p>
-    </div>
-    <span class="ml-auto font-bold text-sm">→</span>
-  </a>
-  {% endif %}
-
-  {# Category Sales & Operational Insights Grid #}
+  {# ── Analytics Row ───────────────────────────────────────────────────────── #}
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    
-    {# Category Distribution Doughnut #}
-    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 11;">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-slate-900 text-xs tracking-tight">Sales by Category</h3>
-        <span class="text-[9px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full font-bold">Revenue Share</span>
+
+    <!-- Category Doughnut -->
+    <div class="glass-panel rounded-2xl p-5 stagger-item" style="--sibling-index: 7;">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-black text-slate-900 text-sm tracking-tight">Sales by Category</h3>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">Revenue distribution</p>
+        </div>
+        <span class="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100">Share</span>
       </div>
-      <div class="h-52 relative w-full">
+      <div class="h-48 relative w-full">
         <canvas id="categoryChart"></canvas>
       </div>
     </div>
 
-    {# SaaS Operational Insights Panel #}
-    <div class="glass-panel rounded-xl p-4 flex flex-col justify-between stagger-item" style="--sibling-index: 12;">
-      <div>
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-bold text-slate-900 text-xs tracking-tight">Operational Insights</h3>
-          <span class="text-[9px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full font-bold">Business intelligence</span>
+    <!-- Operational Insights -->
+    <div class="glass-panel rounded-2xl p-5 flex flex-col justify-between stagger-item" style="--sibling-index: 8;">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-black text-slate-900 text-sm tracking-tight">Operational Insights</h3>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">Business intelligence</p>
         </div>
-        
-        <div class="grid grid-cols-2 gap-3 mb-4">
-          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
-            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Peak Order hour</span>
-            <span class="font-bold text-slate-800 text-xs mt-0.5 block">{{ insights.peak_hour }}</span>
-          </div>
-          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
-            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Top Dining Table</span>
-            <span class="font-bold text-slate-800 text-xs mt-0.5 block">{{ insights.top_table }}</span>
-          </div>
-          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
-            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Avg Items / Order</span>
-            <span class="font-bold text-slate-800 text-xs mt-0.5 block">{{ insights.avg_items }}</span>
-          </div>
-          <div class="bg-slate-50/50 border border-slate-200/50 p-2.5 rounded-lg">
-            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Popular Dish</span>
-            <span class="font-bold text-slate-800 text-xs mt-0.5 block truncate" title="{{ insights.popular_dish }}">{{ insights.popular_dish }}</span>
-          </div>
+        <span class="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">Intel</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="rounded-xl p-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mb-1">Peak Hour</p>
+          <p class="font-black text-slate-800 text-sm">{{ insights.peak_hour }}</p>
+        </div>
+        <div class="rounded-xl p-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mb-1">Top Table</p>
+          <p class="font-black text-slate-800 text-sm">{{ insights.top_table }}</p>
+        </div>
+        <div class="rounded-xl p-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mb-1">Avg Items / Order</p>
+          <p class="font-black text-slate-800 text-sm">{{ insights.avg_items }}</p>
+        </div>
+        <div class="rounded-xl p-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mb-1">Popular Dish</p>
+          <p class="font-black text-slate-800 text-sm truncate" title="{{ insights.popular_dish }}">{{ insights.popular_dish }}</p>
         </div>
       </div>
 
-      <div class="bg-emerald-50/50 border border-emerald-100 p-3 rounded-lg flex gap-2">
-        <span class="text-sm">💡</span>
+      <div class="rounded-xl p-4 flex gap-3 items-start" style="background: linear-gradient(135deg, #f0fdf4, #ecfdf5); border: 1px solid #bbf7d0;">
+        <div class="w-8 h-8 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <i class="bi bi-lightbulb-fill text-emerald-600 text-sm"></i>
+        </div>
         <div>
-          <span class="text-[9px] text-emerald-800 font-extrabold uppercase tracking-wider block">Recommendation</span>
-          <p class="text-[11px] text-emerald-700 font-medium leading-relaxed mt-0.5">
+          <p class="text-[9px] text-emerald-800 font-extrabold uppercase tracking-wider mb-1">Recommendation</p>
+          <p class="text-[11px] text-emerald-700 font-medium leading-relaxed">
             {% if stats.total_orders > 0 %}
-              Peak hours require active kitchen dispatch. Monitor preparation backlogs and focus promotion banners on low-revenue menu categories to optimize your inventory.
+              Peak hours require active kitchen dispatch. Monitor prep backlogs and promote low-traffic menu items to balance demand.
             {% else %}
-              No orders have been recorded in the selected period. Launch new promo codes or customer dining offers to stimulate foot traffic and drive orders.
+              No orders recorded in this period. Try launching a promo offer to stimulate foot traffic and drive new orders.
             {% endif %}
           </p>
         </div>
@@ -270,47 +280,47 @@
 
   </div>
 
-  {# Quick Navigation Links #}
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <a href="{% url 'web:admin_orders' %}?paid=0" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 13;">
-      <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 border border-rose-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <i class="bi bi-cash-stack text-base"></i>
-      </div>
-      <div>
-        <p class="text-xs font-bold text-slate-800">Unpaid Invoices</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Pending Cashout</p>
-      </div>
-    </a>
-
-    <a href="{% url 'web:staff_kitchen' %}" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 14;">
-      <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-700 border border-orange-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <i class="bi bi-fire text-base"></i>
-      </div>
-      <div>
-        <p class="text-xs font-bold text-slate-800">Kitchen Display</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Cooking Queue</p>
-      </div>
-    </a>
-
-    <a href="{% url 'web:admin_menu' %}" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 15;">
-      <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <i class="bi bi-book text-base"></i>
-      </div>
-      <div>
-        <p class="text-xs font-bold text-slate-800">Manage Menu</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Dishes & Pricing</p>
-      </div>
-    </a>
-
-    <a href="{% url 'web:admin_logs' %}" class="glass-card stagger-item rounded-xl p-4 flex items-start gap-3" style="--sibling-index: 16;">
-      <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-        <i class="bi bi-clock-history text-base"></i>
-      </div>
-      <div>
-        <p class="text-xs font-bold text-slate-800">System Logs</p>
-        <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Audit Trails</p>
-      </div>
-    </a>
+  {# ── Quick Actions ───────────────────────────────────────────────────────── #}
+  <div>
+    <h2 class="font-black text-slate-900 text-sm tracking-tight mb-3">Quick Actions</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <a href="{% url 'web:admin_orders' %}?paid=0" class="glass-card stagger-item rounded-2xl p-4 flex items-center gap-3 group" style="--sibling-index: 9;">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110 bg-rose-50 text-rose-600 border border-rose-100">
+          <i class="bi bi-cash-stack text-base"></i>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-slate-800">Unpaid Bills</p>
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Settle Cash</p>
+        </div>
+      </a>
+      <a href="{% url 'web:staff_kitchen' %}" class="glass-card stagger-item rounded-2xl p-4 flex items-center gap-3 group" style="--sibling-index: 10;">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110 bg-orange-50 text-orange-600 border border-orange-100">
+          <i class="bi bi-fire text-base"></i>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-slate-800">Kitchen View</p>
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">KDS Board</p>
+        </div>
+      </a>
+      <a href="{% url 'web:admin_menu' %}" class="glass-card stagger-item rounded-2xl p-4 flex items-center gap-3 group" style="--sibling-index: 11;">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110 bg-emerald-50 text-emerald-600 border border-emerald-100">
+          <i class="bi bi-book text-base"></i>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-slate-800">Manage Menu</p>
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Dishes & Pricing</p>
+        </div>
+      </a>
+      <a href="{% url 'web:admin_logs' %}" class="glass-card stagger-item rounded-2xl p-4 flex items-center gap-3 group" style="--sibling-index: 12;">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110 bg-slate-100 text-slate-600 border border-slate-200">
+          <i class="bi bi-clock-history text-base"></i>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-slate-800">System Logs</p>
+          <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Audit Trails</p>
+        </div>
+      </a>
+    </div>
   </div>
 
 </div>
@@ -318,29 +328,27 @@
 
 {% block admin_scripts %}
 <script>
-  // --- Charts Rendering ---
+  const chartFont = { family: 'Outfit, sans-serif' };
 
-  // 1. Revenue Line Chart
-  const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-  const gradientRev = ctxRevenue.createLinearGradient(0, 0, 0, 220);
-  gradientRev.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
-  gradientRev.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
-
-  new Chart(ctxRevenue, {
+  // Revenue Trend
+  const ctxRev = document.getElementById('revenueChart').getContext('2d');
+  const gradRev = ctxRev.createLinearGradient(0, 0, 0, 220);
+  gradRev.addColorStop(0, 'rgba(16,185,129,0.22)');
+  gradRev.addColorStop(1, 'rgba(16,185,129,0.0)');
+  new Chart(ctxRev, {
     type: 'line',
     data: {
       labels: {{ chart_data.trend_labels|safe }},
       datasets: [{
-        label: 'Revenue (₹)',
         data: {{ chart_data.trend_values|safe }},
         borderColor: '#10b981',
         borderWidth: 2.5,
-        backgroundColor: gradientRev,
+        backgroundColor: gradRev,
         fill: true,
-        tension: 0.4,
+        tension: 0.42,
         pointBackgroundColor: '#10b981',
         pointBorderColor: '#ffffff',
-        pointBorderWidth: 1.5,
+        pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6
       }]
@@ -352,51 +360,36 @@
         legend: { display: false },
         tooltip: {
           backgroundColor: '#1e293b',
-          titleFont: { family: 'Outfit', size: 12, weight: 'bold' },
-          bodyFont: { family: 'Outfit', size: 12 },
+          titleFont: { ...chartFont, size: 11, weight: 'bold' },
+          bodyFont: { ...chartFont, size: 11 },
           padding: 10,
-          cornerRadius: 8,
+          cornerRadius: 10,
           displayColors: false,
-          callbacks: {
-            label: function(context) {
-              return ` Revenue: ₹${context.raw.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            }
-          }
+          callbacks: { label: ctx => ` ₹${ctx.raw.toLocaleString(undefined, {minimumFractionDigits: 2})}` }
         }
       },
       scales: {
-        x: {
-          grid: { display: false },
-          ticks: { font: { family: 'Outfit', size: 10 }, color: '#64748b' }
-        },
+        x: { grid: { display: false }, ticks: { font: { ...chartFont, size: 10 }, color: '#94a3b8' } },
         y: {
-          grid: { color: 'rgba(226, 232, 240, 0.4)' },
-          ticks: { 
-            font: { family: 'Outfit', size: 10 }, 
-            color: '#64748b',
-            callback: function(value) {
-              return '₹' + value;
-            }
-          }
+          grid: { color: 'rgba(226,232,240,0.4)' },
+          ticks: { font: { ...chartFont, size: 10 }, color: '#94a3b8', callback: v => '₹' + v }
         }
       }
     }
   });
 
-  // 2. Top Items Horizontal Bar Chart
-  const ctxItems = document.getElementById('topItemsChart').getContext('2d');
-  new Chart(ctxItems, {
+  // Top Items Bar
+  new Chart(document.getElementById('topItemsChart').getContext('2d'), {
     type: 'bar',
     data: {
       labels: {{ chart_data.top_item_labels|safe }},
       datasets: [{
-        label: 'Quantity Sold',
         data: {{ chart_data.top_item_qtys|safe }},
-        backgroundColor: '#3b82f6',
-        hoverBackgroundColor: '#2563eb',
-        borderRadius: 4,
+        backgroundColor: 'rgba(59,130,246,0.75)',
+        hoverBackgroundColor: '#3b82f6',
+        borderRadius: 5,
         borderSkipped: false,
-        barThickness: 10
+        barThickness: 11
       }]
     },
     options: {
@@ -407,46 +400,31 @@
         legend: { display: false },
         tooltip: {
           backgroundColor: '#1e293b',
-          titleFont: { family: 'Outfit', size: 12, weight: 'bold' },
-          bodyFont: { family: 'Outfit', size: 12 },
+          titleFont: { ...chartFont, size: 11, weight: 'bold' },
+          bodyFont: { ...chartFont, size: 11 },
           padding: 10,
-          cornerRadius: 8,
+          cornerRadius: 10,
           displayColors: false
         }
       },
       scales: {
-        x: {
-          grid: { color: 'rgba(226, 232, 240, 0.4)' },
-          ticks: { font: { family: 'Outfit', size: 10 }, color: '#64748b', stepSize: 1 }
-        },
-        y: {
-          grid: { display: false },
-          ticks: { font: { family: 'Outfit', size: 10 }, color: '#475569', weight: 'semibold' }
-        }
+        x: { grid: { color: 'rgba(226,232,240,0.4)' }, ticks: { font: { ...chartFont, size: 10 }, color: '#94a3b8', stepSize: 1 } },
+        y: { grid: { display: false }, ticks: { font: { ...chartFont, size: 10 }, color: '#475569', weight: '600' } }
       }
     }
   });
 
-  // 3. Category Sales Share Doughnut Chart
-  const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-  new Chart(ctxCategory, {
+  // Category Doughnut
+  new Chart(document.getElementById('categoryChart').getContext('2d'), {
     type: 'doughnut',
     data: {
       labels: {{ chart_data.cat_labels|safe }},
       datasets: [{
         data: {{ chart_data.cat_revenues|safe }},
-        backgroundColor: [
-          '#10b981', // emerald
-          '#3b82f6', // blue
-          '#f59e0b', // amber
-          '#8b5cf6', // purple
-          '#ec4899', // rose
-          '#14b8a6', // teal
-          '#6366f1', // indigo
-        ],
-        borderWidth: 1.5,
+        backgroundColor: ['#10b981','#3b82f6','#f59e0b','#8b5cf6','#ec4899','#14b8a6','#6366f1'],
+        borderWidth: 2,
         borderColor: '#ffffff',
-        hoverOffset: 4
+        hoverOffset: 5
       }]
     },
     options: {
@@ -455,28 +433,19 @@
       plugins: {
         legend: {
           position: 'right',
-          labels: {
-            font: { family: 'Outfit', size: 10, weight: 'bold' },
-            color: '#475569',
-            boxWidth: 8,
-            padding: 8
-          }
+          labels: { font: { ...chartFont, size: 10, weight: '700' }, color: '#475569', boxWidth: 9, padding: 10 }
         },
         tooltip: {
           backgroundColor: '#1e293b',
-          titleFont: { family: 'Outfit', size: 11, weight: 'bold' },
-          bodyFont: { family: 'Outfit', size: 11 },
+          titleFont: { ...chartFont, size: 11, weight: 'bold' },
+          bodyFont: { ...chartFont, size: 11 },
           padding: 10,
-          cornerRadius: 8,
+          cornerRadius: 10,
           displayColors: false,
-          callbacks: {
-            label: function(context) {
-              return ` ${context.label}: ₹${context.raw.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            }
-          }
+          callbacks: { label: ctx => ` ${ctx.label}: ₹${ctx.raw.toLocaleString(undefined, {minimumFractionDigits: 2})}` }
         }
       },
-      cutout: '65%'
+      cutout: '67%'
     }
   });
 </script>
