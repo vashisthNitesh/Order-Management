@@ -53,7 +53,7 @@ def status_badge(status):
         'cancelled': 'bg-rose-50 text-rose-700 border-rose-200/60',
     }
     labels = {
-        'pending': 'Pending',
+        'pending': 'Order Received',
         'confirmed': 'Confirmed',
         'preparing': 'Preparing',
         'ready': 'Ready',
