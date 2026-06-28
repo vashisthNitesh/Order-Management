@@ -2,30 +2,27 @@
 {% load web_extras %}
 {% block title %}Kitchen Monitor{% endblock %}
 {% block body %}
-<div class="min-h-screen flex flex-col" style="background: #0f172a;">
+<div class="min-h-screen flex flex-col bg-slate-50">
 
   <!-- Header -->
-  <header class="sticky top-0 z-30 flex-shrink-0 backdrop-blur-md" style="background: rgba(15,23,42,0.96); border-bottom: 1px solid rgba(255,255,255,0.06);">
+  <header class="bg-white/70 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-30 flex-shrink-0">
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-lg" style="background: linear-gradient(135deg, #f97316, #e11d48); box-shadow: 0 4px 14px rgba(249,115,22,0.25);">
-          <i class="bi bi-fire text-base"></i>
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-rose-500 rounded-xl flex items-center justify-center text-white shadow-md shadow-orange-500/25">
+          <i class="bi bi-fire text-sm"></i>
         </div>
         <div>
-          <span class="font-extrabold text-white text-sm tracking-tight">Kitchen Monitor</span>
-          <p class="text-[10px] font-bold uppercase tracking-widest -mt-0.5" style="color: #64748b;">Live KDS · Real-Time Display</p>
+          <span class="font-extrabold text-slate-900 text-sm tracking-tight">Kitchen Monitor</span>
+          <p class="text-[10px] text-slate-400 -mt-0.5 font-bold uppercase tracking-wider">Live Display · KDS</p>
         </div>
       </div>
-      <div class="flex items-center gap-2.5">
-        <div id="liveChip" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl" style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25);">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-[10px] font-bold text-emerald-400">LIVE</span>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-xl">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-[10px] font-bold text-emerald-700">LIVE</span>
         </div>
         <a href="{% url 'web:staff_logout' %}"
-           class="w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-95"
-           style="border: 1px solid rgba(255,255,255,0.08); color: #94a3b8;"
-           onmouseover="this.style.background='rgba(225,29,72,0.15)';this.style.color='#fb7185';this.style.borderColor='rgba(225,29,72,0.3)'"
-           onmouseout="this.style.background='';this.style.color='#94a3b8';this.style.borderColor='rgba(255,255,255,0.08)'"
+           class="w-9 h-9 bg-white border border-slate-200 hover:bg-rose-50 hover:border-rose-200 text-slate-400 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-sm"
            title="Logout">
           <i class="bi bi-box-arrow-right text-base"></i>
         </a>
@@ -34,17 +31,17 @@
   </header>
 
   <!-- KDS Board -->
-  <main class="flex-1 max-w-7xl mx-auto w-full p-4 overflow-y-auto">
+  <main class="flex-1 max-w-7xl mx-auto w-full p-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 
       <!-- New Orders (pending + confirmed) -->
-      <div class="rounded-2xl overflow-hidden" style="background: rgba(120,53,15,0.14); border: 1px solid rgba(251,191,36,0.18);">
-        <div class="flex items-center justify-between px-4 py-3" style="background: rgba(120,53,15,0.18); border-bottom: 1px solid rgba(251,191,36,0.12);">
+      <div class="glass-panel rounded-2xl overflow-hidden shadow-sm">
+        <div class="flex items-center justify-between px-4 py-3 bg-amber-50/60 border-b border-amber-200/50">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            <h3 class="font-extrabold text-xs uppercase tracking-widest" style="color: #fcd34d;">New Orders</h3>
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <h3 class="font-extrabold text-xs text-amber-800 uppercase tracking-widest">New Orders</h3>
           </div>
-          <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 text-[10px] font-extrabold rounded-full" style="background: rgba(251,191,36,0.15); color: #fcd34d; border: 1px solid rgba(251,191,36,0.25);">
+          <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 bg-amber-100 text-amber-700 text-[10px] font-extrabold rounded-full border border-amber-200">
             {{ pending_orders.count }}
           </span>
         </div>
@@ -52,22 +49,22 @@
           {% for order in pending_orders %}
           {% include "staff/_kitchen_card.html" with next_status="preparing" next_label="Start Cooking" card_accent="amber" %}
           {% empty %}
-          <div class="flex flex-col items-center justify-center py-16 text-center rounded-xl" style="border: 1px dashed rgba(251,191,36,0.15); background: rgba(120,53,15,0.05);">
-            <i class="bi bi-inbox text-3xl mb-2" style="color: rgba(251,191,36,0.25);"></i>
-            <p class="font-bold text-xs" style="color: #475569;">All caught up</p>
+          <div class="flex flex-col items-center justify-center py-16 text-center border border-dashed border-amber-200 rounded-2xl bg-amber-50/30 p-4">
+            <i class="bi bi-inbox text-3xl text-amber-300 mb-2"></i>
+            <p class="font-bold text-xs text-slate-400">All caught up</p>
           </div>
           {% endfor %}
         </div>
       </div>
 
       <!-- Cooking (preparing) -->
-      <div class="rounded-2xl overflow-hidden" style="background: rgba(67,20,7,0.14); border: 1px solid rgba(249,115,22,0.18);">
-        <div class="flex items-center justify-between px-4 py-3" style="background: rgba(67,20,7,0.18); border-bottom: 1px solid rgba(249,115,22,0.12);">
+      <div class="glass-panel rounded-2xl overflow-hidden shadow-sm">
+        <div class="flex items-center justify-between px-4 py-3 bg-orange-50/60 border-b border-orange-200/50">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
-            <h3 class="font-extrabold text-xs uppercase tracking-widest" style="color: #fdba74;">In Cooking</h3>
+            <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+            <h3 class="font-extrabold text-xs text-orange-800 uppercase tracking-widest">In Cooking</h3>
           </div>
-          <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 text-[10px] font-extrabold rounded-full" style="background: rgba(249,115,22,0.15); color: #fdba74; border: 1px solid rgba(249,115,22,0.25);">
+          <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 bg-orange-100 text-orange-700 text-[10px] font-extrabold rounded-full border border-orange-200">
             {{ preparing_orders.count }}
           </span>
         </div>
@@ -75,22 +72,22 @@
           {% for order in preparing_orders %}
           {% include "staff/_kitchen_card.html" with next_status="ready" next_label="Mark Ready" card_accent="orange" %}
           {% empty %}
-          <div class="flex flex-col items-center justify-center py-16 text-center rounded-xl" style="border: 1px dashed rgba(249,115,22,0.15); background: rgba(67,20,7,0.05);">
-            <i class="bi bi-fire text-3xl mb-2" style="color: rgba(249,115,22,0.25);"></i>
-            <p class="font-bold text-xs" style="color: #475569;">No active prep</p>
+          <div class="flex flex-col items-center justify-center py-16 text-center border border-dashed border-orange-200 rounded-2xl bg-orange-50/30 p-4">
+            <i class="bi bi-fire text-3xl text-orange-300 mb-2"></i>
+            <p class="font-bold text-xs text-slate-400">No active prep</p>
           </div>
           {% endfor %}
         </div>
       </div>
 
       <!-- Ready to serve -->
-      <div class="rounded-2xl overflow-hidden" style="background: rgba(6,78,59,0.14); border: 1px solid rgba(52,211,153,0.18);">
-        <div class="flex items-center justify-between px-4 py-3" style="background: rgba(6,78,59,0.18); border-bottom: 1px solid rgba(52,211,153,0.12);">
+      <div class="glass-panel rounded-2xl overflow-hidden shadow-sm">
+        <div class="flex items-center justify-between px-4 py-3 bg-emerald-50/60 border-b border-emerald-200/50">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <h3 class="font-extrabold text-xs uppercase tracking-widest" style="color: #6ee7b7;">Ready to Serve</h3>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <h3 class="font-extrabold text-xs text-emerald-800 uppercase tracking-widest">Ready to Serve</h3>
           </div>
-          <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 text-[10px] font-extrabold rounded-full" style="background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25);">
+          <span class="inline-flex items-center justify-center min-w-6 h-6 px-2 bg-emerald-100 text-emerald-700 text-[10px] font-extrabold rounded-full border border-emerald-200">
             {{ ready_orders.count }}
           </span>
         </div>
@@ -98,9 +95,9 @@
           {% for order in ready_orders %}
           {% include "staff/_kitchen_card.html" with next_status="served" next_label="Mark Served" card_accent="emerald" %}
           {% empty %}
-          <div class="flex flex-col items-center justify-center py-16 text-center rounded-xl" style="border: 1px dashed rgba(52,211,153,0.15); background: rgba(6,78,59,0.05);">
-            <i class="bi bi-check-circle text-3xl mb-2" style="color: rgba(52,211,153,0.25);"></i>
-            <p class="font-bold text-xs" style="color: #475569;">Nothing waiting</p>
+          <div class="flex flex-col items-center justify-center py-16 text-center border border-dashed border-emerald-200 rounded-2xl bg-emerald-50/30 p-4">
+            <i class="bi bi-check-circle text-3xl text-emerald-300 mb-2"></i>
+            <p class="font-bold text-xs text-slate-400">Nothing waiting</p>
           </div>
           {% endfor %}
         </div>

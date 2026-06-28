@@ -17,7 +17,7 @@ class Order(models.Model):
     CANCELLED = 'cancelled'
 
     STATUS_CHOICES = [
-        (PENDING, 'Order Received'),
+        (PENDING, 'Received'),
         (CONFIRMED, 'Confirmed'),
         (PREPARING, 'Preparing'),
         (READY, 'Ready'),

@@ -346,7 +346,7 @@ def track_order(request, order_id):
         id=order_id
     )
     steps = [
-        ('pending',   'Order Received', '📋'),
+        ('pending',   'Received', '📋'),
         ('confirmed', 'Confirmed',       '✅'),
         ('preparing', 'Preparing',       '👨‍🍳'),
         ('ready',     'Ready',           '🔔'),
