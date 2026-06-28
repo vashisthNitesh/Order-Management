@@ -275,11 +275,148 @@
     <main id="admin-main" class="flex-1 overflow-y-auto animate-fade-up">{% block content %}{% endblock %}</main>
   </div>
 </div>
+
+{# Toast notification stack — fixed top-right, listens for show-toast events #}
+<div x-data="{
+  toasts: [],
+  init() {
+    window.addEventListener('show-toast', (e) => {
+      const id = Date.now();
+      const t = { id, title: e.detail.title || '', message: e.detail.message || '', order_id: e.detail.order_id || null, progress: 100 };
+      this.toasts.push(t);
+      const iv = setInterval(() => {
+        const idx = this.toasts.findIndex(x => x.id === id);
+        if (idx === -1) { clearInterval(iv); return; }
+        this.toasts[idx].progress -= 2;
+        if (this.toasts[idx].progress <= 0) { this.dismiss(id); clearInterval(iv); }
+      }, 100);
+    });
+  },
+  dismiss(id) { this.toasts = this.toasts.filter(t => t.id !== id); },
+  iconFor(title) {
+    if (title.includes('Placed')) return 'bi-receipt';
+    if (title.includes('Paid')) return 'bi-check-circle';
+    if (title.includes('Updated') || title.includes('Edited')) return 'bi-pencil';
+    return 'bi-bell';
+  },
+  colorFor(title) {
+    if (title.includes('Placed')) return 'emerald';
+    if (title.includes('Paid')) return 'blue';
+    if (title.includes('Updated') || title.includes('Edited')) return 'amber';
+    return 'slate';
+  }
+}"
+class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 w-80 pointer-events-none">
+
+  <template x-for="toast in toasts" :key="toast.id">
+    <div class="pointer-events-auto relative overflow-hidden rounded-2xl bg-white shadow-2xl"
+         style="border:1px solid rgba(0,0,0,0.08); box-shadow:0 20px 48px -8px rgba(15,23,42,0.18),0 0 0 1px rgba(255,255,255,0.5) inset;"
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="opacity-0 translate-x-8 scale-95"
+         x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+         x-transition:leave="transition ease-in duration-200 transform"
+         x-transition:leave-start="opacity-100 translate-x-0 scale-100"
+         x-transition:leave-end="opacity-0 translate-x-8 scale-95">
+
+      <!-- Top accent line -->
+      <div class="h-1"
+           :class="{
+             'bg-emerald-500': colorFor(toast.title) === 'emerald',
+             'bg-blue-500':    colorFor(toast.title) === 'blue',
+             'bg-amber-500':   colorFor(toast.title) === 'amber',
+             'bg-slate-400':   colorFor(toast.title) === 'slate'
+           }"></div>
+
+      <div class="flex gap-3 items-start p-4">
+        <!-- Icon badge -->
+        <div class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-base"
+             :class="{
+               'bg-emerald-50 text-emerald-600 border border-emerald-100': colorFor(toast.title) === 'emerald',
+               'bg-blue-50 text-blue-600 border border-blue-100':          colorFor(toast.title) === 'blue',
+               'bg-amber-50 text-amber-600 border border-amber-100':       colorFor(toast.title) === 'amber',
+               'bg-slate-50 text-slate-500 border border-slate-100':       colorFor(toast.title) === 'slate'
+             }">
+          <i class="bi" :class="iconFor(toast.title)"></i>
+        </div>
+
+        <!-- Text -->
+        <div class="flex-1 min-w-0">
+          <p class="font-extrabold text-slate-900 text-sm leading-tight" x-text="toast.title"></p>
+          <p class="text-xs text-slate-500 font-medium mt-0.5 leading-snug line-clamp-2" x-text="toast.message"></p>
+          <template x-if="toast.order_id">
+            <a :href="`/manage/orders/${toast.order_id}/`"
+               class="inline-flex items-center gap-1 mt-2 text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider hover:text-emerald-700 transition-colors">
+              View order <i class="bi bi-arrow-right-short text-sm"></i>
+            </a>
+          </template>
+        </div>
+
+        <!-- Dismiss -->
+        <button @click="dismiss(toast.id)"
+                class="flex-shrink-0 w-6 h-6 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors text-sm">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="h-0.5 bg-slate-100">
+        <div class="h-full transition-all duration-100 ease-linear"
+             :class="{
+               'bg-emerald-400': colorFor(toast.title) === 'emerald',
+               'bg-blue-400':    colorFor(toast.title) === 'blue',
+               'bg-amber-400':   colorFor(toast.title) === 'amber',
+               'bg-slate-400':   colorFor(toast.title) === 'slate'
+             }"
+             :style="`width:${toast.progress}%`"></div>
+      </div>
+    </div>
+  </template>
+</div>
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
 (function() {
+  // ── Notification sound via Web Audio API ─────────────────────────────────
+  let _actx = null;
+
+  // Browsers block AudioContext until first user gesture — resume on any click
+  function getAudioCtx() {
+    if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (_actx.state === 'suspended') _actx.resume();
+    return _actx;
+  }
+  document.addEventListener('click', () => { if (_actx && _actx.state === 'suspended') _actx.resume(); }, { passive: true });
+
+  function playNotificationChime() {
+    try {
+      const ctx = getAudioCtx();
+      if (ctx.state !== 'running') return;
+
+      // Two-tone ascending chime: A5 → C#6
+      const notes = [
+        { freq: 880,  t: 0,    dur: 0.18 },
+        { freq: 1108, t: 0.16, dur: 0.28 },
+      ];
+      notes.forEach(({ freq, t, dur }) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const now = ctx.currentTime;
+        gain.gain.setValueAtTime(0, now + t);
+        gain.gain.linearRampToValueAtTime(0.28, now + t + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + t + dur);
+        osc.start(now + t);
+        osc.stop(now + t + dur + 0.01);
+      });
+    } catch(e) {}
+  }
+
+  // ── Event polling ─────────────────────────────────────────────────────────
   let _latestId = 0;
   let _initialized = false;
 
@@ -291,7 +428,6 @@
       const newId = data.latest_id || 0;
       const unread = data.unread_count || 0;
 
-      // Broadcast unread count to sidebar badge
       window.dispatchEvent(new CustomEvent('admin-unread-count', { detail: unread }));
 
       if (!_initialized) {
@@ -302,17 +438,15 @@
 
       if (newId > _latestId) {
         _latestId = newId;
-        // Fire bell animation / toast via existing listener
         if (data.notifications && data.notifications.length > 0) {
           const n = data.notifications[0];
+          playNotificationChime();
           window.dispatchEvent(new CustomEvent('show-toast', {
             detail: { title: n.title, message: n.message, order_id: n.order_id }
           }));
         }
-        // Reload page only if visible and admin isn't actively editing
         if (!document.hidden && !window._adminSuppressReload) {
-          // Small delay so the bell animation plays first
-          setTimeout(() => window.location.reload(), 1200);
+          setTimeout(() => window.location.reload(), 5500);
         }
       }
     } catch(e) {}
