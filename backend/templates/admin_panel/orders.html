@@ -11,7 +11,10 @@
         <i class="bi bi-search text-sm text-slate-400"></i>
       </div>
       <input name="q" type="text" value="{{ search }}" placeholder="Search order number or customer..."
-        class="h-9 pl-10 pr-3.5 w-full rounded-lg glass-input glass-input-icon-left text-slate-800 text-xs placeholder-slate-400 focus:outline-none">
+        class="h-9 pl-10 pr-9 w-full rounded-lg glass-input glass-input-icon-left text-slate-800 text-xs placeholder-slate-400 focus:outline-none">
+      <button type="submit" class="absolute inset-y-0 right-0 px-2.5 flex items-center text-slate-400 hover:text-emerald-600 transition-colors">
+        <i class="bi bi-arrow-right text-sm"></i>
+      </button>
     </div>
 
     <!-- Status Filter -->
@@ -73,19 +76,13 @@
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="flex items-center gap-2">
-      <button type="submit" 
-        class="h-9 px-4 glass-btn-primary rounded-lg text-xs font-bold shadow-sm active:scale-[0.98]">
-        Filter
-      </button>
-      {% if search or status_filter or paid_filter %}
-      <a href="{% url 'web:admin_orders' %}" 
-        class="h-9 px-3 glass-btn-secondary rounded-lg text-xs font-bold flex items-center justify-center transition-all active:scale-[0.98]">
-        Clear
-      </a>
-      {% endif %}
-    </div>
+    {% if search or status_filter or paid_filter %}
+    <a href="{% url 'web:admin_orders' %}"
+      class="h-9 px-3 glass-btn-secondary rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all active:scale-[0.98] flex-shrink-0">
+      <i class="bi bi-x text-sm"></i>
+      Clear
+    </a>
+    {% endif %}
   </form>
 
   {% if not orders %}
