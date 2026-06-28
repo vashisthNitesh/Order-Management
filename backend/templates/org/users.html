@@ -9,9 +9,7 @@
       <div class="flex items-center gap-3">
         <a href="{% url 'web:org_dashboard' %}"
            class="w-8 h-8 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
+          <i class="bi bi-arrow-left text-base"></i>
         </a>
         <div class="flex items-center gap-2.5">
           {% if restaurant.logo %}
@@ -27,9 +25,7 @@
       </div>
       <a href="{% url 'web:org_user_add' restaurant.id %}"
          class="flex items-center gap-2 glass-btn-primary px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm active:scale-[0.97] transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
+        <i class="bi bi-plus-lg text-base"></i>
         Add user
       </a>
     </div>
@@ -78,19 +74,16 @@
                 <a href="{% url 'web:org_user_edit' restaurant.id p.id %}"
                    class="w-8 h-8 glass-btn-secondary rounded-lg flex items-center justify-center active:scale-[0.97] transition-all"
                    title="Edit">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                  </svg>
+                  <i class="bi bi-pencil text-sm"></i>
                 </a>
                 <form method="post" action="{% url 'web:org_user_delete' restaurant.id p.id %}"
                       x-data @submit.prevent="showConfirm('Delete user','Delete &ldquo;{{ p.user.username|escapejs }}&rdquo;? This cannot be undone.',{confirmLabel:'Delete'}).then(ok=>{if(ok)$el.submit()})">
                   {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
                   <button type="submit"
                           class="w-8 h-8 glass-btn-danger rounded-lg flex items-center justify-center active:scale-[0.97] transition-all"
                           title="Delete">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
+                    <i class="bi bi-trash text-sm"></i>
                   </button>
                 </form>
               </div>

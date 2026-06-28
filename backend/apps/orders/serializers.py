@@ -42,7 +42,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'restaurant', 'table', 'table_number', 'order_number',
-            'status', 'total_amount', 'special_instructions', 'customer_name',
+            'status', 'is_paid', 'total_amount', 'special_instructions', 'customer_name',
             'customer_phone', 'items', 'status_history', 'created_at', 'updated_at'
         ]
         read_only_fields = ['order_number', 'total_amount', 'created_at', 'updated_at']

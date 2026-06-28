@@ -34,9 +34,7 @@
           <img src="{{ restaurant.logo.url }}" class="w-7 h-7 rounded-lg object-cover shadow-sm">
           {% else %}
           <div class="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center shadow-sm">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
+            <i class="bi bi-bag text-sm text-white"></i>
           </div>
           {% endif %}
           <span class="text-slate-800 text-sm font-bold tracking-tight">{{ restaurant.name }}</span>
@@ -59,15 +57,11 @@
     {# Search #}
     <div class="px-4 pb-5 max-w-lg mx-auto">
       <div class="relative">
-        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
-        </svg>
+        <i class="absolute left-3.5 top-1/2 -translate-y-1/2 bi bi-search text-sm text-slate-400"></i>
         <input x-model="search" type="text" placeholder="Search dishes..."
           class="w-full pl-10 pr-10 h-12 rounded-2xl border border-slate-200 bg-white shadow-sm text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 glass-input-icon-left">
         <button x-show="search" @click="search=''" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+          <i class="bi bi-x-lg text-sm"></i>
         </button>
       </div>
     </div>
@@ -192,9 +186,7 @@
     {# ── Items Grid ──────────────────────────────────────────────── #}
     <div>
       <div class="flex items-center gap-2 mb-4">
-        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-        </svg>
+        <i class="bi bi-bag text-base text-emerald-600"></i>
         <h2 class="font-bold text-slate-900" x-text="sectionTitle"></h2>
         <span class="text-xs text-slate-400 font-bold" x-text="displayedItems.length + ' items'"></span>
       </div>
@@ -286,9 +278,7 @@
       class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 rounded-2xl shadow-xl shadow-emerald-500/20 p-4 flex items-center justify-between text-white active:scale-[0.98] transition-all">
       <div class="flex items-center gap-3">
         <div class="relative">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-          </svg>
+          <i class="bi bi-bag text-2xl"></i>
           <span class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-white text-emerald-700 rounded-full text-[10px] font-extrabold flex items-center justify-center" x-text="cartCount"></span>
         </div>
         <span class="font-semibold text-sm" x-text="cartCount + (cartCount===1?' item':' items')"></span>
@@ -308,9 +298,7 @@
       <div class="flex items-center justify-between p-5 border-b border-slate-200">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl flex items-center justify-center shadow-sm">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
+            <i class="bi bi-bag text-xl"></i>
           </div>
           <div>
             <h2 class="font-extrabold text-slate-900 text-sm">Your Cart</h2>
@@ -318,9 +306,7 @@
           </div>
         </div>
         <button @click="cartOpen=false" class="w-8 h-8 bg-slate-50 border border-slate-200 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+          <i class="bi bi-x-lg text-sm"></i>
         </button>
       </div>
 
@@ -356,9 +342,7 @@
                   </button>
                 </div>
                 <button @click="removeItem(item.id)" class="text-slate-400 hover:text-red-500 transition-colors p-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                  </svg>
+                  <i class="bi bi-trash text-sm"></i>
                 </button>
               </div>
             </div>
@@ -394,9 +378,7 @@
           <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Table {{ table.table_number }}</p>
         </div>
         <button @click="reviewOpen=false" class="w-8 h-8 bg-slate-50 border border-slate-200 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+          <i class="bi bi-x-lg text-sm"></i>
         </button>
       </div>
       <div class="overflow-y-auto flex-1 p-6 space-y-5">
@@ -445,10 +427,7 @@
         <button @click="submitOrder()" :disabled="placing"
           class="glass-btn-primary w-full flex items-center justify-center gap-2 rounded-xl py-3.5 font-bold text-sm transition-all active:scale-95 disabled:opacity-60">
           <template x-if="placing">
-            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-            </svg>
+            <i class="bi bi-arrow-repeat animate-spin text-xl"></i>
           </template>
           <template x-if="!placing"><span x-text="isEditingOrder ? 'Confirm Update →' : 'Confirm Order →'"></span></template>
         </button>

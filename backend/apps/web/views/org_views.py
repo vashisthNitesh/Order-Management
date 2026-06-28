@@ -18,6 +18,13 @@ def org_required(view_func):
     return wrapped
 
 
+def _return_url(request, fallback_name, **fallback_kwargs):
+    next_url = request.POST.get('next', '').strip()
+    if next_url and next_url.startswith('/') and not next_url.startswith('//'):
+        return redirect(next_url)
+    return redirect(fallback_name, **fallback_kwargs)
+
+
 def org_login(request):
     if request.user.is_authenticated and request.user.is_superuser:
         return redirect('web:org_dashboard')
@@ -104,7 +111,7 @@ def org_restaurant_delete(request, restaurant_id):
     name = restaurant.name
     restaurant.delete()
     messages.success(request, f'"{name}" deleted.')
-    return redirect('web:org_dashboard')
+    return _return_url(request, 'web:org_dashboard')
 
 
 @org_required
@@ -187,4 +194,4 @@ def org_user_delete(request, restaurant_id, profile_id):
     username = profile.user.username
     profile.user.delete()
     messages.success(request, f'User "{username}" deleted.')
-    return redirect('web:org_users', restaurant_id=restaurant_id)
+    return _return_url(request, 'web:org_users', restaurant_id=restaurant_id)

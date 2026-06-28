@@ -32,6 +32,14 @@ def _get_restaurant(request):
         return Restaurant.objects.first()
 
 
+def _return_url(request, fallback_name, **fallback_kwargs):
+    """Redirect back to the `next` POST param if it's a safe local path, else use fallback."""
+    next_url = request.POST.get('next', '').strip()
+    if next_url and next_url.startswith('/manage/') and not next_url.startswith('//'):
+        return redirect(next_url)
+    return redirect(fallback_name, **fallback_kwargs)
+
+
 
 def _paginate_queryset(request, queryset, page_size):
     from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -337,7 +345,7 @@ def admin_table_delete(request, table_id):
     num = table.table_number
     table.delete()
     messages.success(request, f'Table {num} deleted.')
-    return redirect('web:admin_tables')
+    return _return_url(request, 'web:admin_tables')
 
 
 @admin_required
@@ -501,7 +509,7 @@ def admin_menu_delete(request, item_id):
     name = item.name
     item.delete()
     messages.success(request, f'"{name}" deleted.')
-    return redirect('web:admin_menu')
+    return _return_url(request, 'web:admin_menu')
 
 
 # ── Categories ────────────────────────────────────────────────────────────
@@ -565,7 +573,7 @@ def admin_category_delete(request, cat_id):
     name = cat.name
     cat.delete()
     messages.success(request, f'"{name}" deleted.')
-    return redirect('web:admin_categories')
+    return _return_url(request, 'web:admin_categories')
 
 
 # ── Offers ────────────────────────────────────────────────────────────────
@@ -633,7 +641,7 @@ def admin_offer_delete(request, offer_id):
     title = offer.title
     offer.delete()
     messages.success(request, f'Offer "{title}" deleted.')
-    return redirect('web:admin_offers')
+    return _return_url(request, 'web:admin_offers')
 
 
 # ── Staff Management ──────────────────────────────────────────────────────
@@ -701,7 +709,7 @@ def admin_staff_delete(request, staff_id):
     name = staff.user.get_full_name() or staff.user.username
     staff.user.delete()
     messages.success(request, f'Staff "{name}" removed.')
-    return redirect('web:admin_staff')
+    return _return_url(request, 'web:admin_staff')
 
 
 # ── Orders / Invoices ─────────────────────────────────────────────────────
@@ -895,18 +903,57 @@ def admin_order_mark_paid(request, order_id):
     if order.is_paid:
         messages.info(request, 'Order is already marked as paid.')
         return redirect('web:admin_order_detail', order_id=order_id)
+    old_status = order.status
     order.is_paid = True
     order.paid_at = timezone.now()
     order.paid_by = request.user
     if order.status not in (Order.SERVED, Order.CANCELLED):
         order.status = Order.SERVED
     order.save(update_fields=['is_paid', 'paid_at', 'paid_by', 'status'])
-    OrderStatusHistory.objects.create(order=order, status=Order.SERVED, changed_by=request.user, note='Marked as paid')
+    if old_status != order.status:
+        OrderStatusHistory.objects.create(order=order, status=order.status, changed_by=request.user, note='Marked as paid')
     OrderLog.objects.create(order=order, action='paid', actor_type='staff',
                             actor_name=_actor_name(request.user),
                             details=f'Invoice marked as paid. Total: {order.total_amount}')
     messages.success(request, f'Order #{order.order_number} marked as paid.')
-    return redirect('web:admin_order_detail', order_id=order_id)
+    return _return_url(request, 'web:admin_order_detail', order_id=order_id)
+
+
+@admin_required
+@require_POST
+def admin_order_cancel(request, order_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.status == Order.CANCELLED:
+        messages.info(request, f'Order #{order.order_number} is already cancelled.')
+        return redirect('web:admin_orders')
+    old_status = order.status
+    order.status = Order.CANCELLED
+    order.save(update_fields=['status'])
+    OrderStatusHistory.objects.create(order=order, status=Order.CANCELLED, changed_by=request.user)
+    OrderLog.objects.create(order=order, action='status_changed', actor_type='staff',
+                            actor_name=_actor_name(request.user),
+                            details=f'{old_status} → cancelled')
+    messages.success(request, f'Order #{order.order_number} cancelled.')
+    return _return_url(request, 'web:admin_orders')
+
+
+@admin_required
+@require_POST
+def admin_order_confirm(request, order_id):
+    restaurant = _get_restaurant(request)
+    order = get_object_or_404(Order, id=order_id, restaurant=restaurant)
+    if order.status != Order.PENDING:
+        messages.info(request, f'Order #{order.order_number} cannot be confirmed from status "{order.status}".')
+        return redirect('web:admin_orders')
+    order.status = Order.CONFIRMED
+    order.save(update_fields=['status'])
+    OrderStatusHistory.objects.create(order=order, status=Order.CONFIRMED, changed_by=request.user)
+    OrderLog.objects.create(order=order, action='status_changed', actor_type='staff',
+                            actor_name=_actor_name(request.user),
+                            details='pending → confirmed')
+    messages.success(request, f'Order #{order.order_number} confirmed.')
+    return _return_url(request, 'web:admin_orders')
 
 
 @admin_required
@@ -1163,7 +1210,7 @@ def admin_charge_delete(request, charge_id):
     name = charge.name
     charge.delete()
     messages.success(request, f'Charge "{name}" deleted.')
-    return redirect('web:admin_charges')
+    return _return_url(request, 'web:admin_charges')
 
 
 # ── Per-order manual charges ─────────────────────────────────────────────

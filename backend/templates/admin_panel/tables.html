@@ -27,9 +27,7 @@
       <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full -z-10"></div>
       <button @click="qrModal=null" aria-label="Close"
               class="absolute top-3 right-3 w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+        <i class="bi bi-x-lg text-sm"></i>
       </button>
       <p class="font-medium text-slate-900 text-base mb-1 mt-1" x-text="qrModal ? 'Table ' + qrModal.table_number : ''"></p>
       <p class="text-xs text-slate-400 mb-4 font-medium">Scan to open the restaurant menu</p>
@@ -40,9 +38,7 @@
         </template>
         <template x-if="qrModal && !qrModal.qr_url">
           <div class="w-44 h-44 bg-slate-50 rounded-xl border border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 text-xs gap-2">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
+            <i class="bi bi-exclamation-triangle text-2xl"></i>
             <span>No QR generated</span>
           </div>
         </template>
@@ -102,9 +98,7 @@
                class="w-20 h-20 object-contain">
           {% else %}
           <div class="w-20 h-20 flex flex-col items-center justify-center text-slate-300 text-[10px] gap-1">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
-            </svg>
+            <i class="bi bi-qr-code text-2xl"></i>
             <span>No QR</span>
           </div>
           {% endif %}
@@ -153,11 +147,10 @@
                 @submit.prevent="showConfirm('Delete table','Delete Table {{ table.table_number }}? Its QR code will stop working.',{confirmLabel:'Delete'}).then(ok=>{ if(ok) $el.submit() })"
                 class="inline-block">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
             <button type="submit" aria-label="Delete table {{ table.table_number }}"
                     class="w-9 h-9 glass-btn-danger rounded-lg flex items-center justify-center active:scale-[0.96] transition-all">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-              </svg>
+              <i class="bi bi-trash text-sm"></i>
             </button>
           </form>
         </div>

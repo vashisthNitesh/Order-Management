@@ -194,11 +194,11 @@ def place_order(request, table_id):
             return JsonResponse({'error': 'You cannot edit this order.'}, status=403)
         is_edit = True
     else:
-        # Check if there is an active unpaid, non-cancelled order for this table
+        # Check if there is an active unpaid, non-terminal order for this table
         table_active_order = Order.objects.filter(
             table=table,
             is_paid=False
-        ).exclude(status=Order.CANCELLED).first()
+        ).exclude(status__in=[Order.CANCELLED, Order.SERVED]).first()
         
         if table_active_order:
             order = table_active_order

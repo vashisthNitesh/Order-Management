@@ -21,9 +21,7 @@
         <a href="{% url 'web:staff_logout' %}"
            class="w-9 h-9 bg-white border border-slate-200 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-sm"
            aria-label="Sign out" title="Sign out">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-          </svg>
+          <i class="bi bi-box-arrow-right text-base"></i>
         </a>
       </div>
     </div>
@@ -33,16 +31,12 @@
       <nav class="max-w-3xl mx-auto flex px-4">
         <a href="{% url 'web:staff_dashboard' %}" 
            class="flex-1 max-w-[200px] flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-700 border-b-2 border-emerald-600 transition-all">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          </svg>
+          <i class="bi bi-receipt text-sm"></i>
           <span>Active Orders</span>
         </a>
         <a href="{% url 'web:staff_kitchen' %}" 
            class="flex-1 max-w-[200px] flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition-all border-b-2 border-transparent">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
+          <i class="bi bi-fire text-sm"></i>
           <span>Kitchen Queue</span>
         </a>
       </nav>
@@ -138,9 +132,7 @@
             </span>
             <span class="flex items-center gap-1 text-[10px] text-slate-400 flex-shrink-0">
               <span x-text="expanded ? 'Hide' : 'Details'"></span>
-              <svg class="w-3.5 h-3.5 transform transition-transform duration-200" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-              </svg>
+              <i class="bi bi-chevron-down text-sm transform transition-transform duration-200" :class="expanded ? 'rotate-180' : ''"></i>
             </span>
           </button>
 
@@ -157,9 +149,7 @@
             {% endfor %}
             {% if order.special_instructions %}
             <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 font-semibold leading-relaxed flex gap-2 mt-2">
-              <svg class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
+              <i class="bi bi-exclamation-triangle text-base text-amber-600 flex-shrink-0 mt-0.5"></i>
               <span>{{ order.special_instructions }}</span>
             </div>
             {% endif %}

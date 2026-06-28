@@ -4,9 +4,7 @@
 <div class="p-6 max-w-xl mx-auto">
   <div class="flex items-center gap-3 mb-6">
     <a href="{% url 'web:admin_offers' %}" aria-label="Back to offers" class="glass-btn-secondary w-9 h-9 rounded-xl flex items-center justify-center transition-all text-slate-600 active:scale-[0.97] flex-shrink-0">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
-      </svg>
+      <i class="bi bi-arrow-left text-base"></i>
     </a>
     <h2 class="text-xl font-medium text-slate-900">{% if offer %}Edit Offer{% else %}Add New Offer{% endif %}</h2>
   </div>
@@ -40,9 +38,7 @@
             <button type="button" @click="open = !open" @click.away="open = false"
               class="w-full h-11 rounded-2xl glass-input px-4 text-sm focus:outline-none text-left flex items-center justify-between active:scale-[0.99] duration-155">
               <span x-text="selectedLabel" class="text-slate-800 font-bold"></span>
-              <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-              </svg>
+              <i class="bi bi-chevron-down text-sm text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
             </button>
             
             <!-- Dropdown Options -->

@@ -118,14 +118,18 @@ def staff_order_mark_paid(request, order_id):
         messages.info(request, 'Order is already marked as paid.')
         return redirect('web:staff_dashboard')
         
+    old_status = order.status
     order.is_paid = True
     from django.utils import timezone
     order.paid_at = timezone.now()
     order.paid_by = request.user
-    order.save(update_fields=['is_paid', 'paid_at', 'paid_by'])
-    
-    # Create logs
-    OrderStatusHistory.objects.create(order=order, status=order.status, changed_by=request.user, note='Marked as paid by staff')
+    if order.status not in (Order.SERVED, Order.CANCELLED):
+        order.status = Order.SERVED
+    order.save(update_fields=['is_paid', 'paid_at', 'paid_by', 'status'])
+
+    # Only log a status change if the status actually moved
+    if old_status != order.status:
+        OrderStatusHistory.objects.create(order=order, status=order.status, changed_by=request.user, note='Marked as paid by staff')
     
     from apps.orders.models import OrderLog
     actor_name = request.user.get_full_name() or request.user.username
