@@ -1,69 +1,72 @@
 {% extends "base.html" %}
 {% block title %}Staff Login{% endblock %}
-{% block body %}
+
+{% block extra_head %}
 <style>
   @keyframes blob {
     0%,100% { transform: translate(0,0) scale(1); }
-    33%      { transform: translate(24px,-32px) scale(1.06); }
-    66%      { transform: translate(-18px,18px) scale(0.96); }
+    33%      { transform: translate(26px,-34px) scale(1.07); }
+    66%      { transform: translate(-20px,20px) scale(0.95); }
   }
   @keyframes card-up {
-    from { opacity:0; transform:translateY(28px) scale(0.97); }
+    from { opacity:0; transform:translateY(32px) scale(0.96); }
     to   { opacity:1; transform:translateY(0) scale(1); }
   }
-  @keyframes logo-pop {
-    from { opacity:0; transform:scale(0.55) rotate(-10deg); }
+  @keyframes icon-pop {
+    from { opacity:0; transform:scale(0.4) rotate(-15deg); }
     to   { opacity:1; transform:scale(1) rotate(0deg); }
   }
   @keyframes slide-in {
-    from { opacity:0; transform:translateX(-14px); }
+    from { opacity:0; transform:translateX(-16px); }
     to   { opacity:1; transform:translateX(0); }
   }
-  .anim-card  { animation: card-up  0.55s cubic-bezier(.22,1,.36,1) both; }
-  .anim-logo  { animation: logo-pop 0.45s cubic-bezier(.22,1,.36,1) 0.1s both; }
-  .anim-head  { animation: slide-in 0.4s ease-out 0.22s both; }
-  .anim-f1    { animation: slide-in 0.4s ease-out 0.32s both; }
-  .anim-f2    { animation: slide-in 0.4s ease-out 0.42s both; }
-  .anim-btn   { animation: slide-in 0.4s ease-out 0.52s both; }
+  .anim-card { animation: card-up  0.6s cubic-bezier(.22,1,.36,1) 0.05s both; }
+  .anim-icon { animation: icon-pop 0.5s cubic-bezier(.22,1,.36,1) 0.15s both; }
+  .anim-head { animation: slide-in 0.45s ease-out 0.25s both; }
+  .anim-f1   { animation: slide-in 0.45s ease-out 0.35s both; }
+  .anim-f2   { animation: slide-in 0.45s ease-out 0.45s both; }
+  .anim-btn  { animation: slide-in 0.45s ease-out 0.55s both; }
 </style>
+{% endblock %}
 
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style="background: linear-gradient(145deg,#f0fdf4,#f1f5f9 60%,#eff6ff);">
+{% block body %}
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+     style="background: linear-gradient(145deg, #f0fdf4, #f8fafc 55%, #eff6ff);">
 
-  <!-- Animated ambient blobs -->
-  <div style="position:absolute;top:-120px;right:-120px;width:480px;height:480px;border-radius:50%;
-              background:radial-gradient(circle,rgba(16,185,129,0.13) 0%,transparent 65%);
-              animation:blob 11s ease-in-out infinite;pointer-events:none;"></div>
-  <div style="position:absolute;bottom:-100px;left:-100px;width:380px;height:380px;border-radius:50%;
-              background:radial-gradient(circle,rgba(20,184,166,0.1) 0%,transparent 65%);
-              animation:blob 15s ease-in-out infinite 2.5s;pointer-events:none;"></div>
-  <div style="position:absolute;top:38%;left:8%;width:220px;height:220px;border-radius:50%;
-              background:radial-gradient(circle,rgba(16,185,129,0.07) 0%,transparent 65%);
-              animation:blob 19s ease-in-out infinite 5s;pointer-events:none;"></div>
-  <div style="position:absolute;bottom:18%;right:12%;width:170px;height:170px;border-radius:50%;
-              background:radial-gradient(circle,rgba(99,102,241,0.06) 0%,transparent 65%);
-              animation:blob 13s ease-in-out infinite 3.5s;pointer-events:none;"></div>
+  <!-- Decorative blobs (supplement the base.html mesh) -->
+  <div style="position:absolute;top:-100px;right:-100px;width:420px;height:420px;border-radius:50%;
+              background:radial-gradient(circle,rgba(16,185,129,0.1) 0%,transparent 70%);
+              animation:blob 11s ease-in-out infinite;pointer-events:none;z-index:0;"></div>
+  <div style="position:absolute;bottom:-80px;left:-80px;width:340px;height:340px;border-radius:50%;
+              background:radial-gradient(circle,rgba(20,184,166,0.08) 0%,transparent 70%);
+              animation:blob 15s ease-in-out infinite 2.5s;pointer-events:none;z-index:0;"></div>
+  <div style="position:absolute;top:42%;left:6%;width:200px;height:200px;border-radius:50%;
+              background:radial-gradient(circle,rgba(16,185,129,0.06) 0%,transparent 70%);
+              animation:blob 20s ease-in-out infinite 5.5s;pointer-events:none;z-index:0;"></div>
 
-  <div class="w-full max-w-sm relative z-10 anim-card">
+  <div class="w-full max-w-sm relative anim-card" style="z-index:1;">
 
-    <!-- Logo + brand -->
-    <div class="text-center mb-7 anim-head">
-      <div class="anim-logo inline-flex w-16 h-16 rounded-2xl mb-4 shadow-xl overflow-hidden mx-auto ring-4 ring-white/80 ring-offset-2
-        {% if not restaurant.logo %}bg-gradient-to-br from-emerald-600 to-teal-500 items-center justify-center{% endif %}">
-        {% if restaurant.logo %}
-        <img src="{{ restaurant.logo.url }}" class="w-full h-full object-cover">
-        {% else %}
-        <span class="text-3xl flex items-center justify-center w-full h-full">🍽️</span>
-        {% endif %}
+    <!-- Icon + title -->
+    <div class="text-center mb-7">
+      <div class="anim-icon inline-flex w-16 h-16 rounded-2xl mb-4 mx-auto items-center justify-center shadow-xl ring-4 ring-white/70"
+           style="background: linear-gradient(135deg, #059669, #0d9488);">
+        <i class="bi bi-bag-check text-white text-2xl"></i>
       </div>
-      <h1 class="text-2xl font-black text-slate-900 tracking-tight">{% if restaurant %}{{ restaurant.name }}{% else %}Staff Portal{% endif %}</h1>
-      <p class="text-[10px] font-extrabold uppercase tracking-widest mt-1.5" style="color:#94a3b8;">Sign in to manage orders</p>
+      <div class="anim-head">
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Staff Portal</h1>
+        <p class="text-[10px] font-extrabold uppercase tracking-widest mt-1.5 text-slate-400">Sign in to manage orders</p>
+      </div>
     </div>
 
     <!-- Card -->
-    <div class="rounded-3xl p-7 shadow-2xl" style="background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 25px 60px -10px rgba(15,23,42,0.12),0 0 0 1px rgba(255,255,255,0.6) inset;">
+    <div class="rounded-3xl p-7"
+         style="background:rgba(255,255,255,0.88);backdrop-filter:blur(16px);
+                border:1px solid rgba(255,255,255,0.75);
+                box-shadow:0 24px 56px -8px rgba(15,23,42,0.1),0 0 0 1px rgba(255,255,255,0.65) inset;">
 
       {% for msg in messages %}
-      <div class="mb-5 flex items-start gap-3 text-xs font-bold px-4 py-3.5 rounded-2xl" style="background:#fff1f2;border:1px solid #fecdd3;color:#be123c;">
+      <div class="mb-5 flex items-start gap-3 text-xs font-bold px-4 py-3.5 rounded-2xl"
+           style="background:#fff1f2;border:1px solid #fecdd3;color:#be123c;">
         <i class="bi bi-exclamation-circle text-base flex-shrink-0 mt-0.5"></i>{{ msg }}
       </div>
       {% endfor %}
@@ -71,31 +74,32 @@
       <form method="post" class="space-y-5">
         {% csrf_token %}
 
-        <div class="space-y-2 anim-f1">
-          <label class="text-[10px] font-extrabold uppercase tracking-widest" style="color:#64748b;">Username</label>
+        <div class="space-y-1.5 anim-f1">
+          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Username</label>
           <div class="relative">
-            <i class="bi bi-person absolute pointer-events-none text-slate-400 text-base" style="top:50%;transform:translateY(-50%);left:14px;"></i>
-            <input name="username" type="text" required autocomplete="username" autocapitalize="none" placeholder="Enter your username"
-              class="w-full h-12 rounded-xl glass-input text-slate-800 placeholder-slate-300 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-emerald-500/15 transition-all duration-200"
-              style="padding-left:42px;padding-right:16px;">
+            <i class="bi bi-person absolute pointer-events-none text-slate-400 text-base"
+               style="top:50%;transform:translateY(-50%);left:14px;"></i>
+            <input name="username" type="text" required autocomplete="username" autocapitalize="none"
+                   placeholder="Enter your username"
+                   class="w-full h-12 rounded-xl glass-input text-slate-800 placeholder-slate-300 text-sm font-medium focus:outline-none"
+                   style="padding-left:42px;padding-right:16px;">
           </div>
         </div>
 
-        <div class="space-y-2 anim-f2">
-          <label class="text-[10px] font-extrabold uppercase tracking-widest" style="color:#64748b;">Password</label>
+        <div class="space-y-1.5 anim-f2">
+          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Password</label>
           <div class="relative">
-            <i class="bi bi-lock absolute pointer-events-none text-slate-400 text-base" style="top:50%;transform:translateY(-50%);left:14px;"></i>
-            <input name="password" type="password" required autocomplete="current-password" placeholder="••••••••"
-              class="w-full h-12 rounded-xl glass-input text-slate-800 placeholder-slate-300 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-emerald-500/15 transition-all duration-200"
-              style="padding-left:42px;padding-right:16px;">
+            <i class="bi bi-lock absolute pointer-events-none text-slate-400 text-base"
+               style="top:50%;transform:translateY(-50%);left:14px;"></i>
+            <input name="password" type="password" required autocomplete="current-password"
+                   placeholder="••••••••"
+                   class="w-full h-12 rounded-xl glass-input text-slate-800 placeholder-slate-300 text-sm font-medium focus:outline-none"
+                   style="padding-left:42px;padding-right:16px;">
           </div>
         </div>
 
         <button type="submit"
-          class="anim-btn w-full h-12 rounded-xl font-bold text-sm text-white transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2 mt-1"
-          style="background:linear-gradient(135deg,#059669,#0d9488);box-shadow:0 8px 24px rgba(5,150,105,0.28);"
-          onmouseover="this.style.boxShadow='0 12px 32px rgba(5,150,105,0.38)'"
-          onmouseout="this.style.boxShadow='0 8px 24px rgba(5,150,105,0.28)'">
+                class="anim-btn w-full h-12 rounded-xl font-bold text-sm text-white glass-btn-primary flex items-center justify-center gap-2 mt-1">
           <i class="bi bi-box-arrow-in-right text-base"></i>
           Sign In
         </button>
